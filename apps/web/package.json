@@ -12,11 +12,14 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@better-auth/stripe": "^1.2.7",
     "@repo/database": "workspace:*",
     "@repo/ui": "workspace:*",
+    "better-auth": "^1.2.7",
     "next": "16.1.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "stripe": "^17.7.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

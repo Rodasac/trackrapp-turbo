@@ -17,8 +17,8 @@
 
 | Step | Description | Status | Notes |
 |------|-------------|--------|-------|
-| 1 | Database Schema | ⬜ Not started | |
-| 2 | Better Auth Setup | ⬜ Not started | Requires Step 1 |
+| 1 | Database Schema | ✅ Complete | 12 tables, migrations applied, seed data inserted |
+| 2 | Better Auth Setup | ✅ Complete | auth.ts, auth-client.ts, catch-all route, middleware |
 | 3 | App Layout & Navigation | ⬜ Not started | Requires Step 2 |
 | 4 | Subscription CRUD | ⬜ Not started | Requires Steps 1, 2, 3 |
 | 5 | Worker App | ⬜ Not started | Requires Step 1 |
@@ -64,3 +64,4 @@
 | Date | Work done |
 |------|-----------|
 | 2026-02-23 | Plan saved to docs/ |
+| 2026-02-23 | Steps 1+2: schema, migrations, seed data, Better Auth, middleware, @/ alias |

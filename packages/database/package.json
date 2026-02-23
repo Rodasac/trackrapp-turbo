@@ -10,7 +10,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx src/seed.ts",
+    "db:seed": "tsx --env-file=.env src/seed.ts",
     "db:studio": "drizzle-kit studio",
     "check-types": "tsc --noEmit"
   },
@@ -21,8 +21,8 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22",
-    "drizzle-kit": "^0.30.0",
-    "tsx": "^4.19.0",
+    "drizzle-kit": "^0.31.9",
+    "tsx": "^4.21.0",
     "typescript": "5.7.3"
   }
 }
