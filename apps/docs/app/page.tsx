@@ -1,5 +1,6 @@
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
+import { Badge } from "@repo/ui/badge";
 import styles from "./page.module.css";
 
 type Props = Omit<ImageProps, "src"> & {
@@ -63,9 +64,11 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-        <Button appName="docs" className={styles.secondary}>
-          Open alert
-        </Button>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Button onClick={() => alert("Hello from docs!")}>Default</Button>
+          <Button variant="outline">Outline</Button>
+          <Badge variant="secondary">Docs</Badge>
+        </div>
       </main>
       <footer className={styles.footer}>
         <a

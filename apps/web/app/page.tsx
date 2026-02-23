@@ -1,5 +1,7 @@
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
+import { Badge } from "@repo/ui/badge";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@repo/ui/card";
 import styles from "./page.module.css";
 
 type Props = Omit<ImageProps, "src"> & {
@@ -63,9 +65,27 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Button onClick={() => alert("Hello from web!")}>Default</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="destructive">Destructive</Button>
+        </div>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Badge>New</Badge>
+          <Badge variant="secondary">Beta</Badge>
+          <Badge variant="outline">v1.0</Badge>
+        </div>
+        <Card style={{ maxWidth: "320px", width: "100%" }}>
+          <CardHeader>
+            <CardTitle>@repo/ui</CardTitle>
+            <CardDescription>Shared shadcn/ui components</CardDescription>
+          </CardHeader>
+          <CardContent>
+            Components live in <code>packages/ui</code> and are used across
+            all apps in the monorepo.
+          </CardContent>
+        </Card>
       </main>
       <footer className={styles.footer}>
         <a

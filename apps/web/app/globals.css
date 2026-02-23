@@ -1,24 +1,12 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "@repo/tailwind-config";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Scan the shared UI package for Tailwind classes */
+@source "../../../packages/ui/src";
 
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
 }
 
 * {
