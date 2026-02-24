@@ -99,6 +99,9 @@ importers:
       better-auth:
         specifier: ^1.4.19
         version: 1.4.19(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(kysely@0.28.11)(postgres@3.4.8))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.0.18(@types/node@24.10.13)(@vitest/ui@4.0.18)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(lightningcss@1.31.1)(tsx@4.21.0))
+      drizzle-orm:
+        specifier: ^0.45.1
+        version: 0.45.1(kysely@0.28.11)(postgres@3.4.8)
       lucide-react:
         specifier: ^0.575.0
         version: 0.575.0(react@19.2.4)

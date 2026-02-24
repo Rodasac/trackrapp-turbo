@@ -1,5 +1,4 @@
-import { DollarSign, TrendingUp, Calendar, Activity } from "lucide-react";
-import { KpiCard } from "@repo/ui/kpi-card";
+import { DashboardKpis } from "@/components/dashboard-kpis";
 
 export default function DashboardPage() {
   return (
@@ -11,35 +10,10 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* KPI row */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard
-          title="Monthly spend"
-          value="$0.00"
-          icon={DollarSign}
-          description="Across all active subscriptions"
-        />
-        <KpiCard
-          title="Yearly spend"
-          value="$0.00"
-          icon={TrendingUp}
-          description="Projected annual total"
-        />
-        <KpiCard
-          title="Active subscriptions"
-          value="0"
-          icon={Activity}
-          description="Currently tracked"
-        />
-        <KpiCard
-          title="Upcoming renewals"
-          value="0"
-          icon={Calendar}
-          description="Due in the next 7 days"
-        />
-      </div>
+      {/* Live KPI cards */}
+      <DashboardKpis />
 
-      {/* Placeholder for charts — added in Phase 3 */}
+      {/* Placeholder for charts — added in a future step */}
       <div className="text-muted-foreground rounded-lg border border-dashed py-16 text-center text-sm">
         Charts and insights will appear here once you add subscriptions.
       </div>

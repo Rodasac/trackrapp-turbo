@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/card";
+import { SubscriptionForm } from "@/components/subscription-form";
 
 export default function NewSubscriptionPage() {
   return (
@@ -29,12 +30,12 @@ export default function NewSubscriptionPage() {
       <Card className="max-w-lg">
         <CardHeader>
           <CardTitle>Subscription details</CardTitle>
-          <CardDescription>Form will be implemented in Step 4</CardDescription>
+          <CardDescription>
+            Search the catalog to auto-fill, or enter details manually.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground rounded border border-dashed py-8 text-center text-sm">
-            Subscription form — coming in Step 4
-          </div>
+          <SubscriptionForm mode="create" />
         </CardContent>
       </Card>
     </div>

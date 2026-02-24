@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@repo/ui/button";
+import { SubscriptionList } from "@/components/subscription-list";
 
 export default function SubscriptionsPage() {
   return (
@@ -20,17 +21,7 @@ export default function SubscriptionsPage() {
         </Button>
       </div>
 
-      {/* Placeholder — list implemented in Step 4 */}
-      <div className="text-muted-foreground rounded-lg border border-dashed py-24 text-center text-sm">
-        <p className="font-medium">No subscriptions yet</p>
-        <p className="mt-1">Add your first subscription to get started.</p>
-        <Button asChild className="mt-4">
-          <Link href="/subscriptions/new">
-            <Plus className="size-4" />
-            Add subscription
-          </Link>
-        </Button>
-      </div>
+      <SubscriptionList />
     </div>
   );
 }

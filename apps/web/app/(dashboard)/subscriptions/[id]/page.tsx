@@ -1,13 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@repo/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/card";
+import { SubscriptionDetail } from "@/components/subscription-detail";
 
 export default async function SubscriptionDetailPage({
   params,
@@ -15,6 +9,7 @@ export default async function SubscriptionDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const idNum = parseInt(id);
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -25,24 +20,22 @@ export default async function SubscriptionDetailPage({
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-semibold">Subscription detail</h1>
-          <p className="text-muted-foreground text-sm">ID: {id}</p>
+          <h1 className="text-2xl font-semibold">Subscription</h1>
+          <p className="text-muted-foreground text-sm">
+            View and manage details
+          </p>
         </div>
       </div>
 
-      <Card className="max-w-lg">
-        <CardHeader>
-          <CardTitle>Details</CardTitle>
-          <CardDescription>
-            Full detail view — implemented in Step 4
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-muted-foreground rounded border border-dashed py-8 text-center text-sm">
-            Subscription detail — coming in Step 4
-          </div>
-        </CardContent>
-      </Card>
+      <div className="max-w-2xl">
+        {isNaN(idNum) ? (
+          <p className="text-muted-foreground text-sm">
+            Invalid subscription ID.
+          </p>
+        ) : (
+          <SubscriptionDetail id={idNum} />
+        )}
+      </div>
     </div>
   );
 }
