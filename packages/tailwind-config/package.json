@@ -5,6 +5,9 @@
   "exports": {
     ".": "./tailwind.css"
   },
+  "scripts": {
+    "clean": "pnpm dlx rimraf node_modules/"
+  },
   "peerDependencies": {
     "tailwindcss": "^4"
   }

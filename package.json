@@ -14,7 +14,9 @@
     "db:migrate": "turbo run db:migrate",
     "db:push": "turbo run db:push",
     "db:seed": "turbo run db:seed",
-    "db:studio": "turbo run db:studio"
+    "db:studio": "turbo run db:studio",
+    "check-types": "turbo run check-types",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

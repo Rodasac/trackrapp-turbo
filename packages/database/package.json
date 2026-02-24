@@ -14,7 +14,8 @@
     "db:push": "drizzle-kit push",
     "db:seed": "tsx --env-file=.env src/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "clean": "pnpm dlx rimraf node_modules/"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.1",

@@ -33,6 +33,9 @@
         "STRIPE_WEBHOOK_SECRET"
       ]
     },
+    "clean": {
+      "cache": false
+    },
     "test": {
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/vitest.config.ts"],
       "dependsOn": ["transit", "@repo/vitest-config#build"],

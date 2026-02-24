@@ -6,6 +6,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "clean": "pnpm dlx rimraf node_modules/"
+  },
   "devDependencies": {
     "vitest": "^4.0.18"
   }

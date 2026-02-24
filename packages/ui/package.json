@@ -10,7 +10,8 @@
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "generate:component": "turbo gen react-component",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "clean": "pnpm dlx rimraf node_modules/"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
