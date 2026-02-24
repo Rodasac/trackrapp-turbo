@@ -19,11 +19,11 @@ Build a multi-user subscription tracker with automatic renewal reminders, expens
 
 ## Implementation Phases
 
-| Phase | Description | Status |
-|-------|-------------|--------|
+| Phase     | Description                          | Status         |
+| --------- | ------------------------------------ | -------------- |
 | MVP (1+2) | Auth + CRUD + Stripe + Notifications | ⬜ Not started |
-| Phase 3 | Dashboard & Insights | ⬜ Not started |
-| Phase 4 | AI Tips + Polish | ⬜ Not started |
+| Phase 3   | Dashboard & Insights                 | ⬜ Not started |
+| Phase 4   | AI Tips + Polish                     | ⬜ Not started |
 
 ---
 
@@ -107,12 +107,14 @@ price_history:
 ```
 
 **Commands to run:**
+
 ```bash
 npx @better-auth/cli@latest generate  # generates auth tables
 drizzle-kit generate && drizzle-kit migrate
 ```
 
 **Seed data:**
+
 - `service_catalog`: ~30 popular services
 - `categories` (system defaults): Entertainment, Productivity, Music, Gaming, Cloud Storage, Health & Fitness, News & Reading, Education, Finance, Other
 
@@ -121,18 +123,21 @@ drizzle-kit generate && drizzle-kit migrate
 ### Step 2: Better Auth Setup
 
 **New files:**
+
 - `apps/web/lib/auth.ts` — Server-side Better Auth config
 - `apps/web/lib/auth-client.ts` — Client-side auth hooks
 - `apps/web/app/api/auth/[...all]/route.ts` — Catch-all auth API route
 - `apps/web/middleware.ts` — Protect authenticated routes
 
 **Config details:**
+
 - Adapter: `drizzleAdapter(db, { provider: "pg", usePlural: true })`
 - Providers: email/password + Google OAuth
 - Stripe plugin: `createCustomerOnSignUp: true`
 - Plans: `free` and `pro` (with 14-day trial)
 
 **Required env vars:**
+
 ```
 BETTER_AUTH_SECRET
 BETTER_AUTH_URL
@@ -143,6 +148,7 @@ STRIPE_WEBHOOK_SECRET
 ```
 
 **Packages to add to `packages/database/package.json`:**
+
 ```
 better-auth
 @better-auth/stripe
@@ -154,6 +160,7 @@ stripe
 ### Step 3: App Layout & Navigation
 
 **New pages:**
+
 - `apps/web/app/(auth)/login/page.tsx`
 - `apps/web/app/(auth)/signup/page.tsx`
 - `apps/web/app/(auth)/layout.tsx` — centered layout
@@ -168,15 +175,18 @@ stripe
 - `apps/web/app/pricing/page.tsx` — public pricing page
 
 **New UI components (`packages/ui`):**
+
 - Sidebar navigation component
 - KPI card component
 - Subscription card component
 - Notification item component
 
 **shadcn components to add:**
+
 ```bash
 shadcn add input form dialog dropdown-menu select separator avatar toast table tabs calendar popover chart label textarea switch
 ```
+
 (badge already exists)
 
 ---
@@ -184,12 +194,14 @@ shadcn add input form dialog dropdown-menu select separator avatar toast table t
 ### Step 4: Subscription CRUD
 
 **API routes:**
+
 - `apps/web/app/api/subscriptions/route.ts` — GET (list), POST (create)
 - `apps/web/app/api/subscriptions/[id]/route.ts` — GET, PUT, DELETE
 - `apps/web/app/api/categories/route.ts` — GET, POST
 - `apps/web/app/api/service-catalog/route.ts` — GET (search/list)
 
 **Features:**
+
 - Add: search service catalog (autocomplete) or manual entry
 - Auto-fill from catalog: name, logo, typical price, default category
 - Edit: any field; price changes recorded in `price_history`
@@ -204,6 +216,7 @@ shadcn add input form dialog dropdown-menu select separator avatar toast table t
 **New package:** `apps/worker/`
 
 **Structure:**
+
 ```
 apps/worker/
   package.json         (deps: node-cron, @repo/database, resend, web-push)
@@ -220,11 +233,13 @@ apps/worker/
 ```
 
 **Cron schedule:**
+
 - Every hour: `send-reminders` — find subscriptions renewing within user's reminder window, send notifications (dedup: check if notification already sent for this renewal)
 - Daily at 3am: `cleanup` — delete read notifications older than 30 days
 - Weekly Sunday 2am (Phase 4): `generate-ai-tips` — batch process Pro users
 
 **Required env vars:**
+
 ```
 DATABASE_URL
 RESEND_API_KEY
@@ -239,21 +254,25 @@ VAPID_PRIVATE_KEY
 ### Step 6: Notification System
 
 **Email (via Resend):**
+
 - Use React Email templates
 - Renewal reminder: "Your [Service] subscription ($X/mo) renews in [N] days"
 
 **Web Push:**
+
 - Service worker: `apps/web/public/sw.js`
 - `PushNotificationManager` component for subscribe/unsubscribe
 - Store push subscriptions in DB
 - Worker sends via `web-push` library
 
 **In-app notifications:**
+
 - Notification bell in header with unread count badge
 - Notification center page: mark-as-read, mark-all-read
 - Real-time: poll every 60s or SSE
 
 **Preferences (in settings page):**
+
 - Toggle email on/off
 - Toggle push on/off
 - Configure reminder timing: choose from [30, 14, 7, 3, 1] days before
@@ -263,12 +282,14 @@ VAPID_PRIVATE_KEY
 ### Step 7: Stripe Integration
 
 **Plans:**
+
 - Free: unlimited subscriptions, basic dashboard, email reminders
 - Pro: AI tips, advanced analytics, push notifications, CSV import/export, priority support
 - Pro includes 14-day free trial
 - Stripe Checkout for upgrade, Stripe Billing Portal for management
 
 **Pages:**
+
 - `/pricing` — public plan comparison
 - `/settings` billing tab — current plan + manage link
 
@@ -317,21 +338,21 @@ VAPID_PRIVATE_KEY
 
 ## Key Files to Modify
 
-| File | Change |
-|------|--------|
-| `packages/database/src/schema/index.ts` | Add all new tables |
-| `packages/database/src/seed.ts` | Seed categories + service catalog |
-| `packages/database/src/index.ts` | Export new schema types |
-| `packages/database/package.json` | Add `better-auth`, `@better-auth/stripe`, `stripe` |
-| `packages/ui/` | Add shadcn components |
-| `apps/web/package.json` | Add `better-auth`, `resend`, `web-push` |
-| `apps/web/app/` | All new pages and API routes |
-| `apps/web/lib/auth.ts` | New: Better Auth server config |
-| `apps/web/lib/auth-client.ts` | New: Better Auth client |
-| `apps/web/middleware.ts` | New: route protection |
-| `apps/web/public/sw.js` | New: service worker for push |
-| `apps/worker/` | New: entire worker app |
-| `turbo.json` | Add worker scripts |
+| File                                    | Change                                             |
+| --------------------------------------- | -------------------------------------------------- |
+| `packages/database/src/schema/index.ts` | Add all new tables                                 |
+| `packages/database/src/seed.ts`         | Seed categories + service catalog                  |
+| `packages/database/src/index.ts`        | Export new schema types                            |
+| `packages/database/package.json`        | Add `better-auth`, `@better-auth/stripe`, `stripe` |
+| `packages/ui/`                          | Add shadcn components                              |
+| `apps/web/package.json`                 | Add `better-auth`, `resend`, `web-push`            |
+| `apps/web/app/`                         | All new pages and API routes                       |
+| `apps/web/lib/auth.ts`                  | New: Better Auth server config                     |
+| `apps/web/lib/auth-client.ts`           | New: Better Auth client                            |
+| `apps/web/middleware.ts`                | New: route protection                              |
+| `apps/web/public/sw.js`                 | New: service worker for push                       |
+| `apps/worker/`                          | New: entire worker app                             |
+| `turbo.json`                            | Add worker scripts                                 |
 
 ---
 

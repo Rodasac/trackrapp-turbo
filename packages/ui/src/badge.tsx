@@ -21,12 +21,11 @@ const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 interface BadgeProps
-  extends React.ComponentProps<"span">,
-    VariantProps<typeof badgeVariants> {
+  extends React.ComponentProps<"span">, VariantProps<typeof badgeVariants> {
   asChild?: boolean;
 }
 

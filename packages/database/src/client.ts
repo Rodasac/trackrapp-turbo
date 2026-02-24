@@ -14,11 +14,9 @@ function createDatabase(): PostgresJsDatabase<Schema> {
 // In development, reuse the connection across Next.js HMR reloads to avoid
 // exhausting the PostgreSQL connection pool.
 declare global {
-  // eslint-disable-next-line no-var
   var _db: PostgresJsDatabase<Schema> | undefined;
 }
 
-export const db: PostgresJsDatabase<Schema> =
-  global._db ?? createDatabase();
+export const db: PostgresJsDatabase<Schema> = global._db ?? createDatabase();
 
 if (process.env.NODE_ENV !== "production") global._db = db;

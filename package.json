@@ -1,7 +1,11 @@
 {
-  "name": "vitest",
+  "name": "trackrapp",
   "private": true,
   "scripts": {
+    "build": "turbo run build",
+    "format": "prettier --write .",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "test:projects": "vitest run",
     "test:projects:watch": "vitest --watch",
@@ -13,11 +17,12 @@
     "db:studio": "turbo run db:studio"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
     "@repo/vitest-config": "workspace:*",
-    "prettier": "^3.5.0",
+    "prettier": "^3.8.1",
     "turbo": "^2.8.10",
-    "typescript": "5.7.3",
-    "vitest": "^3.2.4"
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

@@ -110,12 +110,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -202,12 +198,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -217,9 +209,7 @@
         "sessions_token_unique": {
           "name": "sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -318,12 +308,8 @@
           "name": "subscriptions_reference_id_users_id_fk",
           "tableFrom": "subscriptions",
           "tableTo": "users",
-          "columnsFrom": [
-            "reference_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["reference_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -397,9 +383,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -521,12 +505,8 @@
           "name": "categories_user_id_users_id_fk",
           "tableFrom": "categories",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -595,12 +575,8 @@
           "name": "notification_preferences_user_id_users_id_fk",
           "tableFrom": "notification_preferences",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -610,9 +586,7 @@
         "notification_preferences_user_id_unique": {
           "name": "notification_preferences_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         }
       },
       "policies": {},
@@ -697,12 +671,8 @@
           "name": "notifications_user_id_users_id_fk",
           "tableFrom": "notifications",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -710,12 +680,8 @@
           "name": "notifications_related_subscription_id_tracked_subscriptions_id_fk",
           "tableFrom": "notifications",
           "tableTo": "tracked_subscriptions",
-          "columnsFrom": [
-            "related_subscription_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["related_subscription_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -778,12 +744,8 @@
           "name": "price_history_tracked_subscription_id_tracked_subscriptions_id_fk",
           "tableFrom": "price_history",
           "tableTo": "tracked_subscriptions",
-          "columnsFrom": [
-            "tracked_subscription_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tracked_subscription_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -842,12 +804,8 @@
           "name": "push_subscriptions_user_id_users_id_fk",
           "tableFrom": "push_subscriptions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -857,9 +815,7 @@
         "push_subscriptions_endpoint_unique": {
           "name": "push_subscriptions_endpoint_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "endpoint"
-          ]
+          "columns": ["endpoint"]
         }
       },
       "policies": {},
@@ -933,9 +889,7 @@
         "service_catalog_name_unique": {
           "name": "service_catalog_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -1076,12 +1030,8 @@
           "name": "tracked_subscriptions_user_id_users_id_fk",
           "tableFrom": "tracked_subscriptions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1089,12 +1039,8 @@
           "name": "tracked_subscriptions_category_id_categories_id_fk",
           "tableFrom": "tracked_subscriptions",
           "tableTo": "categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1102,12 +1048,8 @@
           "name": "tracked_subscriptions_service_catalog_id_service_catalog_id_fk",
           "tableFrom": "tracked_subscriptions",
           "tableTo": "service_catalog",
-          "columnsFrom": [
-            "service_catalog_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["service_catalog_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1123,22 +1065,12 @@
     "public.billing_cycle": {
       "name": "billing_cycle",
       "schema": "public",
-      "values": [
-        "monthly",
-        "yearly",
-        "weekly",
-        "quarterly"
-      ]
+      "values": ["monthly", "yearly", "weekly", "quarterly"]
     },
     "public.notification_type": {
       "name": "notification_type",
       "schema": "public",
-      "values": [
-        "renewal_reminder",
-        "price_change",
-        "tip",
-        "system"
-      ]
+      "values": ["renewal_reminder", "price_change", "tip", "system"]
     }
   },
   "schemas": {},

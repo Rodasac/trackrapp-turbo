@@ -178,9 +178,12 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
   trackedSubscriptions: many(trackedSubscriptions),
 }));
 
-export const serviceCatalogRelations = relations(serviceCatalog, ({ many }) => ({
-  trackedSubscriptions: many(trackedSubscriptions),
-}));
+export const serviceCatalogRelations = relations(
+  serviceCatalog,
+  ({ many }) => ({
+    trackedSubscriptions: many(trackedSubscriptions),
+  }),
+);
 
 export const trackedSubscriptionsRelations = relations(
   trackedSubscriptions,

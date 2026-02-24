@@ -5,7 +5,15 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "NODE_ENV",
+        "NEXT_TELEMETRY_DISABLED",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -15,12 +23,28 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "NODE_ENV",
+        "NEXT_TELEMETRY_DISABLED",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET"
+      ]
     },
     "test": {
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/vitest.config.ts"],
       "dependsOn": ["transit", "@repo/vitest-config#build"],
-      "outputs": ["coverage.json"]
+      "outputs": ["coverage.json"],
+      "env": [
+        "NODE_ENV",
+        "NEXT_TELEMETRY_DISABLED",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET"
+      ]
     },
     "transit": {
       "dependsOn": ["^transit"]
@@ -39,7 +63,8 @@
     },
     "db:studio": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["DATABASE_URL"]
     }
   }
 }
