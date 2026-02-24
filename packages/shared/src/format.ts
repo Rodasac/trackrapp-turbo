@@ -1,3 +1,5 @@
+import { parseDateString } from "./dates.js";
+
 export function formatPrice(price: string, currency: string): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -23,9 +25,7 @@ export function billingCycleLabel(cycle: string): string {
 
 export function formatRenewalDate(dateStr: string): string {
   if (!dateStr) return "";
-  // Parse as local date to avoid UTC offset shifts
-  const parts = dateStr.split("-").map(Number);
-  const date = new Date(parts[0]!, parts[1]! - 1, parts[2]!);
+  const date = parseDateString(dateStr);
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const msPerDay = 24 * 60 * 60 * 1000;
@@ -46,8 +46,7 @@ export function formatRenewalDate(dateStr: string): string {
 
 export function formatShortDate(dateStr: string): string {
   if (!dateStr) return "";
-  const parts2 = dateStr.split("-").map(Number);
-  const date = new Date(parts2[0]!, parts2[1]! - 1, parts2[2]!);
+  const date = parseDateString(dateStr);
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",

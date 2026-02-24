@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   MoreHorizontal,
@@ -39,22 +39,12 @@ import {
   TableRow,
 } from "@repo/ui/table";
 import { toast } from "sonner";
-import { formatPrice, billingCycleLabel, formatRenewalDate } from "@/lib/utils/format";
+import { formatPrice, billingCycleLabel, formatRenewalDate } from "@repo/shared/format";
 import { DeleteSubscriptionDialog } from "@/components/delete-subscription-dialog";
-import type { Category } from "@repo/database";
-
-interface Subscription {
-  id: number;
-  name: string;
-  price: string;
-  currency: string;
-  billingCycle: string;
-  nextRenewalDate: string;
-  isActive: boolean;
-  logoUrl: string | null;
-  websiteUrl: string | null;
-  category: Category | null;
-}
+import { useCategories } from "@/hooks/use-categories";
+import { useSubscriptions } from "@/hooks/use-subscriptions";
+import { useDeactivateSubscription } from "@/hooks/use-subscription-mutations";
+import type { SubscriptionListItem } from "@/lib/types/api";
 
 function computeImgSrc(
   logoUrl: string | null,
@@ -81,7 +71,6 @@ function SubscriptionLogo({
   logoUrl: string | null;
   websiteUrl: string | null;
 }) {
-  // Track broken images so we can fall back to the initials circle
   const [broken, setBroken] = useState(false);
   const src = broken ? null : computeImgSrc(logoUrl, websiteUrl);
 
@@ -117,52 +106,37 @@ function SkeletonRow() {
 }
 
 export function SubscriptionList() {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [sort, setSort] = useState("nextRenewalDate");
   const [order, setOrder] = useState("asc");
   const [showInactive, setShowInactive] = useState(false);
 
-  // Load categories for filter dropdown
-  useEffect(() => {
-    fetch("/api/categories")
-      .then((r) => r.json())
-      .then(setCategories)
-      .catch(() => {});
-  }, []);
-
-  // Load subscriptions whenever filters change
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (categoryFilter) params.set("category", categoryFilter);
-    params.set("sort", sort);
-    params.set("order", order);
-    if (!showInactive) params.set("active", "true");
-
-    fetch(`/api/subscriptions?${params.toString()}`)
-      .then((r) => r.json())
-      .then(setSubscriptions)
-      .catch(() => toast.error("Failed to load subscriptions"))
-      .finally(() => setLoading(false));
-  }, [search, categoryFilter, sort, order, showInactive]);
+  const { data: categories = [] } = useCategories();
+  const {
+    data: subscriptions = [],
+    isLoading,
+    isError,
+  } = useSubscriptions({
+    search,
+    category: categoryFilter,
+    sort,
+    order,
+    active: showInactive ? undefined : true,
+  });
+  const deactivate = useDeactivateSubscription();
 
   async function handleDeactivate(id: number) {
-    const res = await fetch(`/api/subscriptions/${id}`, { method: "DELETE" });
-    if (res.ok) {
+    try {
+      await deactivate.mutateAsync(id);
       toast.success("Subscription deactivated");
-      setSubscriptions((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, isActive: false } : s)),
-      );
-    } else {
+    } catch {
       toast.error("Failed to deactivate");
     }
+  }
+
+  if (isError) {
+    toast.error("Failed to load subscriptions");
   }
 
   const hasFilters = !!(search || categoryFilter);
@@ -243,11 +217,11 @@ export function SubscriptionList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading
+            {isLoading
               ? Array.from({ length: 4 }).map((_, i) => (
                   <SkeletonRow key={i} />
                 ))
-              : subscriptions.map((sub) => (
+              : subscriptions.map((sub: SubscriptionListItem) => (
                   <TableRow
                     key={sub.id}
                     className={!sub.isActive ? "opacity-50" : undefined}
@@ -329,20 +303,6 @@ export function SubscriptionList() {
                             <DeleteSubscriptionDialog
                               subscriptionId={sub.id}
                               subscriptionName={sub.name}
-                              onDelete={() =>
-                                setSubscriptions((prev) =>
-                                  prev.filter((s) => s.id !== sub.id),
-                                )
-                              }
-                              onDeactivate={() =>
-                                setSubscriptions((prev) =>
-                                  prev.map((s) =>
-                                    s.id === sub.id
-                                      ? { ...s, isActive: false }
-                                      : s,
-                                  ),
-                                )
-                              }
                               trigger={
                                 <span className="flex cursor-pointer items-center px-2 py-1.5 text-sm">
                                   <Trash2 className="mr-2 size-4 text-destructive" />
@@ -361,7 +321,7 @@ export function SubscriptionList() {
       </div>
 
       {/* Empty states */}
-      {!loading && subscriptions.length === 0 && (
+      {!isLoading && subscriptions.length === 0 && (
         <div className="text-muted-foreground rounded-lg border border-dashed py-16 text-center text-sm">
           {hasFilters ? (
             <>

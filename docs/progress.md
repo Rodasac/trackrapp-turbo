@@ -20,7 +20,7 @@
 | 1    | Database Schema         | ✅ Complete    | 12 tables, migrations applied, seed data inserted            |
 | 2    | Better Auth Setup       | ✅ Complete    | auth.ts, auth-client.ts, catch-all route, middleware         |
 | 3    | App Layout & Navigation | ✅ Complete    | Route groups, sidebar, 13 pages, shadcn components, KPI card |
-| 4    | Subscription CRUD       | ⬜ Not started | Requires Steps 1, 2, 3                                       |
+| 4    | Subscription CRUD       | ✅ Complete    | API routes, forms, list, detail, dashboard KPIs, TanStack Query refactor, @repo/shared |
 | 5    | Worker App              | ⬜ Not started | Requires Step 1                                              |
 | 6    | Notification System     | ⬜ Not started | Requires Steps 2, 5                                          |
 | 7    | Stripe Integration      | ⬜ Not started | Requires Step 2                                              |
@@ -66,3 +66,4 @@
 | 2026-02-23 | Plan saved to docs/                                                                                                                                                                                                             |
 | 2026-02-23 | Steps 1+2: schema, migrations, seed data, Better Auth, middleware, @/ alias                                                                                                                                                     |
 | 2026-02-24 | Step 3: route groups, (auth) + (dashboard) layouts, 13 pages, sidebar-nav, KPI card, shadcn components (input, form, dialog, select, separator, avatar, sonner, table, tabs, calendar, popover, chart, label, textarea, switch) |
+| 2026-02-24 | Step 4: subscription CRUD (API routes, forms, list, detail, live KPIs), then refactored: TanStack Query hooks, @repo/shared (format/dates/billing/validations), API helpers (requireSession/validationErrorResponse/parseIdParam) |

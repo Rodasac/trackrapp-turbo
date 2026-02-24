@@ -1,27 +1,12 @@
-import { auth } from "@/lib/auth";
 import { db, schema } from "@repo/database";
+import { requireSession } from "@/lib/api/helpers";
+import { toMonthlyRate } from "@repo/shared/billing";
 import { and, eq } from "drizzle-orm";
 
-// Normalize any billing cycle to a monthly equivalent cost.
-// Uses exact calendar fractions: 52 weeks / 12 months = 4.333…, 365.25 / 12 = 30.44 days/mo
-function toMonthlyRate(price: number, billingCycle: string): number {
-  switch (billingCycle) {
-    case "monthly":
-      return price;
-    case "yearly":
-      return price / 12;
-    case "quarterly":
-      return price / 3;
-    case "weekly":
-      return (price * 52) / 12;
-    default:
-      return price;
-  }
-}
-
 export async function GET(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const result = await requireSession(request);
+  if ("error" in result) return result.error;
+  const { session } = result;
 
   const subs = await db
     .select()

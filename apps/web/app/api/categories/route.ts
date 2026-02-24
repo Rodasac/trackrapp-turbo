@@ -1,11 +1,12 @@
-import { auth } from "@/lib/auth";
 import { db, schema } from "@repo/database";
-import { categoryFormSchema } from "@/lib/validations/subscription";
+import { requireSession, validationErrorResponse } from "@/lib/api/helpers";
+import { categoryFormSchema } from "@repo/shared/validations";
 import { asc, eq, isNull, or } from "drizzle-orm";
 
 export async function GET(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const result = await requireSession(request);
+  if ("error" in result) return result.error;
+  const { session } = result;
 
   const cats = await db
     .select()
@@ -22,21 +23,17 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const result = await requireSession(request);
+  if ("error" in result) return result.error;
+  const { session } = result;
 
   const body = await request.json();
-  const result = categoryFormSchema.safeParse(body);
-  if (!result.success) {
-    return Response.json(
-      { error: "Validation failed", issues: result.error.issues },
-      { status: 400 },
-    );
-  }
+  const parsed = categoryFormSchema.safeParse(body);
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const [category] = await db
     .insert(schema.categories)
-    .values({ ...result.data, userId: session.user.id })
+    .values({ ...parsed.data, userId: session.user.id })
     .returning();
 
   return Response.json(category, { status: 201 });

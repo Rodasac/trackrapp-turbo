@@ -22,7 +22,8 @@ import {
   FormMessage,
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
-import { categoryFormSchema, type CategoryFormValues } from "@/lib/validations/subscription";
+import { categoryFormSchema, type CategoryFormValues } from "@repo/shared/validations";
+import { useCreateCategory } from "@/hooks/use-subscription-mutations";
 import type { Category } from "@repo/database";
 
 interface AddCategoryDialogProps {
@@ -31,6 +32,7 @@ interface AddCategoryDialogProps {
 
 export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
   const [open, setOpen] = useState(false);
+  const createCategory = useCreateCategory();
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
@@ -38,19 +40,13 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
   });
 
   async function onSubmit(values: CategoryFormValues) {
-    const res = await fetch("/api/categories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-
-    if (res.ok) {
-      const cat: Category = await res.json();
+    try {
+      const cat: Category = await createCategory.mutateAsync(values);
       onCreated(cat);
       setOpen(false);
       form.reset();
       toast.success("Category created");
-    } else {
+    } catch {
       toast.error("Failed to create category");
     }
   }

@@ -1,11 +1,12 @@
-import { auth } from "@/lib/auth";
 import { db, schema } from "@repo/database";
-import { subscriptionFormSchema } from "@/lib/validations/subscription";
+import { requireSession, validationErrorResponse } from "@/lib/api/helpers";
+import { subscriptionFormSchema } from "@repo/shared/validations";
 import { and, asc, desc, eq, ilike } from "drizzle-orm";
 
 export async function GET(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const result = await requireSession(request);
+  if ("error" in result) return result.error;
+  const { session } = result;
 
   const url = new URL(request.url);
   const categoryParam = url.searchParams.get("category");
@@ -46,19 +47,15 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const result = await requireSession(request);
+  if ("error" in result) return result.error;
+  const { session } = result;
 
   const body = await request.json();
-  const result = subscriptionFormSchema.safeParse(body);
-  if (!result.success) {
-    return Response.json(
-      { error: "Validation failed", issues: result.error.issues },
-      { status: 400 },
-    );
-  }
+  const parsed = subscriptionFormSchema.safeParse(body);
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
-  const { data } = result;
+  const { data } = parsed;
 
   const inserted = await db
     .insert(schema.trackedSubscriptions)

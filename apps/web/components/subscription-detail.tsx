@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pencil, X, ExternalLink } from "lucide-react";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
@@ -8,40 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Separator } from "@repo/ui/separator";
 import { SubscriptionForm } from "@/components/subscription-form";
 import { DeleteSubscriptionDialog } from "@/components/delete-subscription-dialog";
-import { formatPrice, billingCycleLabel, formatShortDate, formatRenewalDate } from "@/lib/utils/format";
-import type { SubscriptionFormValues } from "@/lib/validations/subscription";
-
-interface PriceHistoryEntry {
-  id: number;
-  price: string;
-  recordedAt: string;
-}
-
-interface CategoryData {
-  id: number;
-  name: string;
-  color: string | null;
-  icon: string | null;
-}
-
-interface SubscriptionData {
-  id: number;
-  name: string;
-  description: string | null;
-  price: string;
-  currency: string;
-  billingCycle: string;
-  nextRenewalDate: string;
-  startDate: string | null;
-  isActive: boolean;
-  logoUrl: string | null;
-  websiteUrl: string | null;
-  notes: string | null;
-  categoryId: number | null;
-  serviceCatalogId: number | null;
-  category: CategoryData | null;
-  priceHistory: PriceHistoryEntry[];
-}
+import {
+  formatPrice,
+  billingCycleLabel,
+  formatShortDate,
+  formatRenewalDate,
+} from "@repo/shared/format";
+import { useSubscription } from "@/hooks/use-subscription";
+import type { SubscriptionFormValues } from "@repo/shared/validations";
 
 interface SubscriptionDetailProps {
   id: number;
@@ -53,35 +27,18 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
       <dt className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
         {label}
       </dt>
-      <dd className="text-sm">{value ?? <span className="text-muted-foreground">—</span>}</dd>
+      <dd className="text-sm">
+        {value ?? <span className="text-muted-foreground">—</span>}
+      </dd>
     </div>
   );
 }
 
 export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
-  const [sub, setSub] = useState<SubscriptionData | null>(null);
   const [mode, setMode] = useState<"view" | "edit">("view");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: sub, isLoading, isError } = useSubscription(id);
 
-  function loadSub() {
-    setLoading(true);
-    fetch(`/api/subscriptions/${id}`)
-      .then((r) => {
-        if (!r.ok) throw new Error("Not found");
-        return r.json();
-      })
-      .then((data: SubscriptionData) => setSub(data))
-      .catch((e: Error) => setError(e.message))
-      .finally(() => setLoading(false));
-  }
-
-  useEffect(() => {
-    loadSub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
@@ -91,7 +48,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
     );
   }
 
-  if (error || !sub) {
+  if (isError || !sub) {
     return (
       <div className="text-muted-foreground rounded-lg border border-dashed py-12 text-center text-sm">
         Subscription not found.
@@ -118,11 +75,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setMode("view")}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setMode("view")}>
             <X className="mr-1 size-4" />
             Cancel
           </Button>
@@ -131,10 +84,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
           mode="edit"
           subscriptionId={id}
           initialValues={initialValues}
-          onSuccess={() => {
-            setMode("view");
-            loadSub();
-          }}
+          onSuccess={() => setMode("view")}
         />
       </div>
     );
@@ -159,9 +109,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold">{sub.name}</h2>
-            {!sub.isActive && (
-              <Badge variant="secondary">Inactive</Badge>
-            )}
+            {!sub.isActive && <Badge variant="secondary">Inactive</Badge>}
           </div>
           {sub.category && (
             <Badge
@@ -212,10 +160,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                 sub.billingCycle.slice(1)
               }
             />
-            <InfoRow
-              label="Currency"
-              value={sub.currency}
-            />
+            <InfoRow label="Currency" value={sub.currency} />
             <InfoRow
               label="Next renewal"
               value={formatRenewalDate(sub.nextRenewalDate)}

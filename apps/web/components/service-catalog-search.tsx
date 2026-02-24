@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@repo/ui/input";
+import { useServiceCatalogSearch } from "@/hooks/use-service-catalog-search";
 import type { ServiceCatalogEntry } from "@repo/database";
 
 interface ServiceCatalogSearchProps {
@@ -10,38 +11,25 @@ interface ServiceCatalogSearchProps {
 
 export function ServiceCatalogSearch({ onSelect }: ServiceCatalogSearchProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<ServiceCatalogEntry[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Debounced search
+  // Debounce the query by 300ms before firing the request
   useEffect(() => {
-    if (!query.trim()) {
-      setResults([]);
-      return;
-    }
-    setLoading(true);
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(
-          `/api/service-catalog?q=${encodeURIComponent(query)}&limit=8`,
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setResults(data);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
+    const timer = setTimeout(() => setDebouncedQuery(query.trim()), 300);
     return () => clearTimeout(timer);
   }, [query]);
+
+  const { data: results = [], isFetching } = useServiceCatalogSearch(debouncedQuery);
 
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -49,7 +37,8 @@ export function ServiceCatalogSearch({ onSelect }: ServiceCatalogSearchProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const showDropdown = open && (loading || results.length > 0 || query.trim().length > 0);
+  const showDropdown =
+    open && (isFetching || results.length > 0 || query.trim().length > 0);
 
   return (
     <div ref={containerRef} className="relative">
@@ -65,12 +54,12 @@ export function ServiceCatalogSearch({ onSelect }: ServiceCatalogSearchProps) {
       />
       {showDropdown && (
         <div className="bg-background absolute z-20 mt-1 w-full rounded-md border shadow-md">
-          {loading && (
+          {isFetching && (
             <div className="text-muted-foreground px-3 py-2 text-sm">
               Searching…
             </div>
           )}
-          {!loading && results.length === 0 && query.trim() && (
+          {!isFetching && results.length === 0 && query.trim() && (
             <div className="text-muted-foreground px-3 py-2 text-sm">
               No matches — enter details manually below
             </div>

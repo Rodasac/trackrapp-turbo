@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,10 +29,12 @@ import { cn } from "@repo/ui/lib/utils";
 import {
   subscriptionFormSchema,
   type SubscriptionFormValues,
-} from "@/lib/validations/subscription";
-import { formatShortDate } from "@/lib/utils/format";
+} from "@repo/shared/validations";
+import { formatShortDate, parseDateString, toDateString } from "@repo/shared";
 import { ServiceCatalogSearch } from "@/components/service-catalog-search";
 import { AddCategoryDialog } from "@/components/add-category-dialog";
+import { useCategories } from "@/hooks/use-categories";
+import { useSaveSubscription } from "@/hooks/use-subscription-mutations";
 import type { Category, ServiceCatalogEntry } from "@repo/database";
 
 interface SubscriptionFormProps {
@@ -44,19 +45,6 @@ interface SubscriptionFormProps {
   onSuccess?: () => void;
 }
 
-function toCalendarDate(dateStr: string | undefined): Date | undefined {
-  if (!dateStr) return undefined;
-  const parts = dateStr.split("-").map(Number);
-  return new Date(parts[0]!, parts[1]! - 1, parts[2]!);
-}
-
-function toDateString(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
 export function SubscriptionForm({
   mode,
   initialValues,
@@ -64,14 +52,8 @@ export function SubscriptionForm({
   onSuccess,
 }: SubscriptionFormProps) {
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([]);
-
-  useEffect(() => {
-    fetch("/api/categories")
-      .then((r) => r.json())
-      .then(setCategories)
-      .catch(() => {});
-  }, []);
+  const { data: categories = [] } = useCategories();
+  const saveSubscription = useSaveSubscription(mode, subscriptionId);
 
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
@@ -116,26 +98,13 @@ export function SubscriptionForm({
   }
 
   function handleCategoryCreated(cat: Category) {
-    setCategories((prev) =>
-      [...prev, cat].sort((a, b) => a.name.localeCompare(b.name)),
-    );
+    // Mutation in AddCategoryDialog invalidates categories.all — just set the value
     form.setValue("categoryId", cat.id);
   }
 
   async function onSubmit(values: SubscriptionFormValues) {
-    const url =
-      mode === "create"
-        ? "/api/subscriptions"
-        : `/api/subscriptions/${subscriptionId}`;
-    const method = mode === "create" ? "POST" : "PUT";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-
-    if (res.ok) {
+    try {
+      await saveSubscription.mutateAsync(values);
       toast.success(
         mode === "create" ? "Subscription added!" : "Subscription updated!",
       );
@@ -144,11 +113,8 @@ export function SubscriptionForm({
       } else {
         router.push("/subscriptions");
       }
-    } else {
-      const data = await res.json().catch(() => ({}));
-      toast.error(
-        (data as { error?: string }).error ?? "Something went wrong",
-      );
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
     }
   }
 
@@ -268,7 +234,9 @@ export function SubscriptionForm({
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={toCalendarDate(field.value)}
+                      selected={
+                        field.value ? parseDateString(field.value) : undefined
+                      }
                       onSelect={(d) =>
                         field.onChange(d ? toDateString(d) : "")
                       }
@@ -306,7 +274,9 @@ export function SubscriptionForm({
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={toCalendarDate(field.value)}
+                      selected={
+                        field.value ? parseDateString(field.value) : undefined
+                      }
                       onSelect={(d) =>
                         field.onChange(d ? toDateString(d) : "")
                       }

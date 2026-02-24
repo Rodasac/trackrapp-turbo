@@ -13,6 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/dialog";
+import {
+  useDeactivateSubscription,
+  useDeleteSubscription,
+} from "@/hooks/use-subscription-mutations";
 
 interface DeleteSubscriptionDialogProps {
   subscriptionId: number;
@@ -31,45 +35,32 @@ export function DeleteSubscriptionDialog({
   trigger,
 }: DeleteSubscriptionDialogProps) {
   const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState<"deactivate" | "delete" | null>(null);
   const router = useRouter();
+  const deactivate = useDeactivateSubscription();
+  const hardDelete = useDeleteSubscription();
+
+  const pending = deactivate.isPending || hardDelete.isPending;
 
   async function handleDeactivate() {
-    setPending("deactivate");
     try {
-      const res = await fetch(`/api/subscriptions/${subscriptionId}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        toast.success("Subscription deactivated");
-        setOpen(false);
-        onDeactivate?.();
-        router.refresh();
-      } else {
-        toast.error("Failed to deactivate");
-      }
-    } finally {
-      setPending(null);
+      await deactivate.mutateAsync(subscriptionId);
+      toast.success("Subscription deactivated");
+      setOpen(false);
+      onDeactivate?.();
+    } catch {
+      toast.error("Failed to deactivate");
     }
   }
 
   async function handleDelete() {
-    setPending("delete");
     try {
-      const res = await fetch(
-        `/api/subscriptions/${subscriptionId}?hard=true`,
-        { method: "DELETE" },
-      );
-      if (res.ok) {
-        toast.success("Subscription deleted");
-        setOpen(false);
-        onDelete?.();
-        router.push("/subscriptions");
-      } else {
-        toast.error("Failed to delete");
-      }
-    } finally {
-      setPending(null);
+      await hardDelete.mutateAsync(subscriptionId);
+      toast.success("Subscription deleted");
+      setOpen(false);
+      onDelete?.();
+      router.push("/subscriptions");
+    } catch {
+      toast.error("Failed to delete");
     }
   }
 
@@ -115,23 +106,23 @@ export function DeleteSubscriptionDialog({
             <Button
               variant="outline"
               onClick={() => setOpen(false)}
-              disabled={pending !== null}
+              disabled={pending}
             >
               Cancel
             </Button>
             <Button
               variant="secondary"
               onClick={handleDeactivate}
-              disabled={pending !== null}
+              disabled={pending}
             >
-              {pending === "deactivate" ? "Deactivating…" : "Deactivate"}
+              {deactivate.isPending ? "Deactivating…" : "Deactivate"}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
-              disabled={pending !== null}
+              disabled={pending}
             >
-              {pending === "delete" ? "Deleting…" : "Delete permanently"}
+              {hardDelete.isPending ? "Deleting…" : "Delete permanently"}
             </Button>
           </DialogFooter>
         </DialogContent>

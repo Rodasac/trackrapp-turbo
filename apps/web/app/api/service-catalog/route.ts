@@ -1,10 +1,10 @@
-import { auth } from "@/lib/auth";
 import { db, schema } from "@repo/database";
+import { requireSession } from "@/lib/api/helpers";
 import { ilike } from "drizzle-orm";
 
 export async function GET(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const result = await requireSession(request);
+  if ("error" in result) return result.error;
 
   const url = new URL(request.url);
   const q = url.searchParams.get("q") ?? "";

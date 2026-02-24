@@ -1,18 +1,24 @@
-import { auth } from "@/lib/auth";
 import { db, schema } from "@repo/database";
-import { subscriptionFormSchema } from "@/lib/validations/subscription";
+import {
+  requireSession,
+  validationErrorResponse,
+  parseIdParam,
+} from "@/lib/api/helpers";
+import { subscriptionFormSchema } from "@repo/shared/validations";
 import { and, eq } from "drizzle-orm";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = await requireSession(request);
+  if ("error" in authResult) return authResult.error;
+  const { session } = authResult;
 
   const { id } = await params;
-  const idNum = parseInt(id);
-  if (isNaN(idNum)) return Response.json({ error: "Invalid ID" }, { status: 400 });
+  const idResult = parseIdParam(id);
+  if ("error" in idResult) return idResult.error;
+  const { idNum } = idResult;
 
   const sub = await db.query.trackedSubscriptions.findFirst({
     where: and(
@@ -36,21 +42,18 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = await requireSession(request);
+  if ("error" in authResult) return authResult.error;
+  const { session } = authResult;
 
   const { id } = await params;
-  const idNum = parseInt(id);
-  if (isNaN(idNum)) return Response.json({ error: "Invalid ID" }, { status: 400 });
+  const idResult = parseIdParam(id);
+  if ("error" in idResult) return idResult.error;
+  const { idNum } = idResult;
 
   const body = await request.json();
-  const result = subscriptionFormSchema.partial().safeParse(body);
-  if (!result.success) {
-    return Response.json(
-      { error: "Validation failed", issues: result.error.issues },
-      { status: 400 },
-    );
-  }
+  const parsed = subscriptionFormSchema.partial().safeParse(body);
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const existing = await db.query.trackedSubscriptions.findFirst({
     where: and(
@@ -60,7 +63,7 @@ export async function PUT(
   });
   if (!existing) return Response.json({ error: "Not found" }, { status: 404 });
 
-  const { data } = result;
+  const { data } = parsed;
   const updateData: Record<string, unknown> = {};
   if (data.name !== undefined) updateData.name = data.name;
   if (data.price !== undefined) updateData.price = data.price;
@@ -84,7 +87,6 @@ export async function PUT(
     .where(eq(schema.trackedSubscriptions.id, idNum))
     .returning();
 
-  // Record new price history entry if price changed
   if (data.price !== undefined && data.price !== existing.price) {
     await db.insert(schema.priceHistory).values({
       trackedSubscriptionId: idNum,
@@ -99,12 +101,14 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = await requireSession(request);
+  if ("error" in authResult) return authResult.error;
+  const { session } = authResult;
 
   const { id } = await params;
-  const idNum = parseInt(id);
-  if (isNaN(idNum)) return Response.json({ error: "Invalid ID" }, { status: 400 });
+  const idResult = parseIdParam(id);
+  if ("error" in idResult) return idResult.error;
+  const { idNum } = idResult;
 
   const url = new URL(request.url);
   const hard = url.searchParams.get("hard") === "true";
