@@ -28,12 +28,10 @@ export const auth = betterAuth({
             enabled: true,
             plans: [
               {
-                name: "free",
-                // TODO: define your free plan limits here
-              },
-              {
                 name: "pro",
-                // TODO: add trialDays, priceId etc. here
+                priceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID!,
+                annualDiscountPriceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
+                freeTrial: { days: 14 },
               },
             ],
           },

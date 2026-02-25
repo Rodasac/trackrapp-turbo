@@ -67,3 +67,13 @@ export interface NotificationPreferencesResponse {
 export interface UnreadCountResponse {
   count: number;
 }
+
+export interface SubscriptionPlanResponse {
+  plan: "free" | "pro";
+  status: "active" | "trialing" | "canceled" | "past_due" | "incomplete" | null;
+  isTrialing: boolean;
+  trialEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  periodEnd: string | null;
+  stripeSubscriptionId: string | null;
+}

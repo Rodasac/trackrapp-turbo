@@ -1,5 +1,8 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
 import {
   Card,
@@ -9,8 +12,19 @@ import {
   CardTitle,
 } from "@repo/ui/card";
 import { NotificationPreferencesForm } from "@/components/notification-preferences-form";
+import { BillingSettings } from "@/components/billing-settings";
 
 export default function SettingsPage() {
+  const searchParams = useSearchParams();
+  const defaultTab = searchParams.get("tab") ?? "profile";
+  const upgraded = searchParams.get("upgraded") === "true";
+
+  useEffect(() => {
+    if (upgraded) {
+      toast.success("You're now on Pro! Enjoy your AI insights.");
+    }
+  }, [upgraded]);
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
@@ -20,7 +34,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="profile" className="max-w-2xl">
+      <Tabs defaultValue={defaultTab} className="max-w-2xl">
         <TabsList>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
@@ -64,9 +78,7 @@ export default function SettingsPage() {
               <CardDescription>Manage your subscription plan</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-muted-foreground rounded border border-dashed py-8 text-center text-sm">
-                Billing management — coming in Step 7
-              </div>
+              <BillingSettings />
             </CardContent>
           </Card>
         </TabsContent>

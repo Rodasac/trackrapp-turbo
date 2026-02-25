@@ -6,6 +6,7 @@ import type {
   PriceHistoryItem,
   NotificationItem,
   NotificationPreferencesResponse,
+  SubscriptionPlanResponse,
 } from "@/lib/types/api";
 
 export function mockCategory(overrides?: Partial<CategoryItem>): CategoryItem {
@@ -117,6 +118,51 @@ export function mockNotificationPreferences(
     reminderDaysBefore: [7, 3, 1],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
+export function mockSubscriptionPlan(
+  overrides?: Partial<SubscriptionPlanResponse>,
+): SubscriptionPlanResponse {
+  return {
+    plan: "free",
+    status: null,
+    isTrialing: false,
+    trialEnd: null,
+    cancelAtPeriodEnd: false,
+    periodEnd: null,
+    stripeSubscriptionId: null,
+    ...overrides,
+  };
+}
+
+export function mockProPlan(
+  overrides?: Partial<SubscriptionPlanResponse>,
+): SubscriptionPlanResponse {
+  return {
+    plan: "pro",
+    status: "active",
+    isTrialing: false,
+    trialEnd: null,
+    cancelAtPeriodEnd: false,
+    periodEnd: "2026-03-25T00:00:00.000Z",
+    stripeSubscriptionId: "sub_pro123",
+    ...overrides,
+  };
+}
+
+export function mockTrialingPlan(
+  overrides?: Partial<SubscriptionPlanResponse>,
+): SubscriptionPlanResponse {
+  return {
+    plan: "pro",
+    status: "trialing",
+    isTrialing: true,
+    trialEnd: "2026-03-10T00:00:00.000Z",
+    cancelAtPeriodEnd: false,
+    periodEnd: "2026-03-10T00:00:00.000Z",
+    stripeSubscriptionId: "sub_trial123",
     ...overrides,
   };
 }

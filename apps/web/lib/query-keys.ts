@@ -43,4 +43,7 @@ export const queryKeys = {
   notificationPreferences: {
     all: ["notification-preferences"] as const,
   },
+  subscriptionPlan: {
+    all: ["subscription-plan"] as const,
+  },
 } as const;

@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@repo/ui/button";
 import { Badge } from "@repo/ui/badge";
 import {
@@ -11,6 +15,9 @@ import {
   CardTitle,
 } from "@repo/ui/card";
 import { Separator } from "@repo/ui/separator";
+import { useSession } from "@/lib/auth-client";
+import { useSubscriptionPlan } from "@/hooks/use-subscription-plan";
+import { useUpgradeToPro } from "@/hooks/use-subscription-plan-mutations";
 
 const FREE_FEATURES = [
   "Unlimited subscriptions",
@@ -31,6 +38,29 @@ const PRO_FEATURES = [
 ];
 
 export default function PricingPage() {
+  const [annual, setAnnual] = useState(false);
+  const { data: session } = useSession();
+  const isLoggedIn = !!session;
+
+  const { data: plan } = useSubscriptionPlan({ enabled: isLoggedIn });
+  const upgrade = useUpgradeToPro();
+
+  const isPro =
+    plan?.plan === "pro" &&
+    (plan.status === "active" || plan.status === "trialing");
+
+  async function handleUpgrade() {
+    try {
+      await upgrade.mutateAsync({
+        annual,
+        successUrl: `${window.location.origin}/settings?tab=billing&upgraded=true`,
+        cancelUrl: `${window.location.origin}/pricing`,
+      });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upgrade failed");
+    }
+  }
+
   return (
     <div className="flex min-h-svh flex-col items-center px-4 py-16">
       <div className="mb-10 text-center">
@@ -38,6 +68,29 @@ export default function PricingPage() {
         <p className="text-muted-foreground mt-2">
           Start free. Upgrade when you need AI insights.
         </p>
+
+        {/* Monthly / Annual toggle */}
+        <div className="mt-6 flex items-center justify-center gap-2">
+          <Button
+            variant={annual ? "ghost" : "secondary"}
+            size="sm"
+            onClick={() => setAnnual(false)}
+          >
+            Monthly
+          </Button>
+          <Button
+            variant={annual ? "secondary" : "ghost"}
+            size="sm"
+            onClick={() => setAnnual(true)}
+          >
+            Annual
+          </Button>
+          {annual && (
+            <Badge variant="outline" className="text-brand border-brand ml-1">
+              Save 17%
+            </Badge>
+          )}
+        </div>
       </div>
 
       <div className="grid w-full max-w-3xl gap-6 sm:grid-cols-2">
@@ -82,12 +135,24 @@ export default function PricingPage() {
             <CardTitle>Pro</CardTitle>
             <CardDescription>AI tips + advanced analytics</CardDescription>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-3xl font-bold">$4</span>
-              <span className="text-muted-foreground text-sm">/ month</span>
+              {annual ? (
+                <>
+                  <span className="text-3xl font-bold">$40</span>
+                  <span className="text-muted-foreground text-sm">/ year</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-3xl font-bold">$4</span>
+                  <span className="text-muted-foreground text-sm">/ month</span>
+                </>
+              )}
             </div>
-            <p className="text-muted-foreground text-xs">
-              14-day free trial, no credit card required
-            </p>
+            {annual && (
+              <p className="text-muted-foreground text-xs">
+                $3.33/month effective — save 17%
+              </p>
+            )}
+            <p className="text-muted-foreground text-xs">14-day free trial</p>
           </CardHeader>
           <Separator />
           <CardContent className="mt-4">
@@ -101,9 +166,23 @@ export default function PricingPage() {
             </ul>
           </CardContent>
           <CardFooter>
-            <Button className="bg-brand hover:bg-brand/90 w-full" asChild>
-              <Link href="/signup">Start free trial</Link>
-            </Button>
+            {isPro ? (
+              <Button className="w-full" disabled>
+                Current plan
+              </Button>
+            ) : isLoggedIn ? (
+              <Button
+                className="bg-brand hover:bg-brand/90 w-full"
+                onClick={handleUpgrade}
+                disabled={upgrade.isPending}
+              >
+                {upgrade.isPending ? "Redirecting…" : "Start free trial"}
+              </Button>
+            ) : (
+              <Button className="bg-brand hover:bg-brand/90 w-full" asChild>
+                <Link href="/signup">Start free trial</Link>
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </div>

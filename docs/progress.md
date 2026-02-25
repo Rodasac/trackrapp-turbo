@@ -23,7 +23,7 @@
 | 4    | Subscription CRUD       | ✅ Complete    | API routes, forms, list, detail, dashboard KPIs, TanStack Query refactor, @repo/shared |
 | 5    | Worker App              | ✅ Complete    | node-cron jobs: send-reminders (hourly), cleanup (daily), generate-ai-tips stub (weekly) |
 | 6    | Notification System     | ✅ Complete    | API routes, TanStack Query hooks, NotificationBell, NotificationCenter, preferences form, push SW |
-| 7    | Stripe Integration      | ⬜ Not started | Requires Step 2                                              |
+| 7    | Stripe Integration      | ✅ Complete    | Pro plan config, /api/subscription-plan, billing settings, pricing toggle, tips gating, 35 new tests |
 
 ## Phase 3: Dashboard & Insights
 
@@ -69,3 +69,4 @@
 | 2026-02-24 | Step 4: subscription CRUD (API routes, forms, list, detail, live KPIs), then refactored: TanStack Query hooks, @repo/shared (format/dates/billing/validations), API helpers (requireSession/validationErrorResponse/parseIdParam) |
 | 2026-02-25 | Phase 6 (E2E): Playwright test suite — 45 tests across auth, subscriptions, categories, dashboard, and navigation. All passing. |
 | 2026-02-25 | Steps 5+6: Worker app (apps/worker) + full notification system. Mailpit in docker-compose, 6 notification API routes, TanStack Query hooks (list, unread-count polling, preferences, mutations), NotificationBell badge, NotificationCenter page, NotificationPreferencesForm, PushNotificationManager, service worker. 22 worker unit tests + 16 web component tests + E2E notifications spec. All passing. |
+| 2026-02-25 | Step 7: Stripe integration (MVP complete). Pro plan config with priceId/annualDiscountPriceId/freeTrial, removed free plan stub, stripeClient({ subscription: true }), /api/subscription-plan route, useSubscriptionPlan + useIsPro hooks, useUpgradeToPro + useOpenBillingPortal mutations, BillingSettings component, settings page ?tab= + ?upgraded= params, pricing page monthly/annual toggle, tips page Pro gating. 35 new tests (156 total). Run scripts/stripe-setup.sh to generate price IDs. |
