@@ -34,14 +34,16 @@ CREATE TABLE "subscriptions" (
 	"reference_id" text NOT NULL,
 	"stripe_customer_id" text,
 	"stripe_subscription_id" text,
-	"status" text NOT NULL,
+	"status" text DEFAULT 'incomplete',
 	"period_start" timestamp,
 	"period_end" timestamp,
-	"cancel_at_period_end" boolean DEFAULT false NOT NULL,
 	"trial_start" timestamp,
 	"trial_end" timestamp,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"cancel_at_period_end" boolean DEFAULT false,
+	"cancel_at" timestamp,
+	"canceled_at" timestamp,
+	"ended_at" timestamp,
+	"seats" integer
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -50,9 +52,9 @@ CREATE TABLE "users" (
 	"email" text NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"image" text,
-	"stripe_customer_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"stripe_customer_id" text,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -148,7 +150,6 @@ CREATE TABLE "tracked_subscriptions" (
 --> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_reference_id_users_id_fk" FOREIGN KEY ("reference_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "categories" ADD CONSTRAINT "categories_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "notification_preferences" ADD CONSTRAINT "notification_preferences_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

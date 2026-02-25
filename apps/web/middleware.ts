@@ -12,15 +12,22 @@ const PROTECTED_PATHS = [
   "/settings",
 ];
 
+const AUTH_PATHS = ["/login", "/signup"];
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
+  const isAuthPage = AUTH_PATHS.some((p) => pathname.startsWith(p));
 
-  if (!isProtected) return NextResponse.next();
+  if (!isProtected && !isAuthPage) return NextResponse.next();
 
   const session = await auth.api.getSession({ headers: request.headers });
 
-  if (!session) {
+  if (isAuthPage && session) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (isProtected && !session) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);

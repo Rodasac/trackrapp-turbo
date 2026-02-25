@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  integer,
+  index,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -7,13 +14,12 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
-  // Added by @better-auth/stripe plugin
-  stripeCustomerId: text("stripe_customer_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
 });
 
 export const sessions = pgTable(
@@ -81,22 +87,19 @@ export const verifications = pgTable(
 export const subscriptions = pgTable("subscriptions", {
   id: text("id").primaryKey(),
   plan: text("plan").notNull(),
-  referenceId: text("reference_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  referenceId: text("reference_id").notNull(),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
-  status: text("status").notNull(),
+  status: text("status").default("incomplete"),
   periodStart: timestamp("period_start"),
   periodEnd: timestamp("period_end"),
-  cancelAtPeriodEnd: boolean("cancel_at_period_end").notNull().default(false),
   trialStart: timestamp("trial_start"),
   trialEnd: timestamp("trial_end"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
+  cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false),
+  cancelAt: timestamp("cancel_at"),
+  canceledAt: timestamp("canceled_at"),
+  endedAt: timestamp("ended_at"),
+  seats: integer("seats"),
 });
 
 export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
