@@ -18,6 +18,10 @@ export type {
   TrackedSubscription,
   NewTrackedSubscription,
   Notification,
+  NewNotification,
   NotificationPreferences,
+  NewNotificationPreferences,
+  PushSubscription,
+  NewPushSubscription,
   PriceHistory,
 } from "./schema/app";

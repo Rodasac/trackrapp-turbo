@@ -21,8 +21,8 @@
 | 2    | Better Auth Setup       | ✅ Complete    | auth.ts, auth-client.ts, catch-all route, middleware         |
 | 3    | App Layout & Navigation | ✅ Complete    | Route groups, sidebar, 13 pages, shadcn components, KPI card |
 | 4    | Subscription CRUD       | ✅ Complete    | API routes, forms, list, detail, dashboard KPIs, TanStack Query refactor, @repo/shared |
-| 5    | Worker App              | ⬜ Not started | Requires Step 1                                              |
-| 6    | Notification System     | ⬜ Not started | Requires Steps 2, 5                                          |
+| 5    | Worker App              | ✅ Complete    | node-cron jobs: send-reminders (hourly), cleanup (daily), generate-ai-tips stub (weekly) |
+| 6    | Notification System     | ✅ Complete    | API routes, TanStack Query hooks, NotificationBell, NotificationCenter, preferences form, push SW |
 | 7    | Stripe Integration      | ⬜ Not started | Requires Step 2                                              |
 
 ## Phase 3: Dashboard & Insights
@@ -68,3 +68,4 @@
 | 2026-02-24 | Step 3: route groups, (auth) + (dashboard) layouts, 13 pages, sidebar-nav, KPI card, shadcn components (input, form, dialog, select, separator, avatar, sonner, table, tabs, calendar, popover, chart, label, textarea, switch) |
 | 2026-02-24 | Step 4: subscription CRUD (API routes, forms, list, detail, live KPIs), then refactored: TanStack Query hooks, @repo/shared (format/dates/billing/validations), API helpers (requireSession/validationErrorResponse/parseIdParam) |
 | 2026-02-25 | Phase 6 (E2E): Playwright test suite — 45 tests across auth, subscriptions, categories, dashboard, and navigation. All passing. |
+| 2026-02-25 | Steps 5+6: Worker app (apps/worker) + full notification system. Mailpit in docker-compose, 6 notification API routes, TanStack Query hooks (list, unread-count polling, preferences, mutations), NotificationBell badge, NotificationCenter page, NotificationPreferencesForm, PushNotificationManager, service worker. 22 worker unit tests + 16 web component tests + E2E notifications spec. All passing. |

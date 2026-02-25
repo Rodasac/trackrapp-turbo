@@ -223,6 +223,36 @@ export const priceHistoryRelations = relations(priceHistory, ({ one }) => ({
   }),
 }));
 
+export const notificationPreferencesRelations = relations(
+  notificationPreferences,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [notificationPreferences.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const pushSubscriptionsRelations = relations(
+  pushSubscriptions,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [pushSubscriptions.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+// Extend usersRelations with app-specific relations (merged by Drizzle at init).
+export const usersAppRelations = relations(users, ({ one, many }) => ({
+  notificationPreferences: one(notificationPreferences, {
+    fields: [users.id],
+    references: [notificationPreferences.userId],
+  }),
+  pushSubscriptions: many(pushSubscriptions),
+  trackedSubscriptions: many(trackedSubscriptions),
+}));
+
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
 export type Category = typeof categories.$inferSelect;
@@ -231,6 +261,11 @@ export type ServiceCatalogEntry = typeof serviceCatalog.$inferSelect;
 export type TrackedSubscription = typeof trackedSubscriptions.$inferSelect;
 export type NewTrackedSubscription = typeof trackedSubscriptions.$inferInsert;
 export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
 export type NotificationPreferences =
   typeof notificationPreferences.$inferSelect;
+export type NewNotificationPreferences =
+  typeof notificationPreferences.$inferInsert;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;
 export type PriceHistory = typeof priceHistory.$inferSelect;

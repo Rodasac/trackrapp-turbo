@@ -42,3 +42,28 @@ export interface DashboardStats {
   activeCount: number;
   upcomingRenewals: number;
 }
+
+export interface NotificationItem {
+  id: number;
+  userId: string;
+  type: "renewal_reminder" | "price_change" | "tip" | "system";
+  title: string;
+  message: string;
+  relatedSubscriptionId: number | null;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface NotificationPreferencesResponse {
+  id: number;
+  userId: string;
+  emailEnabled: boolean;
+  pushEnabled: boolean;
+  reminderDaysBefore: number[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UnreadCountResponse {
+  count: number;
+}

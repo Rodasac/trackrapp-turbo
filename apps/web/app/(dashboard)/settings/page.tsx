@@ -1,3 +1,5 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
 import {
   Card,
@@ -6,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/card";
+import { NotificationPreferencesForm } from "@/components/notification-preferences-form";
 
 export default function SettingsPage() {
   return (
@@ -49,9 +52,7 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-muted-foreground rounded border border-dashed py-8 text-center text-sm">
-                Notification preferences — coming in Step 6
-              </div>
+              <NotificationPreferencesForm />
             </CardContent>
           </Card>
         </TabsContent>

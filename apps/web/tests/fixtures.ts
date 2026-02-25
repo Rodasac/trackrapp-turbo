@@ -4,6 +4,8 @@ import type {
   SubscriptionDetail,
   DashboardStats,
   PriceHistoryItem,
+  NotificationItem,
+  NotificationPreferencesResponse,
 } from "@/lib/types/api";
 
 export function mockCategory(overrides?: Partial<CategoryItem>): CategoryItem {
@@ -85,6 +87,37 @@ export function mockSession() {
       email: "test@example.com",
       name: "Test User",
     },
+  };
+}
+
+export function mockNotification(
+  overrides?: Partial<NotificationItem>,
+): NotificationItem {
+  return {
+    id: 1,
+    userId: "user-1",
+    type: "renewal_reminder",
+    title: "Netflix renews tomorrow",
+    message: "Your Netflix subscription (USD 15.99) renews tomorrow.",
+    relatedSubscriptionId: 1,
+    isRead: false,
+    createdAt: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
+export function mockNotificationPreferences(
+  overrides?: Partial<NotificationPreferencesResponse>,
+): NotificationPreferencesResponse {
+  return {
+    id: 1,
+    userId: "user-1",
+    emailEnabled: true,
+    pushEnabled: false,
+    reminderDaysBefore: [7, 3, 1],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ...overrides,
   };
 }
 

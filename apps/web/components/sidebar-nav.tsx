@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   CreditCard,
-  Bell,
   Lightbulb,
   Settings,
   LogOut,
@@ -14,11 +13,13 @@ import { Button } from "@repo/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { Separator } from "@repo/ui/separator";
 import { useSession, signOut } from "@/lib/auth-client";
+import { NotificationBell } from "@/components/notification-bell";
 
+// Notifications uses a custom icon component; others use lucide icons directly.
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/subscriptions", label: "Subscriptions", icon: CreditCard },
-  { href: "/notifications", label: "Notifications", icon: Bell },
+  { href: "/notifications", label: "Notifications", icon: null },
   { href: "/tips", label: "Tips", icon: Lightbulb },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
@@ -72,7 +73,11 @@ export function SidebarNav() {
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               ].join(" ")}
             >
-              <Icon className="size-4 shrink-0" />
+              {Icon ? (
+                <Icon className="size-4 shrink-0" />
+              ) : (
+                <NotificationBell />
+              )}
               {label}
             </Link>
           );

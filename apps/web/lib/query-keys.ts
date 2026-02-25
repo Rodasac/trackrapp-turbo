@@ -12,6 +12,12 @@ export interface SubscriptionFilters {
  *   queryClient.invalidateQueries({ queryKey: queryKeys.subscriptions.all })
  * invalidates both the list and all detail queries.
  */
+export interface NotificationFilters {
+  read?: boolean;
+  limit?: number;
+  offset?: number;
+}
+
 export const queryKeys = {
   categories: {
     all: ["categories"] as const,
@@ -27,5 +33,14 @@ export const queryKeys = {
   },
   serviceCatalog: {
     search: (q: string) => ["serviceCatalog", "search", q] as const,
+  },
+  notifications: {
+    all: ["notifications"] as const,
+    list: (filters: NotificationFilters) =>
+      ["notifications", "list", filters] as const,
+    unreadCount: ["notifications", "unread-count"] as const,
+  },
+  notificationPreferences: {
+    all: ["notification-preferences"] as const,
   },
 } as const;

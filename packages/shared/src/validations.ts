@@ -27,3 +27,23 @@ export const categoryFormSchema = z.object({
 });
 
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
+
+export const notificationPreferencesSchema = z.object({
+  emailEnabled: z.boolean(),
+  pushEnabled: z.boolean(),
+  reminderDaysBefore: z
+    .array(z.number().int().min(1).max(30))
+    .min(1, "Select at least one reminder day"),
+});
+
+export type NotificationPreferencesValues = z.infer<
+  typeof notificationPreferencesSchema
+>;
+
+export const pushSubscriptionSchema = z.object({
+  endpoint: z.string().url(),
+  keys: z.object({
+    p256dh: z.string().min(1),
+    auth: z.string().min(1),
+  }),
+});
