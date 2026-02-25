@@ -91,7 +91,7 @@ test("logout redirects to login page", async ({ page }) => {
   const creds = await signUpNewUser(page);
   await loginUser(page, creds.email, creds.password);
   await expect(page).toHaveURL(/\/dashboard/);
-  await page.getByTitle("Sign out").click();
+  await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/login/);
 });
 

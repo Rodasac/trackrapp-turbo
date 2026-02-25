@@ -1,13 +1,19 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { uniqueSuffix } from "./fixtures/auth";
+
+async function gotoNewSubscription(page: Page): Promise<void> {
+  const categoriesReady = page.waitForResponse(
+    (r) => r.url().includes("/api/categories") && r.status() === 200,
+    { timeout: 15_000 },
+  );
+  await page.goto("/subscriptions/new");
+  await categoriesReady;
+}
 
 // All tests use authenticated storageState (default)
 
 test("category dropdown shows seeded system categories", async ({ page }) => {
-  await page.goto("/subscriptions/new");
-
-  // Wait for categories to load
-  await page.waitForLoadState("networkidle");
+  await gotoNewSubscription(page);
 
   // Open the category select
   const categoryTrigger = page
@@ -35,8 +41,7 @@ test("category dropdown shows seeded system categories", async ({ page }) => {
 test("create new category appears in dropdown", async ({ page }) => {
   const catName = `Test Cat ${uniqueSuffix()}`;
 
-  await page.goto("/subscriptions/new");
-  await page.waitForLoadState("networkidle");
+  await gotoNewSubscription(page);
 
   // Open the AddCategoryDialog
   await page.getByRole("button", { name: "New category" }).click();
@@ -72,8 +77,7 @@ test("create new category appears in dropdown", async ({ page }) => {
 });
 
 test("category creation requires name", async ({ page }) => {
-  await page.goto("/subscriptions/new");
-
+  await gotoNewSubscription(page);
   await page.getByRole("button", { name: "New category" }).click();
 
   // Submit without filling name
@@ -87,9 +91,7 @@ test("category creation requires name", async ({ page }) => {
 test("cancel category dialog does not create category", async ({ page }) => {
   const catName = `Would Not Create ${uniqueSuffix()}`;
 
-  await page.goto("/subscriptions/new");
-  await page.waitForLoadState("networkidle");
-
+  await gotoNewSubscription(page);
   await page.getByRole("button", { name: "New category" }).click();
 
   // Scope to dialog to avoid ambiguity

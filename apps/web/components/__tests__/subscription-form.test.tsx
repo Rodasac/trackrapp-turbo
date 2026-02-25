@@ -141,7 +141,7 @@ describe("SubscriptionForm", () => {
     });
   });
 
-  it("calls saveSubscription.mutateAsync on valid submit", async () => {
+  it("shows renewal date validation error when date is not selected", async () => {
     const user = userEvent.setup();
     mockSaveAsync.mockResolvedValue({ id: 1 });
 

@@ -38,7 +38,7 @@ export function parseIdParam(
   id: string,
 ): { idNum: number } | { error: Response } {
   const idNum = parseInt(id);
-  if (isNaN(idNum)) {
+  if (isNaN(idNum) || idNum <= 0) {
     return { error: Response.json({ error: "Invalid ID" }, { status: 400 }) };
   }
   return { idNum };

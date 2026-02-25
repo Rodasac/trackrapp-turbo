@@ -104,11 +104,19 @@ describe("parseIdParam", () => {
     expect("error" in result).toBe(true);
   });
 
-  it("returns { idNum: 0 } for '0' (parseInt('0') is not NaN)", () => {
+  it("returns 400 error for '0' (IDs must be positive)", () => {
     const result = parseIdParam("0");
-    expect("idNum" in result).toBe(true);
-    if ("idNum" in result) {
-      expect(result.idNum).toBe(0);
+    expect("error" in result).toBe(true);
+    if ("error" in result) {
+      expect(result.error.status).toBe(400);
+    }
+  });
+
+  it("returns 400 error for negative numbers", () => {
+    const result = parseIdParam("-1");
+    expect("error" in result).toBe(true);
+    if ("error" in result) {
+      expect(result.error.status).toBe(400);
     }
   });
 });

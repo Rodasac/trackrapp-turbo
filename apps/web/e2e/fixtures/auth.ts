@@ -1,6 +1,12 @@
 import type { Page } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "url";
+
+const AUTH_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../.auth",
+);
 
 export function uniqueSuffix(): string {
   return `${Date.now()}-${Math.floor(Math.random() * 10_000)}`;
@@ -54,10 +60,9 @@ export function saveTestUser(creds: {
   email: string;
   password: string;
 }): void {
-  const dir = path.resolve("e2e/.auth");
-  fs.mkdirSync(dir, { recursive: true });
+  fs.mkdirSync(AUTH_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(dir, "test-user.json"),
+    path.join(AUTH_DIR, "test-user.json"),
     JSON.stringify(creds, null, 2),
   );
 }
@@ -68,7 +73,7 @@ export function loadTestUser(): {
   email: string;
   password: string;
 } {
-  const file = path.resolve("e2e/.auth/test-user.json");
+  const file = path.join(AUTH_DIR, "test-user.json");
   return JSON.parse(fs.readFileSync(file, "utf-8")) as {
     name: string;
     email: string;

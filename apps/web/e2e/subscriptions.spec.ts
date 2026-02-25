@@ -5,6 +5,23 @@ import { pickFutureDate } from "./fixtures/dates";
 // State shared between sequential tests
 let manualSubName: string;
 
+/**
+ * Navigate to /subscriptions/new and wait for the form to be fully
+ * hydrated. We use the /api/categories response as a signal: this call
+ * is made by useCategories() inside the form component, which only runs
+ * after React 18 has finished async hydration and component effects have
+ * fired. Waiting for it prevents a race where we click "Add subscription"
+ * before the form's onSubmit handler is attached.
+ */
+async function gotoNewSubscription(page: Page): Promise<void> {
+  const categoriesReady = page.waitForResponse(
+    (r) => r.url().includes("/api/categories") && r.status() === 200,
+    { timeout: 15_000 },
+  );
+  await page.goto("/subscriptions/new");
+  await categoriesReady;
+}
+
 // Navigate from the subscriptions list to the Manual Sub detail page.
 // This avoids relying on a module-level `detailUrl` variable which can be
 // reset if Playwright reinitialises the worker scope between tests.
@@ -14,11 +31,11 @@ async function goToManualSubDetail(page: Page): Promise<void> {
   // We deliberately avoid waitForLoadState("networkidle") because the Next.js
   // dev-mode HMR WebSocket prevents the page from reaching idle.
   await page.getByRole("row").nth(1).waitFor({ state: "visible", timeout: 10_000 });
-  const sortSelect = page.getByRole("combobox").nth(1);
+  const sortSelect = page.getByTestId("sort-select");
   await sortSelect.click();
   await page.getByRole("option", { name: "Name A–Z" }).click();
-  // Wait for the sort to re-render
-  await page.waitForTimeout(300);
+  // Wait for the sort to re-render (first row visible after sort)
+  await page.getByRole("row").nth(1).waitFor({ state: "visible" });
   const row = page.getByRole("row").filter({ hasText: manualSubName });
   await row.getByRole("button", { name: "Actions" }).click();
   await page.getByRole("menuitem", { name: "View" }).click();
@@ -35,8 +52,7 @@ async function goToManualSubDetail(page: Page): Promise<void> {
 test("create subscription manually", async ({ page }) => {
   manualSubName = `Manual Sub ${uniqueSuffix()}`;
 
-  await page.goto("/subscriptions/new");
-  await page.waitForLoadState("networkidle");
+  await gotoNewSubscription(page);
   await page.getByLabel("Name *").fill(manualSubName);
   await page.getByLabel("Price *").fill("12.99");
 
@@ -51,15 +67,13 @@ test("create subscription manually", async ({ page }) => {
 });
 
 test("create subscription from catalog (Netflix)", async ({ page }) => {
-  await page.goto("/subscriptions/new");
-  await page.waitForLoadState("networkidle");
+  await gotoNewSubscription(page);
 
-  // Type in the catalog search (300 ms debounce — fill then wait)
+  // Type in the catalog search (300 ms debounce — wait for result to appear)
   const catalogInput = page.getByPlaceholder(/Search for a service/i);
   await catalogInput.fill("Netflix");
-  await page.waitForTimeout(400); // let debounce resolve
 
-  // Click the Netflix result
+  // Click the Netflix result (waiting for it implicitly handles the debounce)
   await page.getByRole("button", { name: "Netflix" }).first().click();
 
   // Name should be auto-filled
@@ -76,8 +90,7 @@ test("create subscription from catalog (Netflix)", async ({ page }) => {
 test("create subscription with all optional fields", async ({ page }) => {
   const fullName = `Full Sub ${uniqueSuffix()}`;
 
-  await page.goto("/subscriptions/new");
-  await page.waitForLoadState("networkidle");
+  await gotoNewSubscription(page);
   await page.getByLabel("Name *").fill(fullName);
   await page.getByLabel("Price *").fill("99.99");
 
@@ -104,7 +117,7 @@ test("create subscription with all optional fields", async ({ page }) => {
 test("create subscription shows validation errors for empty form", async ({
   page,
 }) => {
-  await page.goto("/subscriptions/new");
+  await gotoNewSubscription(page);
   await page.getByRole("button", { name: "Add subscription" }).click();
   await expect(page.getByText("Name is required")).toBeVisible();
   await expect(page.getByText("Renewal date is required")).toBeVisible();
@@ -152,8 +165,7 @@ test("category filter shows only matching subscriptions", async ({ page }) => {
     page.locator("td").filter({ hasText: "Netflix" }).first(),
   ).toBeVisible({ timeout: 10_000 });
 
-  // Open category dropdown (nth(0) = category select on this page)
-  const categorySelect = page.getByRole("combobox").nth(0);
+  const categorySelect = page.getByTestId("category-filter");
   await categorySelect.click();
   await page.getByRole("option", { name: /entertainment/i }).first().click();
 
@@ -180,8 +192,7 @@ test("sort order changes row order", async ({ page }) => {
     page.locator("td").filter({ hasText: "Netflix" }).first(),
   ).toBeVisible({ timeout: 10_000 });
 
-  // nth(1) = sort select on this page
-  const sortSelect = page.getByRole("combobox").nth(1);
+  const sortSelect = page.getByTestId("sort-select");
 
   // Sort name A-Z
   await sortSelect.click();
@@ -320,8 +331,7 @@ test("delete permanently removes subscription", async ({ page }) => {
   const tempName = `Temp Sub ${uniqueSuffix()}`;
 
   // Create a temporary subscription
-  await page.goto("/subscriptions/new");
-  await page.waitForLoadState("networkidle");
+  await gotoNewSubscription(page);
   await page.getByLabel("Name *").fill(tempName);
   await page.getByLabel("Price *").fill("5.00");
   await pickFutureDate(page, page.getByRole("button", { name: /Next renewal/i }));

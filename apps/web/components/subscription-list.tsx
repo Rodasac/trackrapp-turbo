@@ -156,7 +156,7 @@ export function SubscriptionList() {
         </div>
 
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-40" data-testid="category-filter">
             <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
@@ -178,7 +178,7 @@ export function SubscriptionList() {
             setOrder(o!);
           }}
         >
-          <SelectTrigger className="w-44">
+          <SelectTrigger className="w-44" data-testid="sort-select">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
