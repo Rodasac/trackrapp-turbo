@@ -14,5 +14,6 @@ export default mergeConfig(uiConfig, {
   },
   test: {
     setupFiles: ["./tests/setup.ts"],
+    exclude: ["e2e/**", "**/node_modules/**"],
   },
 });

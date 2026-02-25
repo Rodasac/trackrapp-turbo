@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toMonthlyRate } from "../billing.js";
+import { toMonthlyRate } from "../billing";
 
 describe("toMonthlyRate", () => {
   it("returns price unchanged for monthly", () => {

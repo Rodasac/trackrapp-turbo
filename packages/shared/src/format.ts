@@ -1,4 +1,4 @@
-import { parseDateString } from "./dates.js";
+import { parseDateString } from "./dates";
 
 export function formatPrice(price: string, currency: string): string {
   return new Intl.NumberFormat("en-US", {

@@ -26,7 +26,7 @@ function AllProviders({ children }: { children: React.ReactNode }) {
 export function renderWithProviders(
   ui: React.ReactElement,
   options?: Omit<RenderOptions, "wrapper">,
-) {
+): ReturnType<typeof render> {
   return render(ui, { wrapper: AllProviders, ...options });
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,6 +55,8 @@ export function SubscriptionForm({
   const router = useRouter();
   const { data: categories = [] } = useCategories();
   const saveSubscription = useSaveSubscription(mode, subscriptionId);
+  const [nextRenewalOpen, setNextRenewalOpen] = useState(false);
+  const [startDateOpen, setStartDateOpen] = useState(false);
 
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
@@ -214,7 +217,7 @@ export function SubscriptionForm({
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Next renewal *</FormLabel>
-                <Popover>
+                <Popover open={nextRenewalOpen} onOpenChange={setNextRenewalOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -237,9 +240,10 @@ export function SubscriptionForm({
                       selected={
                         field.value ? parseDateString(field.value) : undefined
                       }
-                      onSelect={(d) =>
-                        field.onChange(d ? toDateString(d) : "")
-                      }
+                      onSelect={(d) => {
+                        field.onChange(d ? toDateString(d) : "");
+                        setNextRenewalOpen(false);
+                      }}
                     />
                   </PopoverContent>
                 </Popover>
@@ -254,7 +258,7 @@ export function SubscriptionForm({
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Start date</FormLabel>
-                <Popover>
+                <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -277,9 +281,10 @@ export function SubscriptionForm({
                       selected={
                         field.value ? parseDateString(field.value) : undefined
                       }
-                      onSelect={(d) =>
-                        field.onChange(d ? toDateString(d) : "")
-                      }
+                      onSelect={(d) => {
+                        field.onChange(d ? toDateString(d) : "");
+                        setStartDateOpen(false);
+                      }}
                     />
                   </PopoverContent>
                 </Popover>
@@ -298,9 +303,9 @@ export function SubscriptionForm({
               <FormLabel>Category</FormLabel>
               <div className="flex items-center gap-2">
                 <Select
-                  value={field.value !== undefined ? String(field.value) : ""}
+                  value={field.value !== undefined ? String(field.value) : "none"}
                   onValueChange={(v) =>
-                    field.onChange(v ? Number(v) : undefined)
+                    field.onChange(v === "none" ? undefined : Number(v))
                   }
                 >
                   <FormControl>
@@ -309,7 +314,7 @@ export function SubscriptionForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="">No category</SelectItem>
+                    <SelectItem value="none">No category</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={String(cat.id)}>
                         {cat.icon ? `${cat.icon} ` : ""}

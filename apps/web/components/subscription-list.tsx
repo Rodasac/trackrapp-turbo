@@ -107,7 +107,7 @@ function SkeletonRow() {
 
 export function SubscriptionList() {
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [sort, setSort] = useState("nextRenewalDate");
   const [order, setOrder] = useState("asc");
   const [showInactive, setShowInactive] = useState(false);
@@ -119,7 +119,7 @@ export function SubscriptionList() {
     isError,
   } = useSubscriptions({
     search,
-    category: categoryFilter,
+    category: categoryFilter === "all" ? "" : categoryFilter,
     sort,
     order,
     active: showInactive ? undefined : true,
@@ -139,7 +139,7 @@ export function SubscriptionList() {
     toast.error("Failed to load subscriptions");
   }
 
-  const hasFilters = !!(search || categoryFilter);
+  const hasFilters = !!(search || categoryFilter !== "all");
 
   return (
     <div className="flex flex-col gap-4">
@@ -160,7 +160,7 @@ export function SubscriptionList() {
             <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All categories</SelectItem>
+            <SelectItem value="all">All categories</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat.id} value={String(cat.id)}>
                 {cat.icon ? `${cat.icon} ` : ""}

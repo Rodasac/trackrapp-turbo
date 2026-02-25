@@ -67,3 +67,4 @@
 | 2026-02-23 | Steps 1+2: schema, migrations, seed data, Better Auth, middleware, @/ alias                                                                                                                                                     |
 | 2026-02-24 | Step 3: route groups, (auth) + (dashboard) layouts, 13 pages, sidebar-nav, KPI card, shadcn components (input, form, dialog, select, separator, avatar, sonner, table, tabs, calendar, popover, chart, label, textarea, switch) |
 | 2026-02-24 | Step 4: subscription CRUD (API routes, forms, list, detail, live KPIs), then refactored: TanStack Query hooks, @repo/shared (format/dates/billing/validations), API helpers (requireSession/validationErrorResponse/parseIdParam) |
+| 2026-02-25 | Phase 6 (E2E): Playwright test suite — 45 tests across auth, subscriptions, categories, dashboard, and navigation. All passing. |

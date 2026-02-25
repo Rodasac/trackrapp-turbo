@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseDateString, toDateString } from "../dates.js";
+import { parseDateString, toDateString } from "../dates";
 
 describe("parseDateString", () => {
   it("parses a standard date string", () => {

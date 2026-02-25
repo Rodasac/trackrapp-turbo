@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { subscriptionFormSchema, categoryFormSchema } from "../validations.js";
+import { subscriptionFormSchema, categoryFormSchema } from "../validations";
 
 const validSubscription = {
   name: "Netflix",
