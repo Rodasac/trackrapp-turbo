@@ -1,9 +1,6 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-// Use Node.js runtime so auth.api.getSession can reach the database.
-export const runtime = "nodejs";
-
 const PROTECTED_PATHS = [
   "/dashboard",
   "/subscriptions",
@@ -14,7 +11,7 @@ const PROTECTED_PATHS = [
 
 const AUTH_PATHS = ["/login", "/signup"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   const isAuthPage = AUTH_PATHS.some((p) => pathname.startsWith(p));
