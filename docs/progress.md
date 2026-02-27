@@ -27,14 +27,14 @@
 
 ## Phase 3: Dashboard & Insights
 
-| Step | Description                     | Status         | Notes        |
-| ---- | ------------------------------- | -------------- | ------------ |
-| 3.1  | KPI Cards                       | ⬜ Not started | Requires MVP |
-| 3.2  | Charts (trend, category, top 5) | ⬜ Not started |              |
-| 3.3  | Calendar widget                 | ⬜ Not started |              |
-| 3.4  | Price history chart             | ⬜ Not started |              |
-| 3.5  | CSV export                      | ⬜ Not started |              |
-| 3.6  | Static tips                     | ⬜ Not started |              |
+| Step | Description                     | Status      | Notes                                                                                   |
+| ---- | ------------------------------- | ----------- | --------------------------------------------------------------------------------------- |
+| 3.1  | KPI Cards                       | ✅ Complete | 6 KPIs: monthly/yearly spend, cost/day, active subs, upcoming renewals, remaining month |
+| 3.2  | Charts (trend, category, top 5) | ✅ Complete | Recharts line + pie + bar; last 12 months trend; category breakdown; top 5 by spend     |
+| 3.3  | Calendar widget                 | ✅ Complete | shadcn Calendar with renewal-date highlights, click-to-detail, 30-day window            |
+| 3.4  | Price history chart             | ✅ Complete | Line chart on subscription detail page                                                  |
+| 3.5  | CSV export                      | ✅ Complete | Export CSV button on subscriptions list; Content-Disposition attachment response        |
+| 3.6  | Static tips                     | ✅ Complete | 5 rule-based tips (annual savings, high-spend, forgotten, daily cost, overlap); Pro-gated |
 
 ## Phase 4: AI Tips + Polish
 
@@ -70,3 +70,5 @@
 | 2026-02-25 | Phase 6 (E2E): Playwright test suite — 45 tests across auth, subscriptions, categories, dashboard, and navigation. All passing. |
 | 2026-02-25 | Steps 5+6: Worker app (apps/worker) + full notification system. Mailpit in docker-compose, 6 notification API routes, TanStack Query hooks (list, unread-count polling, preferences, mutations), NotificationBell badge, NotificationCenter page, NotificationPreferencesForm, PushNotificationManager, service worker. 22 worker unit tests + 16 web component tests + E2E notifications spec. All passing. |
 | 2026-02-25 | Step 7: Stripe integration (MVP complete). Pro plan config with priceId/annualDiscountPriceId/freeTrial, removed free plan stub, stripeClient({ subscription: true }), /api/subscription-plan route, useSubscriptionPlan + useIsPro hooks, useUpgradeToPro + useOpenBillingPortal mutations, BillingSettings component, settings page ?tab= + ?upgraded= params, pricing page monthly/annual toggle, tips page Pro gating. 35 new tests (156 total). Run scripts/stripe-setup.sh to generate price IDs. |
+| 2026-02-27 | Phase 3: Dashboard & Insights complete. KPI cards (6), spending trend/category/top-subs charts (Recharts), renewal calendar widget, price history chart, CSV export, static tips. 207 web + 50 shared unit tests. |
+| 2026-02-27 | Post-Phase 3 code review fixes + E2E coverage. Timezone bug fixes (toDateString replaces toISOString UTC shift across 4 API routes + calendar). Dead code removal. Lint cleanup across web + worker (all warnings cleared). Fixed broken dashboard E2E test. Added 6 new E2E tests: 6 KPI cards, charts empty states, renewal calendar, spending insights, charts populate after add, CSV export download. 45 → 51 E2E tests. |
