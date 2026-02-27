@@ -1,0 +1,1 @@
+ALTER TABLE "tracked_subscriptions" ADD COLUMN "deactivated_at" timestamp;

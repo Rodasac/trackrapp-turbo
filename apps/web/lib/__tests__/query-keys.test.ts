@@ -38,6 +38,18 @@ describe("queryKeys", () => {
     expect(queryKeys.dashboard.stats).toEqual(["dashboard", "stats"]);
   });
 
+  it("dashboard.charts is a stable array", () => {
+    expect(queryKeys.dashboard.charts).toEqual(["dashboard", "charts"]);
+  });
+
+  it("dashboard.renewals is a stable array", () => {
+    expect(queryKeys.dashboard.renewals).toEqual(["dashboard", "renewals"]);
+  });
+
+  it("dashboard.tips is a stable array", () => {
+    expect(queryKeys.dashboard.tips).toEqual(["dashboard", "tips"]);
+  });
+
   it("serviceCatalog.search includes the query", () => {
     const key = queryKeys.serviceCatalog.search("netflix");
     expect(key).toEqual(["serviceCatalog", "search", "netflix"]);

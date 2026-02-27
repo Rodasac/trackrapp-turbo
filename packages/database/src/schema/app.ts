@@ -88,6 +88,7 @@ export const trackedSubscriptions = pgTable(
     logoUrl: text("logo_url"),
     websiteUrl: text("website_url"),
     isActive: boolean("is_active").notNull().default(true),
+    deactivatedAt: timestamp("deactivated_at"),
     notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")

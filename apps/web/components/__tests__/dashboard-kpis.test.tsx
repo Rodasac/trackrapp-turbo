@@ -15,9 +15,9 @@ describe("DashboardKpis", () => {
   it("shows placeholder dashes while loading", () => {
     mockUseDashboardStats.mockReturnValue({ data: undefined } as never);
     renderWithProviders(<DashboardKpis />);
-    // All 4 KPI cards show "—" when no data
+    // All 6 KPI cards show "—" when no data
     const dashes = screen.getAllByText("—");
-    expect(dashes.length).toBe(4);
+    expect(dashes.length).toBe(6);
   });
 
   it("shows formatted monthly spend when data is available", () => {
@@ -43,5 +43,14 @@ describe("DashboardKpis", () => {
     renderWithProviders(<DashboardKpis />);
     expect(screen.getByText("7")).toBeInTheDocument();
     expect(screen.getByText("3")).toBeInTheDocument();
+  });
+
+  it("shows cost per day and remaining this month", () => {
+    mockUseDashboardStats.mockReturnValue({
+      data: mockDashboardStats({ costPerDay: "1.53", remainingThisMonth: "15.99" }),
+    } as never);
+    renderWithProviders(<DashboardKpis />);
+    expect(screen.getByText("$1.53")).toBeInTheDocument();
+    expect(screen.getByText("$15.99")).toBeInTheDocument();
   });
 });

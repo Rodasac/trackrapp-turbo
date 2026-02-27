@@ -42,7 +42,7 @@ export async function GET(request: Request) {
     status,
     isTrialing: status === "trialing",
     trialEnd: record.trialEnd ? record.trialEnd.toISOString() : null,
-    cancelAtPeriodEnd: record.cancelAtPeriodEnd,
+    cancelAtPeriodEnd: record.cancelAtPeriodEnd ?? false,
     periodEnd: record.periodEnd ? record.periodEnd.toISOString() : null,
     stripeSubscriptionId: record.stripeSubscriptionId,
   };

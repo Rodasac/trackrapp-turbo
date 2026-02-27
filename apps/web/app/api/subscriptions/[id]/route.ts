@@ -129,7 +129,7 @@ export async function DELETE(
   } else {
     await db
       .update(schema.trackedSubscriptions)
-      .set({ isActive: false })
+      .set({ isActive: false, deactivatedAt: new Date() })
       .where(eq(schema.trackedSubscriptions.id, idNum));
     return Response.json({ deactivated: true });
   }

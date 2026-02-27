@@ -41,6 +41,8 @@ export interface DashboardStats {
   yearlySpend: string;
   activeCount: number;
   upcomingRenewals: number;
+  costPerDay: string;
+  remainingThisMonth: string;
 }
 
 export interface NotificationItem {
@@ -66,6 +68,46 @@ export interface NotificationPreferencesResponse {
 
 export interface UnreadCountResponse {
   count: number;
+}
+
+export interface RenewalItem {
+  id: number;
+  name: string;
+  price: string;
+  currency: string;
+  billingCycle: string;
+  nextRenewalDate: string;
+  logoUrl: string | null;
+}
+
+export interface StaticTip {
+  id: string;
+  title: string;
+  message: string;
+  type: "savings" | "warning" | "info";
+}
+
+export interface SpendingTrendPoint {
+  month: string;
+  total: number;
+}
+
+export interface CategoryBreakdownItem {
+  name: string;
+  total: number;
+  color: string;
+}
+
+export interface TopSubscriptionItem {
+  name: string;
+  monthlyRate: number;
+  billingCycle: string;
+}
+
+export interface DashboardCharts {
+  spendingTrend: SpendingTrendPoint[];
+  categoryBreakdown: CategoryBreakdownItem[];
+  topSubscriptions: TopSubscriptionItem[];
 }
 
 export interface SubscriptionPlanResponse {

@@ -1,6 +1,6 @@
 "use client";
 
-import { DollarSign, TrendingUp, Calendar, Activity } from "lucide-react";
+import { DollarSign, TrendingUp, Calendar, Activity, Clock, CalendarDays } from "lucide-react";
 import { KpiCard } from "@repo/ui/kpi-card";
 import { formatPrice } from "@repo/shared/format";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
@@ -9,7 +9,7 @@ export function DashboardKpis() {
   const { data: stats } = useDashboardStats();
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <KpiCard
         title="Monthly spend"
         value={stats ? formatPrice(stats.monthlySpend, "USD") : "—"}
@@ -23,6 +23,12 @@ export function DashboardKpis() {
         description="Projected annual total"
       />
       <KpiCard
+        title="Cost per day"
+        value={stats ? formatPrice(stats.costPerDay, "USD") : "—"}
+        icon={Clock}
+        description="Average daily subscription cost"
+      />
+      <KpiCard
         title="Active subscriptions"
         value={stats ? String(stats.activeCount) : "—"}
         icon={Activity}
@@ -33,6 +39,12 @@ export function DashboardKpis() {
         value={stats ? String(stats.upcomingRenewals) : "—"}
         icon={Calendar}
         description="Due in the next 7 days"
+      />
+      <KpiCard
+        title="Remaining this month"
+        value={stats ? formatPrice(stats.remainingThisMonth, "USD") : "—"}
+        icon={CalendarDays}
+        description="Due before end of month"
       />
     </div>
   );

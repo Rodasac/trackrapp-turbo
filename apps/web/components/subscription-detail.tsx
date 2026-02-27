@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Separator } from "@repo/ui/separator";
 import { SubscriptionForm } from "@/components/subscription-form";
 import { DeleteSubscriptionDialog } from "@/components/delete-subscription-dialog";
+import { PriceHistoryChart } from "@/components/charts/price-history-chart";
 import {
   formatPrice,
   billingCycleLabel,
@@ -214,25 +215,32 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
             <CardTitle className="text-sm font-medium">Price history</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {sub.priceHistory.map((ph, i) => (
-                <div key={ph.id}>
-                  {i > 0 && <Separator className="my-2" />}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-mono font-medium">
-                      {formatPrice(ph.price, sub.currency)}
-                    </span>
-                    <span className="text-muted-foreground">
-                      {new Date(ph.recordedAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
+            {sub.priceHistory.length >= 2 ? (
+              <PriceHistoryChart
+                data={sub.priceHistory}
+                currency={sub.currency}
+              />
+            ) : (
+              <div className="space-y-2">
+                {sub.priceHistory.map((ph, i) => (
+                  <div key={ph.id}>
+                    {i > 0 && <Separator className="my-2" />}
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-mono font-medium">
+                        {formatPrice(ph.price, sub.currency)}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {new Date(ph.recordedAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

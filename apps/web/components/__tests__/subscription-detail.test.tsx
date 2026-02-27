@@ -52,6 +52,16 @@ vi.mock("@/components/service-catalog-search", () => ({
   ServiceCatalogSearch: () => null,
 }));
 
+vi.mock("@/components/charts/price-history-chart", () => ({
+  PriceHistoryChart: ({ data }: { data: { price: string }[] }) => (
+    <div data-testid="price-history-chart">
+      {data.map((ph, i) => (
+        <span key={i}>${ph.price}</span>
+      ))}
+    </div>
+  ),
+}));
+
 import { useSubscription } from "@/hooks/use-subscription";
 import { useCategories } from "@/hooks/use-categories";
 import {
@@ -197,6 +207,37 @@ describe("SubscriptionDetail", () => {
     await waitFor(() => {
       expect(screen.getByRole("heading", { name: "Netflix" })).toBeInTheDocument();
     });
+  });
+
+  it("shows price history chart when 2+ price history entries", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({
+        priceHistory: [
+          { id: 1, price: "12.99", recordedAt: "2025-01-01" },
+          { id: 2, price: "15.99", recordedAt: "2026-01-01" },
+        ],
+      }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    expect(screen.getByTestId("price-history-chart")).toBeInTheDocument();
+  });
+
+  it("shows flat list when only 1 price history entry", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({
+        price: "15.99",
+        priceHistory: [{ id: 1, price: "15.99", recordedAt: "2026-01-01" }],
+      }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    expect(screen.queryByTestId("price-history-chart")).not.toBeInTheDocument();
+    expect(screen.getByText("Price history")).toBeInTheDocument();
   });
 
   it("renders the delete dialog trigger", () => {

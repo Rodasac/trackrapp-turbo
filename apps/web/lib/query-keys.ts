@@ -30,6 +30,9 @@ export const queryKeys = {
   },
   dashboard: {
     stats: ["dashboard", "stats"] as const,
+    charts: ["dashboard", "charts"] as const,
+    renewals: ["dashboard", "renewals"] as const,
+    tips: ["dashboard", "tips"] as const,
   },
   serviceCatalog: {
     search: (q: string) => ["serviceCatalog", "search", q] as const,

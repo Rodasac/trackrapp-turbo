@@ -39,6 +39,8 @@ describe("useDashboardStats", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(stats);
+    expect(result.current.data).toHaveProperty("costPerDay");
+    expect(result.current.data).toHaveProperty("remainingThisMonth");
   });
 
   it("sets error on failure", async () => {

@@ -3,6 +3,9 @@ import type {
   SubscriptionListItem,
   SubscriptionDetail,
   DashboardStats,
+  DashboardCharts,
+  RenewalItem,
+  StaticTip,
   PriceHistoryItem,
   NotificationItem,
   NotificationPreferencesResponse,
@@ -72,6 +75,28 @@ export function mockDashboardStats(
     yearlySpend: "551.64",
     activeCount: 3,
     upcomingRenewals: 1,
+    costPerDay: "1.53",
+    remainingThisMonth: "15.99",
+    ...overrides,
+  };
+}
+
+export function mockDashboardCharts(
+  overrides?: Partial<DashboardCharts>,
+): DashboardCharts {
+  return {
+    spendingTrend: [
+      { month: "Jan '25", total: 45.97 },
+      { month: "Feb '25", total: 50.0 },
+    ],
+    categoryBreakdown: [
+      { name: "Entertainment", total: 30.0, color: "#6366f1" },
+      { name: "Productivity", total: 15.97, color: "#22c55e" },
+    ],
+    topSubscriptions: [
+      { name: "Netflix", monthlyRate: 15.99, billingCycle: "monthly" },
+      { name: "Spotify", monthlyRate: 9.99, billingCycle: "monthly" },
+    ],
     ...overrides,
   };
 }
@@ -163,6 +188,31 @@ export function mockTrialingPlan(
     cancelAtPeriodEnd: false,
     periodEnd: "2026-03-10T00:00:00.000Z",
     stripeSubscriptionId: "sub_trial123",
+    ...overrides,
+  };
+}
+
+export function mockRenewalItem(
+  overrides?: Partial<RenewalItem>,
+): RenewalItem {
+  return {
+    id: 1,
+    name: "Netflix",
+    price: "15.99",
+    currency: "USD",
+    billingCycle: "monthly",
+    nextRenewalDate: "2026-03-05",
+    logoUrl: null,
+    ...overrides,
+  };
+}
+
+export function mockStaticTip(overrides?: Partial<StaticTip>): StaticTip {
+  return {
+    id: "daily-cost",
+    title: "Your subscription cost per day",
+    message: "You spend $1.50/day across all subscriptions.",
+    type: "info",
     ...overrides,
   };
 }

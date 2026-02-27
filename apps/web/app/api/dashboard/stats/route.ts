@@ -18,13 +18,18 @@ export async function GET(request: Request) {
       ),
     );
 
-  const todayStr = new Date().toISOString().split("T")[0]!;
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0]!;
   const sevenDaysLaterStr = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split("T")[0]!;
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const endOfMonthStr = endOfMonth.toISOString().split("T")[0]!;
+  const daysInMonth = endOfMonth.getDate();
 
   let monthlySpend = 0;
   let upcomingRenewals = 0;
+  let remainingThisMonth = 0;
 
   for (const sub of subs) {
     monthlySpend += toMonthlyRate(parseFloat(sub.price), sub.billingCycle);
@@ -34,6 +39,12 @@ export async function GET(request: Request) {
     ) {
       upcomingRenewals++;
     }
+    if (
+      sub.nextRenewalDate >= todayStr &&
+      sub.nextRenewalDate <= endOfMonthStr
+    ) {
+      remainingThisMonth += parseFloat(sub.price);
+    }
   }
 
   return Response.json({
@@ -41,5 +52,7 @@ export async function GET(request: Request) {
     yearlySpend: (monthlySpend * 12).toFixed(2),
     activeCount: subs.length,
     upcomingRenewals,
+    costPerDay: (monthlySpend / daysInMonth).toFixed(2),
+    remainingThisMonth: remainingThisMonth.toFixed(2),
   });
 }
