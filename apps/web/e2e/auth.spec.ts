@@ -6,9 +6,14 @@ test.use({ storageState: { cookies: [], origins: [] } });
 
 test("landing page shows CTA buttons", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "TrackrApp" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Get started" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /track every subscription/i }),
+  ).toBeVisible();
+  const header = page.locator("header");
+  await expect(
+    header.getByRole("link", { name: /get started/i }),
+  ).toBeVisible();
+  await expect(header.getByRole("link", { name: /sign in/i })).toBeVisible();
 });
 
 test("signup creates account and auto-logs in to dashboard", async ({

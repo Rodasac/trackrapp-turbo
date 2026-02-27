@@ -33,10 +33,10 @@ Build a multi-user subscription tracker with automatic renewal reminders, expens
 
 > **Depends on:** Phase 3 complete
 
-| Step | Description                | Status         |
-| ---- | -------------------------- | -------------- |
-| 4.1  | Dark mode                  | ⬜ Not started |
-| 4.2  | Landing/marketing page     | ⬜ Not started |
+| Step | Description                | Status        |
+| ---- | -------------------------- |---------------|
+| 4.1  | Dark mode                  | ✅ Complete    |
+| 4.2  | Landing/marketing page     | ✅ Complete    |
 | 4.3  | CSV import                 | ⬜ Not started |
 | 4.4  | AI tips (worker + web)     | ⬜ Not started |
 

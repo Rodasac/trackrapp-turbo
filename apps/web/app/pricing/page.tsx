@@ -18,24 +18,7 @@ import { Separator } from "@repo/ui/separator";
 import { useSession } from "@/lib/auth-client";
 import { useSubscriptionPlan } from "@/hooks/use-subscription-plan";
 import { useUpgradeToPro } from "@/hooks/use-subscription-plan-mutations";
-
-const FREE_FEATURES = [
-  "Unlimited subscriptions",
-  "Renewal reminders (email)",
-  "Basic spending dashboard",
-  "Categories & tags",
-  "CSV export",
-];
-
-const PRO_FEATURES = [
-  "Everything in Free",
-  "AI-powered spending tips",
-  "Push notifications",
-  "Advanced analytics",
-  "CSV import",
-  "Price comparison",
-  "Priority support",
-];
+import { FREE_FEATURES, PRO_FEATURES } from "@/lib/pricing-data";
 
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);

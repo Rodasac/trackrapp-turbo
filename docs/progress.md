@@ -43,8 +43,8 @@
 | 4.1  | Claude API worker integration | ⬜ Not started | Requires Phase 3 |
 | 4.2  | ai_tips table + weekly job    | ⬜ Not started |                  |
 | 4.3  | CSV import                    | ⬜ Not started |                  |
-| 4.4  | Landing/marketing page        | ⬜ Not started |                  |
-| 4.5  | Dark mode                     | ⬜ Not started |                  |
+| 4.4  | Landing/marketing page        | ✅ Complete    | Navbar, HeroSection, FeatureCards, PricingSection, Footer; pricing-data.ts shared module; 20 new unit tests + 7 E2E tests (81 total) |
+| 4.5  | Dark mode                     | ✅ Complete    | ThemeToggle, ThemeProvider (next-themes), CSS class-based toggle, useSyncExternalStore mounted guard; 74 E2E tests |
 
 ---
 
@@ -72,3 +72,5 @@
 | 2026-02-25 | Step 7: Stripe integration (MVP complete). Pro plan config with priceId/annualDiscountPriceId/freeTrial, removed free plan stub, stripeClient({ subscription: true }), /api/subscription-plan route, useSubscriptionPlan + useIsPro hooks, useUpgradeToPro + useOpenBillingPortal mutations, BillingSettings component, settings page ?tab= + ?upgraded= params, pricing page monthly/annual toggle, tips page Pro gating. 35 new tests (156 total). Run scripts/stripe-setup.sh to generate price IDs. |
 | 2026-02-27 | Phase 3: Dashboard & Insights complete. KPI cards (6), spending trend/category/top-subs charts (Recharts), renewal calendar widget, price history chart, CSV export, static tips. 207 web + 50 shared unit tests. |
 | 2026-02-27 | Post-Phase 3 code review fixes + E2E coverage. Timezone bug fixes (toDateString replaces toISOString UTC shift across 4 API routes + calendar). Dead code removal. Lint cleanup across web + worker (all warnings cleared). Fixed broken dashboard E2E test. Added 6 new E2E tests: 6 KPI cards, charts empty states, renewal calendar, spending insights, charts populate after add, CSV export download. 45 → 51 E2E tests. |
+| 2026-02-28 | Phase 4 Step 4.1: Dark mode — ThemeToggle (DropdownMenu), ThemeProvider (next-themes), CSS class-based .dark toggle, removed prefers-color-scheme media query, useSyncExternalStore mounted guard. 213 unit + 74 E2E tests. |
+| 2026-02-28 | Phase 4 Step 4.2: Landing/marketing page — Navbar (auth-aware, sticky, blur), HeroSection (gradient), FeatureCards (6-card grid), PricingSection (reuses pricing-data.ts), Footer. Extracted FREE_FEATURES/PRO_FEATURES to lib/pricing-data.ts. 233 unit + 81 E2E tests. |
