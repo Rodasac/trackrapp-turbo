@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { Separator } from "@repo/ui/separator";
 import { useSession, signOut } from "@/lib/auth-client";
 import { NotificationBell } from "@/components/notification-bell";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 // Notifications uses a custom icon component; others use lucide icons directly.
 const NAV_ITEMS = [
@@ -54,6 +55,9 @@ export function SidebarNav() {
           </div>
           <span className="font-semibold">TrackrApp</span>
         </Link>
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
       </div>
 
       <Separator />

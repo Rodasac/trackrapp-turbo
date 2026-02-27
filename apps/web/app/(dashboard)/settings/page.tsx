@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -14,7 +15,7 @@ import {
 import { NotificationPreferencesForm } from "@/components/notification-preferences-form";
 import { BillingSettings } from "@/components/billing-settings";
 
-export default function SettingsPage() {
+function SettingsContent() {
   const searchParams = useSearchParams();
   const defaultTab = searchParams.get("tab") ?? "profile";
   const upgraded = searchParams.get("upgraded") === "true";
@@ -84,5 +85,13 @@ export default function SettingsPage() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense>
+      <SettingsContent />
+    </Suspense>
   );
 }
