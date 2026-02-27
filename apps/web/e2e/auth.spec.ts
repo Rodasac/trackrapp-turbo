@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { signUpNewUser, loginUser, uniqueSuffix } from "./fixtures/auth";
+import { signUpNewUser, loginUser, signOut, uniqueSuffix } from "./fixtures/auth";
 
 // All tests in this file run unauthenticated
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -11,15 +11,18 @@ test("landing page shows CTA buttons", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
 });
 
-test("signup creates account and redirects to login", async ({ page }) => {
+test("signup creates account and auto-logs in to dashboard", async ({
+  page,
+}) => {
   const id = uniqueSuffix();
   await page.goto("/signup");
   await page.getByLabel("Name").fill(`E2E User ${id}`);
   await page.getByLabel("Email").fill(`e2e-${id}@test.local`);
   await page.getByLabel("Password").fill("Password123!");
   await page.getByRole("button", { name: "Create account" }).click();
-  await page.waitForURL("**/login**");
-  await expect(page).toHaveURL(/\/login/);
+  // Better Auth creates a session on signup; proxy redirects /login → /dashboard
+  await page.waitForURL("**/dashboard**");
+  await expect(page).toHaveURL(/\/dashboard/);
 });
 
 test("signup shows validation errors for empty fields", async ({ page }) => {
@@ -36,6 +39,8 @@ test("signup shows validation errors for empty fields", async ({ page }) => {
 
 test("signup shows error for duplicate email", async ({ page }) => {
   const creds = await signUpNewUser(page);
+  // Sign out so we can reach /signup as an unauthenticated user
+  await signOut(page);
   // Try signing up again with the same email
   await page.goto("/signup");
   await page.getByLabel("Name").fill("Another User");
@@ -51,6 +56,8 @@ test("login with valid credentials redirects to dashboard", async ({
   page,
 }) => {
   const creds = await signUpNewUser(page);
+  // Sign out so we can test the login flow from an unauthenticated state
+  await signOut(page);
   await loginUser(page, creds.email, creds.password);
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(
@@ -60,6 +67,8 @@ test("login with valid credentials redirects to dashboard", async ({
 
 test("login with wrong password shows error toast", async ({ page }) => {
   const creds = await signUpNewUser(page);
+  // Sign out so /login is reachable (proxy redirects authenticated users away)
+  await signOut(page);
   await page.goto("/login");
   await page.getByLabel("Email").fill(creds.email);
   await page.getByLabel("Password").fill("WrongPassword!");
@@ -88,8 +97,8 @@ test("protected route /subscriptions redirects to /login", async ({
 });
 
 test("logout redirects to login page", async ({ page }) => {
-  const creds = await signUpNewUser(page);
-  await loginUser(page, creds.email, creds.password);
+  await signUpNewUser(page);
+  // Already at /dashboard after signup (Better Auth auto-logs in)
   await expect(page).toHaveURL(/\/dashboard/);
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/login/);

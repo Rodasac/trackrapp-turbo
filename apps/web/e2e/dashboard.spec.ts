@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { pickFutureDate } from "./fixtures/dates";
-import { signUpNewUser, loginUser, uniqueSuffix } from "./fixtures/auth";
+import { signUpNewUser, uniqueSuffix } from "./fixtures/auth";
 
 async function gotoNewSubscription(page: Page): Promise<void> {
   const categoriesReady = page.waitForResponse(
@@ -18,8 +18,7 @@ test.use({ storageState: { cookies: [], origins: [] } });
 test("dashboard shows KPIs with zero values for fresh user", async ({
   page,
 }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
@@ -37,8 +36,7 @@ test("dashboard shows KPIs with zero values for fresh user", async ({
 
 // B1 fix: old test expected removed placeholder text; now assert charts section renders
 test("dashboard shows charts section", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/dashboard");
   await expect(page.getByTestId("dashboard-charts")).toBeVisible({
@@ -47,8 +45,7 @@ test("dashboard shows charts section", async ({ page }) => {
 });
 
 test("KPIs update after adding a subscription", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   // Confirm zero state first
   await page.goto("/dashboard");
@@ -71,15 +68,16 @@ test("KPIs update after adding a subscription", async ({ page }) => {
 
   // Return to dashboard
   await page.goto("/dashboard");
-  // Monthly spend should now be non-zero
-  await expect(page.getByText("$15.99")).toBeVisible({ timeout: 10_000 });
+  // Monthly spend KPI should now be non-zero (exact: true avoids matching "$15.99/mo" in renewal list)
+  await expect(page.getByText("$15.99", { exact: true })).toBeVisible({
+    timeout: 10_000,
+  });
 });
 
 // ─── B2: Phase 3 dashboard E2E tests ─────────────────────────────────────────
 
 test("dashboard shows 6 KPI cards", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/dashboard");
   // Wait for KPIs to render
@@ -101,8 +99,7 @@ test("dashboard shows 6 KPI cards", async ({ page }) => {
 });
 
 test("dashboard shows charts section with empty states", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/dashboard");
   // Wait for charts to finish loading
@@ -123,8 +120,7 @@ test("dashboard shows charts section with empty states", async ({ page }) => {
 });
 
 test("dashboard shows renewal calendar", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/dashboard");
   // "Upcoming renewals" appears as both a KPI title and a calendar card header
@@ -139,8 +135,7 @@ test("dashboard shows renewal calendar", async ({ page }) => {
 });
 
 test("dashboard shows spending insights", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/dashboard");
   // Tips card header
@@ -158,8 +153,7 @@ test("dashboard shows spending insights", async ({ page }) => {
 });
 
 test("dashboard charts populate after adding subscription", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   // Confirm empty-state charts first
   await page.goto("/dashboard");

@@ -34,7 +34,8 @@ export async function signUpNewUser(
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Create account" }).click();
-  await page.waitForURL("**/login**");
+  // Better Auth auto-creates a session on signup; proxy redirects /login → /dashboard
+  await page.waitForURL("**/dashboard**");
 
   return { name, email, password };
 }
@@ -52,6 +53,15 @@ export async function loginUser(
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL("**/dashboard**");
+}
+
+/**
+ * Sign out the currently-authenticated user via the sidebar button.
+ * Assumes the user is on a page that has the "Sign out" button visible.
+ */
+export async function signOut(page: Page): Promise<void> {
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await page.waitForURL("**/login**");
 }
 
 /** Save test user credentials to a JSON file so specs can read them */

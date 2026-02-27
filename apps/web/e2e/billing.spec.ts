@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { signUpNewUser, loginUser } from "./fixtures/auth";
+import { signUpNewUser } from "./fixtures/auth";
 
 // Each test creates a fresh user (no Stripe subscription)
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -7,8 +7,7 @@ test.use({ storageState: { cookies: [], origins: [] } });
 test("settings billing tab shows Free plan for a new user", async ({
   page,
 }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/settings?tab=billing");
 
@@ -19,8 +18,7 @@ test("settings billing tab shows Free plan for a new user", async ({
 test("settings billing tab shows Upgrade to Pro button for free user", async ({
   page,
 }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/settings?tab=billing");
 
@@ -32,8 +30,7 @@ test("settings billing tab shows Upgrade to Pro button for free user", async ({
 test("?tab=billing query param opens the billing tab directly", async ({
   page,
 }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/settings?tab=billing");
 
@@ -99,8 +96,7 @@ test("pricing page Start free trial links to /signup when logged out", async ({
 });
 
 test("tips page shows upgrade prompt for free user", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/tips");
 
@@ -113,8 +109,7 @@ test("tips page shows upgrade prompt for free user", async ({ page }) => {
 });
 
 test("tips page shows Pro badge in the heading", async ({ page }) => {
-  const { email, password } = await signUpNewUser(page);
-  await loginUser(page, email, password);
+  await signUpNewUser(page);
 
   await page.goto("/tips");
 

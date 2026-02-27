@@ -1,14 +1,11 @@
 import { test as setup, expect } from "@playwright/test";
-import { signUpNewUser, loginUser, saveTestUser } from "./fixtures/auth";
+import { signUpNewUser, saveTestUser } from "./fixtures/auth";
 
 const AUTH_FILE = "e2e/.auth/user.json";
 
 setup("authenticate", async ({ page }) => {
-  // Sign up a fresh user for this test session
+  // Sign up a fresh user — Better Auth auto-logs in, ending at /dashboard
   const creds = await signUpNewUser(page);
-
-  // Login and confirm redirect to dashboard
-  await loginUser(page, creds.email, creds.password);
   await expect(page).toHaveURL(/\/dashboard/);
 
   // Save credentials so auth specs can re-login if needed
