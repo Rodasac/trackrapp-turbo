@@ -143,6 +143,7 @@ CREATE TABLE "tracked_subscriptions" (
 	"logo_url" text,
 	"website_url" text,
 	"is_active" boolean DEFAULT true NOT NULL,
+	"deactivated_at" timestamp,
 	"notes" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL

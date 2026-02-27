@@ -1,5 +1,5 @@
 {
-  "id": "68caa08a-10a0-4337-b945-c08f4534682c",
+  "id": "9cd1a7cc-b9b5-492f-bc03-4b6b7b8e47f9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1029,6 +1029,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": true
+        },
+        "deactivated_at": {
+          "name": "deactivated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "notes": {
           "name": "notes",
