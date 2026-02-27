@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: "./e2e",
   /* Run tests sequentially — shared database requires no parallelism */
   workers: 1,
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
   retries: process.env.CI ? 1 : 0,
   /* Collect trace on first retry; screenshot on failure */
   use: {
@@ -32,6 +33,7 @@ export default defineConfig({
     command: "pnpm --filter=web dev",
     cwd: "../../",
     port: 3000,
+    // eslint-disable-next-line turbo/no-undeclared-env-vars
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

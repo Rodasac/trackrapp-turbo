@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
@@ -63,7 +63,7 @@ export function NotificationPreferencesForm() {
     }
   }
 
-  const pushEnabled = form.watch("pushEnabled");
+  const pushEnabled = useWatch({ control: form.control, name: "pushEnabled" });
 
   if (isLoading) {
     return (

@@ -1,7 +1,8 @@
 import { db, schema } from "@repo/database";
 import { requireSession } from "@/lib/api/helpers";
 import { toMonthlyRate } from "@repo/shared/billing";
-import { and, eq, inArray } from "drizzle-orm";
+import { toDateString } from "@repo/shared/dates";
+import { eq, inArray } from "drizzle-orm";
 import type {
   SpendingTrendPoint,
   CategoryBreakdownItem,
@@ -56,12 +57,11 @@ export async function GET(request: Request) {
   for (let i = 11; i >= 0; i--) {
     const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
-    const monthStartStr = monthStart.toISOString().split("T")[0]!;
-    const monthEndStr = monthEnd.toISOString().split("T")[0]!;
+    const monthEndStr = toDateString(monthEnd);
 
     let monthTotal = 0;
     for (const sub of subs) {
-      const startDate = sub.startDate ?? sub.createdAt.toISOString().split("T")[0]!;
+      const startDate = sub.startDate ?? toDateString(sub.createdAt);
       // Sub was active during this month if it started before monthEnd
       // and was either still active OR deactivated after monthStart
       const wasActive =

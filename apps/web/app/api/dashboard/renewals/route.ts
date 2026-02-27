@@ -1,5 +1,6 @@
 import { db, schema } from "@repo/database";
 import { requireSession } from "@/lib/api/helpers";
+import { toDateString } from "@repo/shared/dates";
 import { and, eq, gte, lte } from "drizzle-orm";
 
 export async function GET(request: Request) {
@@ -8,9 +9,9 @@ export async function GET(request: Request) {
   const { session } = result;
 
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0]!;
+  const todayStr = toDateString(today);
   const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
-  const thirtyDaysLaterStr = thirtyDaysLater.toISOString().split("T")[0]!;
+  const thirtyDaysLaterStr = toDateString(thirtyDaysLater);
 
   const subs = await db
     .select()

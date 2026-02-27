@@ -32,7 +32,8 @@ export async function createNotification(
 // midnight of that day - 30 days (generous window) to avoid duplicate sends.
 export async function hasExistingReminder(
   subscriptionId: number,
-  renewalDate: string,
+  // TODO: we need to pass this in, but it's not currently used in the job.
+  renewalDate: string, // eslint-disable-line @typescript-eslint/no-unused-vars
 ): Promise<boolean> {
   // We store one reminder per (subscriptionId, renewalDate) window.
   // The title includes the renewal date, so we query by subscriptionId + type + title pattern.

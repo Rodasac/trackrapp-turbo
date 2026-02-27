@@ -35,16 +35,15 @@ test("dashboard shows KPIs with zero values for fresh user", async ({
   await expect(page.getByText("Active subscriptions", { exact: true })).toBeVisible();
 });
 
-test("dashboard shows chart placeholder", async ({ page }) => {
+// B1 fix: old test expected removed placeholder text; now assert charts section renders
+test("dashboard shows charts section", async ({ page }) => {
   const { email, password } = await signUpNewUser(page);
   await loginUser(page, email, password);
 
   await page.goto("/dashboard");
-  await expect(
-    page.getByText(
-      "Charts and insights will appear here once you add subscriptions.",
-    ),
-  ).toBeVisible();
+  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+    timeout: 10_000,
+  });
 });
 
 test("KPIs update after adding a subscription", async ({ page }) => {
@@ -74,4 +73,118 @@ test("KPIs update after adding a subscription", async ({ page }) => {
   await page.goto("/dashboard");
   // Monthly spend should now be non-zero
   await expect(page.getByText("$15.99")).toBeVisible({ timeout: 10_000 });
+});
+
+// ─── B2: Phase 3 dashboard E2E tests ─────────────────────────────────────────
+
+test("dashboard shows 6 KPI cards", async ({ page }) => {
+  const { email, password } = await signUpNewUser(page);
+  await loginUser(page, email, password);
+
+  await page.goto("/dashboard");
+  // Wait for KPIs to render
+  await expect(
+    page.getByText("Monthly spend", { exact: true }),
+  ).toBeVisible({ timeout: 10_000 });
+
+  await expect(page.getByText("Yearly spend", { exact: true })).toBeVisible();
+  await expect(page.getByText("Cost per day", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Active subscriptions", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Upcoming renewals", { exact: true }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Remaining this month", { exact: true }),
+  ).toBeVisible();
+});
+
+test("dashboard shows charts section with empty states", async ({ page }) => {
+  const { email, password } = await signUpNewUser(page);
+  await loginUser(page, email, password);
+
+  await page.goto("/dashboard");
+  // Wait for charts to finish loading
+  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+    timeout: 10_000,
+  });
+
+  // All three chart card headings are present
+  await expect(page.getByText("Spending trend", { exact: true })).toBeVisible();
+  await expect(page.getByText("By category", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Top subscriptions", { exact: true }),
+  ).toBeVisible();
+
+  // Fresh user has no data — charts show empty-state messages
+  await expect(page.getByText("No spending data yet")).toBeVisible();
+  await expect(page.getByText("No subscriptions yet")).toBeVisible();
+});
+
+test("dashboard shows renewal calendar", async ({ page }) => {
+  const { email, password } = await signUpNewUser(page);
+  await loginUser(page, email, password);
+
+  await page.goto("/dashboard");
+  // "Upcoming renewals" appears as both a KPI title and a calendar card header
+  await expect(
+    page.getByText("Upcoming renewals", { exact: true }).first(),
+  ).toBeVisible({ timeout: 10_000 });
+
+  // Fresh user has no upcoming renewals — show empty-state text
+  await expect(
+    page.getByText("No renewals in the next 30 days"),
+  ).toBeVisible();
+});
+
+test("dashboard shows spending insights", async ({ page }) => {
+  const { email, password } = await signUpNewUser(page);
+  await loginUser(page, email, password);
+
+  await page.goto("/dashboard");
+  // Tips card header
+  await expect(page.getByText("Spending insights", { exact: true })).toBeVisible({
+    timeout: 10_000,
+  });
+
+  // Fresh user has no subscriptions — empty state
+  await expect(page.getByTestId("tips-empty")).toBeVisible();
+  await expect(
+    page.getByText(
+      "No insights yet — add more subscriptions to get personalized tips.",
+    ),
+  ).toBeVisible();
+});
+
+test("dashboard charts populate after adding subscription", async ({ page }) => {
+  const { email, password } = await signUpNewUser(page);
+  await loginUser(page, email, password);
+
+  // Confirm empty-state charts first
+  await page.goto("/dashboard");
+  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+    timeout: 10_000,
+  });
+  await expect(page.getByText("No spending data yet")).toBeVisible();
+  await expect(page.getByText("No subscriptions yet")).toBeVisible();
+
+  // Add a subscription
+  await gotoNewSubscription(page);
+  await page.getByLabel("Name *").fill(`Chart Sub ${uniqueSuffix()}`);
+  await page.getByLabel("Price *").fill("9.99");
+  await pickFutureDate(
+    page,
+    page.getByRole("button", { name: /Next renewal/i }),
+  );
+  await page.getByRole("button", { name: "Add subscription" }).click();
+  await page.waitForURL(/\/subscriptions$/);
+
+  // Return to dashboard — charts should no longer show empty states
+  await page.goto("/dashboard");
+  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+    timeout: 10_000,
+  });
+  await expect(page.getByText("No spending data yet")).not.toBeVisible();
+  await expect(page.getByText("No subscriptions yet")).not.toBeVisible();
 });

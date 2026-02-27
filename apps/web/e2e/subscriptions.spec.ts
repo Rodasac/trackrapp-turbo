@@ -327,6 +327,24 @@ test("show inactive toggle reveals deactivated subscription", async ({
 
 // ─── Delete permanently ───────────────────────────────────────────────────────
 
+// ─── CSV export ───────────────────────────────────────────────────────────────
+
+test("CSV export button triggers download", async ({ page }) => {
+  await page.goto("/subscriptions");
+  // Wait for list to load (subscriptions created earlier in the chain)
+  await page.getByRole("row").nth(1).waitFor({ state: "visible", timeout: 10_000 });
+
+  // Start waiting for the download event before clicking
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: /export csv/i }).click();
+  const download = await downloadPromise;
+
+  // Verify the file name is correct
+  expect(download.suggestedFilename()).toBe("subscriptions.csv");
+});
+
+// ─── Delete permanently ───────────────────────────────────────────────────────
+
 test("delete permanently removes subscription", async ({ page }) => {
   const tempName = `Temp Sub ${uniqueSuffix()}`;
 

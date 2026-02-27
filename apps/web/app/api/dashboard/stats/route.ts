@@ -1,6 +1,7 @@
 import { db, schema } from "@repo/database";
 import { requireSession } from "@/lib/api/helpers";
 import { toMonthlyRate } from "@repo/shared/billing";
+import { toDateString } from "@repo/shared/dates";
 import { and, eq } from "drizzle-orm";
 
 export async function GET(request: Request) {
@@ -19,12 +20,10 @@ export async function GET(request: Request) {
     );
 
   const now = new Date();
-  const todayStr = now.toISOString().split("T")[0]!;
-  const sevenDaysLaterStr = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0]!;
+  const todayStr = toDateString(now);
+  const sevenDaysLaterStr = toDateString(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  const endOfMonthStr = endOfMonth.toISOString().split("T")[0]!;
+  const endOfMonthStr = toDateString(endOfMonth);
   const daysInMonth = endOfMonth.getDate();
 
   let monthlySpend = 0;

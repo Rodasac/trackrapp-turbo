@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Badge } from "@repo/ui/badge";
 import { useRenewalCalendar } from "@/hooks/use-renewal-calendar";
 import { formatPrice } from "@repo/shared/format";
-import { parseDateString } from "@repo/shared/dates";
+import { parseDateString, toDateString } from "@repo/shared/dates";
 import type { RenewalItem } from "@/lib/types/api";
 
 function getRenewalDates(renewals: RenewalItem[]): Date[] {
@@ -25,7 +25,7 @@ export function RenewalCalendar() {
 
   // Find renewals on the selected date
   const selectedDateStr = selectedDate
-    ? selectedDate.toISOString().split("T")[0]
+    ? toDateString(selectedDate)
     : null;
   const renewalsOnSelected = selectedDateStr
     ? renewals.filter((r) => r.nextRenewalDate === selectedDateStr)

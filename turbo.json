@@ -7,6 +7,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
+        "MAILPIT_URL",
         "NODE_ENV",
         "NEXT_TELEMETRY_DISABLED",
         "GOOGLE_CLIENT_ID",
@@ -16,6 +17,7 @@
         "STRIPE_PRO_MONTHLY_PRICE_ID",
         "STRIPE_PRO_ANNUAL_PRICE_ID",
         "DATABASE_URL",
+        "SKIP_INTEGRATION",
         "SMTP_HOST",
         "SMTP_PORT",
         "SMTP_SECURE",
@@ -37,6 +39,7 @@
       "cache": false,
       "persistent": true,
       "env": [
+        "MAILPIT_URL",
         "NODE_ENV",
         "NEXT_TELEMETRY_DISABLED",
         "GOOGLE_CLIENT_ID",
@@ -46,6 +49,7 @@
         "STRIPE_PRO_MONTHLY_PRICE_ID",
         "STRIPE_PRO_ANNUAL_PRICE_ID",
         "DATABASE_URL",
+        "SKIP_INTEGRATION",
         "SMTP_HOST",
         "SMTP_PORT",
         "SMTP_SECURE",
@@ -65,6 +69,7 @@
       "dependsOn": ["transit", "@repo/vitest-config#build"],
       "outputs": ["coverage.json"],
       "env": [
+        "MAILPIT_URL",
         "NODE_ENV",
         "NEXT_TELEMETRY_DISABLED",
         "GOOGLE_CLIENT_ID",
@@ -74,6 +79,7 @@
         "STRIPE_PRO_MONTHLY_PRICE_ID",
         "STRIPE_PRO_ANNUAL_PRICE_ID",
         "DATABASE_URL",
+        "SKIP_INTEGRATION",
         "SMTP_HOST",
         "SMTP_PORT",
         "SMTP_SECURE",

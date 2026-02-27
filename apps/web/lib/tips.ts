@@ -11,7 +11,6 @@ export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
 
   const tips: StaticTip[] = [];
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0]!;
 
   const totalMonthly = subs.reduce(
     (sum, s) => sum + toMonthlyRate(parseFloat(s.price), s.billingCycle),
@@ -110,9 +109,6 @@ export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
       type: "info",
     });
   }
-
-  // Suppress unused variable warning for todayStr
-  void todayStr;
 
   return tips;
 }

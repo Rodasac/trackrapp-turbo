@@ -38,147 +38,141 @@ async function mailpitAvailable(): Promise<boolean> {
   }
 }
 
-describe.skipIf(SKIP_INTEGRATION)(
-  "send-reminders integration",
-  () => {
-    let db: Awaited<ReturnType<typeof import("@repo/database").db.select>>[number] | null = null;
-    let testUserId: string | null = null;
-    let testSubId: number | null = null;
-    let mailpitUp = false;
+describe.skipIf(SKIP_INTEGRATION)("send-reminders integration", () => {
+  let testUserId: string | null = null;
+  let testSubId: number | null = null;
+  let mailpitUp = false;
 
-    beforeAll(async () => {
-      mailpitUp = await mailpitAvailable();
-      if (!mailpitUp) {
-        console.warn("[integration] Mailpit not available — email assertions skipped");
-      }
+  beforeAll(async () => {
+    mailpitUp = await mailpitAvailable();
+    if (!mailpitUp) {
+      console.warn(
+        "[integration] Mailpit not available — email assertions skipped",
+      );
+    }
 
-      // Import DB after env check
-      const { db: database, schema } = await import("@repo/database");
-      const { eq } = await import("drizzle-orm");
+    // Import DB after env check
+    const { db: database, schema } = await import("@repo/database");
+    const { eq } = await import("drizzle-orm");
 
-      // Create a test user
-      testUserId = `integration-test-${Date.now()}`;
-      await database.insert(schema.users).values({
-        id: testUserId,
-        name: "Integration Test User",
-        email: `integration-${Date.now()}@test.local`,
-        emailVerified: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+    // Create a test user
+    testUserId = `integration-test-${Date.now()}`;
+    await database.insert(schema.users).values({
+      id: testUserId,
+      name: "Integration Test User",
+      email: `integration-${Date.now()}@test.local`,
+      emailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-      // Renewing tomorrow
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const renewalDate = tomorrow.toISOString().slice(0, 10);
+    // Renewing tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const renewalDate = tomorrow.toISOString().slice(0, 10);
 
-      // Create subscription
-      const [sub] = await database
-        .insert(schema.trackedSubscriptions)
-        .values({
-          userId: testUserId,
-          name: "Integration Test Sub",
-          price: "9.99",
-          currency: "USD",
-          billingCycle: "monthly",
-          nextRenewalDate: renewalDate,
-          isActive: true,
-        })
-        .returning();
-      testSubId = sub!.id;
-
-      // Create notification preferences: email on, remind 1 day before
-      await database.insert(schema.notificationPreferences).values({
+    // Create subscription
+    const [sub] = await database
+      .insert(schema.trackedSubscriptions)
+      .values({
         userId: testUserId,
-        emailEnabled: true,
-        pushEnabled: false,
-        reminderDaysBefore: [1],
-      });
+        name: "Integration Test Sub",
+        price: "9.99",
+        currency: "USD",
+        billingCycle: "monthly",
+        nextRenewalDate: renewalDate,
+        isActive: true,
+      })
+      .returning();
+    testSubId = sub!.id;
 
-      void db;
-      void eq;
+    // Create notification preferences: email on, remind 1 day before
+    await database.insert(schema.notificationPreferences).values({
+      userId: testUserId,
+      emailEnabled: true,
+      pushEnabled: false,
+      reminderDaysBefore: [1],
     });
 
-    afterAll(async () => {
-      if (!testUserId) return;
-      const { db: database, schema } = await import("@repo/database");
-      const { eq } = await import("drizzle-orm");
+    void eq;
+  });
 
-      // Clean up in reverse order
+  afterAll(async () => {
+    if (!testUserId) return;
+    const { db: database, schema } = await import("@repo/database");
+    const { eq } = await import("drizzle-orm");
+
+    // Clean up in reverse order
+    await database
+      .delete(schema.notificationPreferences)
+      .where(eq(schema.notificationPreferences.userId, testUserId!));
+    await database
+      .delete(schema.notifications)
+      .where(eq(schema.notifications.userId, testUserId!));
+    if (testSubId) {
       await database
-        .delete(schema.notificationPreferences)
-        .where(eq(schema.notificationPreferences.userId, testUserId!));
-      await database
-        .delete(schema.notifications)
-        .where(eq(schema.notifications.userId, testUserId!));
-      if (testSubId) {
-        await database
-          .delete(schema.trackedSubscriptions)
-          .where(eq(schema.trackedSubscriptions.id, testSubId));
-      }
-      await database
-        .delete(schema.users)
-        .where(eq(schema.users.id, testUserId!));
-    });
+        .delete(schema.trackedSubscriptions)
+        .where(eq(schema.trackedSubscriptions.id, testSubId));
+    }
+    await database.delete(schema.users).where(eq(schema.users.id, testUserId!));
+  });
 
-    it("creates a notification record in the DB after running send-reminders", async () => {
-      const { runSendReminders } = await import("../../src/jobs/send-reminders.js");
-      const { db: database, schema } = await import("@repo/database");
-      const { and, eq } = await import("drizzle-orm");
+  it("creates a notification record in the DB after running send-reminders", async () => {
+    const { runSendReminders } =
+      await import("../../src/jobs/send-reminders.js");
+    const { db: database, schema } = await import("@repo/database");
+    const { and, eq } = await import("drizzle-orm");
 
-      await runSendReminders();
+    await runSendReminders();
 
-      const notifications = await database
-        .select()
-        .from(schema.notifications)
-        .where(
-          and(
-            eq(schema.notifications.userId, testUserId!),
-            eq(schema.notifications.type, "renewal_reminder"),
-          ),
-        );
+    const notifications = await database
+      .select()
+      .from(schema.notifications)
+      .where(
+        and(
+          eq(schema.notifications.userId, testUserId!),
+          eq(schema.notifications.type, "renewal_reminder"),
+        ),
+      );
 
-      expect(notifications.length).toBeGreaterThan(0);
-      expect(notifications[0]!.relatedSubscriptionId).toBe(testSubId);
-      expect(notifications[0]!.isRead).toBe(false);
-    });
+    expect(notifications.length).toBeGreaterThan(0);
+    expect(notifications[0]!.relatedSubscriptionId).toBe(testSubId);
+    expect(notifications[0]!.isRead).toBe(false);
+  });
 
-    it("does not create a duplicate notification on second run (dedup)", async () => {
-      const { runSendReminders } = await import("../../src/jobs/send-reminders.js");
-      const { db: database, schema } = await import("@repo/database");
-      const { and, eq } = await import("drizzle-orm");
+  it("does not create a duplicate notification on second run (dedup)", async () => {
+    const { runSendReminders } =
+      await import("../../src/jobs/send-reminders.js");
+    const { db: database, schema } = await import("@repo/database");
+    const { and, eq } = await import("drizzle-orm");
 
-      await runSendReminders();
+    await runSendReminders();
 
-      const notifications = await database
-        .select()
-        .from(schema.notifications)
-        .where(
-          and(
-            eq(schema.notifications.userId, testUserId!),
-            eq(schema.notifications.type, "renewal_reminder"),
-          ),
-        );
+    const notifications = await database
+      .select()
+      .from(schema.notifications)
+      .where(
+        and(
+          eq(schema.notifications.userId, testUserId!),
+          eq(schema.notifications.type, "renewal_reminder"),
+        ),
+      );
 
-      // Should still be exactly 1 (dedup prevents second insert)
-      expect(notifications.length).toBe(1);
-    });
+    // Should still be exactly 1 (dedup prevents second insert)
+    expect(notifications.length).toBe(1);
+  });
 
-    it.skipIf(!mailpitUp)(
-      "delivers email to Mailpit inbox",
-      async () => {
-        // Query Mailpit REST API for messages
-        const res = await fetch(`${MAILPIT_URL}/api/v1/messages`);
-        expect(res.ok).toBe(true);
-        const { messages } = (await res.json()) as {
-          messages: Array<{ Subject: string; To: Array<{ Address: string }> }>;
-        };
+  it.skipIf(!mailpitUp)("delivers email to Mailpit inbox", async () => {
+    // Query Mailpit REST API for messages
+    const res = await fetch(`${MAILPIT_URL}/api/v1/messages`);
+    expect(res.ok).toBe(true);
+    const { messages } = (await res.json()) as {
+      messages: Array<{ Subject: string; To: Array<{ Address: string }> }>;
+    };
 
-        const reminder = messages.find((m) =>
-          m.Subject.toLowerCase().includes("integration test sub"),
-        );
-        expect(reminder).toBeDefined();
-      },
+    const reminder = messages.find((m) =>
+      m.Subject.toLowerCase().includes("integration test sub"),
     );
-  },
-);
+    expect(reminder).toBeDefined();
+  });
+});

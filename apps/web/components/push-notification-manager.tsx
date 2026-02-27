@@ -18,20 +18,20 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export function PushNotificationManager({ vapidPublicKey }: Props) {
-  const [status, setStatus] = useState<PushStatus>("loading");
+  const [status, setStatus] = useState<PushStatus>(() => {
+    if (typeof window === "undefined") return "loading";
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      return "unsupported";
+    }
+    if (Notification.permission === "denied") return "denied";
+    return "loading";
+  });
   const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null);
   const { mutateAsync: subscribe, isPending: subscribing } = useSubscribeToPush();
   const { mutateAsync: unsubscribe, isPending: unsubscribing } = useUnsubscribeFromPush();
 
   useEffect(() => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      setStatus("unsupported");
-      return;
-    }
-    if (Notification.permission === "denied") {
-      setStatus("denied");
-      return;
-    }
+    if (status !== "loading") return;
     navigator.serviceWorker.ready
       .then((reg) => reg.pushManager.getSubscription())
       .then((sub) => {
@@ -43,7 +43,7 @@ export function PushNotificationManager({ vapidPublicKey }: Props) {
         }
       })
       .catch(() => setStatus("unsubscribed"));
-  }, []);
+  }, [status]);
 
   async function handleSubscribe() {
     if (!vapidPublicKey) return;
