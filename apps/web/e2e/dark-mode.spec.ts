@@ -45,16 +45,16 @@ test("dark mode changes background color", async ({ page }) => {
   await page.goto("/dashboard");
 
   // Get light background
-  const lightBg = await page.evaluate(() =>
-    getComputedStyle(document.body).backgroundColor,
+  const lightBg = await page.evaluate(
+    () => getComputedStyle(document.body).backgroundColor,
   );
 
   // Switch to dark
   await page.getByRole("button", { name: "Toggle theme" }).click();
   await page.getByRole("menuitem", { name: "Dark" }).click();
 
-  const darkBg = await page.evaluate(() =>
-    getComputedStyle(document.body).backgroundColor,
+  const darkBg = await page.evaluate(
+    () => getComputedStyle(document.body).backgroundColor,
   );
 
   // Background should have changed

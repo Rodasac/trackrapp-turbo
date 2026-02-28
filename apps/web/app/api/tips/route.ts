@@ -21,7 +21,10 @@ export async function GET(request: Request) {
     );
 
   if (!proRecord) {
-    return Response.json({ error: "Pro subscription required" }, { status: 403 });
+    return Response.json(
+      { error: "Pro subscription required" },
+      { status: 403 },
+    );
   }
 
   // Fetch non-expired tips

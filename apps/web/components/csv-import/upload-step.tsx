@@ -25,7 +25,9 @@ export function UploadStep({ onParsed }: UploadStepProps) {
     }
 
     if (file.size > MAX_BYTES) {
-      setError("File exceeds 1MB limit. Please split the file and import in batches.");
+      setError(
+        "File exceeds 1MB limit. Please split the file and import in batches.",
+      );
       return;
     }
 
@@ -61,7 +63,10 @@ export function UploadStep({ onParsed }: UploadStepProps) {
   return (
     <div className="flex flex-col items-center gap-6">
       <div
-        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
@@ -74,7 +79,9 @@ export function UploadStep({ onParsed }: UploadStepProps) {
       >
         <FileUp className="size-12 text-muted-foreground" />
         <div className="text-center">
-          <p className="text-base font-medium">Drag & drop your CSV file here</p>
+          <p className="text-base font-medium">
+            Drag & drop your CSV file here
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">
             or{" "}
             <span className="text-brand underline underline-offset-2">

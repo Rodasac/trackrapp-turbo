@@ -15,7 +15,10 @@ interface ImportStepperProps {
 
 export function ImportStepper({ currentStep }: ImportStepperProps) {
   return (
-    <nav aria-label="Import steps" className="flex items-center justify-center gap-0">
+    <nav
+      aria-label="Import steps"
+      className="flex items-center justify-center gap-0"
+    >
       {STEPS.map((step, idx) => {
         const isCompleted = step.number < currentStep;
         const isActive = step.number === currentStep;
@@ -30,11 +33,10 @@ export function ImportStepper({ currentStep }: ImportStepperProps) {
               <div
                 className={cn(
                   "flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold transition-colors",
-                  isCompleted &&
-                    "border-brand bg-brand text-white",
-                  isActive &&
-                    "border-brand text-brand",
-                  !isCompleted && !isActive &&
+                  isCompleted && "border-brand bg-brand text-white",
+                  isActive && "border-brand text-brand",
+                  !isCompleted &&
+                    !isActive &&
                     "border-muted-foreground/30 text-muted-foreground",
                 )}
               >
@@ -55,7 +57,9 @@ export function ImportStepper({ currentStep }: ImportStepperProps) {
               <div
                 className={cn(
                   "mx-3 mb-5 h-px w-16 transition-colors",
-                  step.number < currentStep ? "bg-brand" : "bg-muted-foreground/20",
+                  step.number < currentStep
+                    ? "bg-brand"
+                    : "bg-muted-foreground/20",
                 )}
               />
             )}

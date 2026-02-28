@@ -2,13 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@repo/ui/button";
-import { useSubscribeToPush, useUnsubscribeFromPush } from "@/hooks/use-notification-mutations";
+import {
+  useSubscribeToPush,
+  useUnsubscribeFromPush,
+} from "@/hooks/use-notification-mutations";
 
 interface Props {
   vapidPublicKey?: string;
 }
 
-type PushStatus = "unsupported" | "denied" | "subscribed" | "unsubscribed" | "loading";
+type PushStatus =
+  | "unsupported"
+  | "denied"
+  | "subscribed"
+  | "unsubscribed"
+  | "loading";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -27,8 +35,10 @@ export function PushNotificationManager({ vapidPublicKey }: Props) {
     return "loading";
   });
   const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null);
-  const { mutateAsync: subscribe, isPending: subscribing } = useSubscribeToPush();
-  const { mutateAsync: unsubscribe, isPending: unsubscribing } = useUnsubscribeFromPush();
+  const { mutateAsync: subscribe, isPending: subscribing } =
+    useSubscribeToPush();
+  const { mutateAsync: unsubscribe, isPending: unsubscribing } =
+    useUnsubscribeFromPush();
 
   useEffect(() => {
     if (status !== "loading") return;
@@ -51,7 +61,9 @@ export function PushNotificationManager({ vapidPublicKey }: Props) {
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(
+          vapidPublicKey,
+        ) as BufferSource,
       });
       const json = sub.toJSON();
       if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) return;

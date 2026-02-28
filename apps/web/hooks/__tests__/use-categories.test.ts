@@ -14,7 +14,10 @@ describe("useCategories", () => {
   });
 
   it("fetches from /api/categories and returns data", async () => {
-    const categories = [mockCategory({ id: 1 }), mockCategory({ id: 2, name: "Work" })];
+    const categories = [
+      mockCategory({ id: 1 }),
+      mockCategory({ id: 2, name: "Work" }),
+    ];
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify(categories), { status: 200 }),
     );

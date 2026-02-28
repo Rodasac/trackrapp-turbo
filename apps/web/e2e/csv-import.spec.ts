@@ -25,7 +25,9 @@ test("Import CSV button navigates to import page", async ({ page }) => {
   await page.goto("/subscriptions");
   await page.getByRole("link", { name: /import csv/i }).click();
   await page.waitForURL(/\/subscriptions\/import$/);
-  await expect(page.getByRole("heading", { name: /import subscriptions/i })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /import subscriptions/i }),
+  ).toBeVisible();
 });
 
 test("Step 1: Upload step renders and accepts a CSV file", async ({ page }) => {
@@ -46,13 +48,19 @@ test("Step 1: Upload step renders and accepts a CSV file", async ({ page }) => {
   });
 
   // Should auto-advance to step 2 (Map Columns)
-  await expect(page.getByText(/map your csv columns/i)).toBeVisible({ timeout: 5_000 });
+  await expect(page.getByText(/map your csv columns/i)).toBeVisible({
+    timeout: 5_000,
+  });
 });
 
-test("Step 2: Mapping step auto-detects TrackrApp columns", async ({ page }) => {
+test("Step 2: Mapping step auto-detects TrackrApp columns", async ({
+  page,
+}) => {
   await page.goto("/subscriptions/import");
 
-  const csvBuffer = makeTrackrCsv(importedSubName ?? `E2E Import ${uniqueSuffix()}`);
+  const csvBuffer = makeTrackrCsv(
+    importedSubName ?? `E2E Import ${uniqueSuffix()}`,
+  );
   const fileInput = page.getByTestId("csv-file-input");
   await fileInput.setInputFiles({
     name: "subscriptions.csv",
@@ -61,19 +69,25 @@ test("Step 2: Mapping step auto-detects TrackrApp columns", async ({ page }) => 
   });
 
   // Wait for mapping step
-  await expect(page.getByText(/map your csv columns/i)).toBeVisible({ timeout: 5_000 });
+  await expect(page.getByText(/map your csv columns/i)).toBeVisible({
+    timeout: 5_000,
+  });
 
   // All 8 TrackrApp headers should be auto-detected
   await expect(page.getByText(/8 of/i)).toBeVisible();
 
   // Continue button should be enabled (all required fields mapped)
-  await expect(page.getByRole("button", { name: /continue to preview/i })).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: /continue to preview/i }),
+  ).toBeEnabled();
 });
 
 test("Step 3: Preview step shows rows with match badges", async ({ page }) => {
   await page.goto("/subscriptions/import");
 
-  const csvBuffer = makeTrackrCsv(importedSubName ?? `E2E Import ${uniqueSuffix()}`);
+  const csvBuffer = makeTrackrCsv(
+    importedSubName ?? `E2E Import ${uniqueSuffix()}`,
+  );
   const fileInput = page.getByTestId("csv-file-input");
   await fileInput.setInputFiles({
     name: "subscriptions.csv",
@@ -82,9 +96,13 @@ test("Step 3: Preview step shows rows with match badges", async ({ page }) => {
   });
 
   // Advance through mapping step; register listener before clicking Continue
-  await expect(page.getByText(/map your csv columns/i)).toBeVisible({ timeout: 5_000 });
+  await expect(page.getByText(/map your csv columns/i)).toBeVisible({
+    timeout: 5_000,
+  });
   const previewResponse = page.waitForResponse(
-    (r) => r.url().includes("/api/subscriptions/import/preview") && r.status() === 200,
+    (r) =>
+      r.url().includes("/api/subscriptions/import/preview") &&
+      r.status() === 200,
     { timeout: 20_000 },
   );
   await page.getByRole("button", { name: /continue to preview/i }).click();
@@ -96,11 +114,15 @@ test("Step 3: Preview step shows rows with match badges", async ({ page }) => {
   });
 
   // Should show a match confidence badge (Exact, Fuzzy, or None)
-  const badges = page.locator("span").filter({ hasText: /^(Exact|Fuzzy|None)$/ });
+  const badges = page
+    .locator("span")
+    .filter({ hasText: /^(Exact|Fuzzy|None)$/ });
   await expect(badges.first()).toBeVisible({ timeout: 5_000 });
 });
 
-test("Full flow: upload → map → preview → confirm → redirect", async ({ page }) => {
+test("Full flow: upload → map → preview → confirm → redirect", async ({
+  page,
+}) => {
   await page.goto("/subscriptions/import");
 
   const subName = `E2E Full ${uniqueSuffix()}`;
@@ -115,9 +137,13 @@ test("Full flow: upload → map → preview → confirm → redirect", async ({ 
   });
 
   // Step 2: Map — auto-detected; register listener before clicking Continue
-  await expect(page.getByText(/map your csv columns/i)).toBeVisible({ timeout: 5_000 });
+  await expect(page.getByText(/map your csv columns/i)).toBeVisible({
+    timeout: 5_000,
+  });
   const previewResponsePromise = page.waitForResponse(
-    (r) => r.url().includes("/api/subscriptions/import/preview") && r.status() === 200,
+    (r) =>
+      r.url().includes("/api/subscriptions/import/preview") &&
+      r.status() === 200,
     { timeout: 20_000 },
   );
   await page.getByRole("button", { name: /continue to preview/i }).click();
@@ -135,7 +161,10 @@ test("Full flow: upload → map → preview → confirm → redirect", async ({ 
 
   // Wait for import API response
   await page.waitForResponse(
-    (r) => r.url().includes("/api/subscriptions/import") && !r.url().includes("preview") && r.status() === 200,
+    (r) =>
+      r.url().includes("/api/subscriptions/import") &&
+      !r.url().includes("preview") &&
+      r.status() === 200,
     { timeout: 15_000 },
   );
 

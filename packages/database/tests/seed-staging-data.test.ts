@@ -137,7 +137,9 @@ describe("buildStripeSubscription", () => {
 
   it("periodEnd is after periodStart", () => {
     const sub = buildStripeSubscription(userId);
-    expect(sub.periodEnd!.getTime()).toBeGreaterThan(sub.periodStart!.getTime());
+    expect(sub.periodEnd!.getTime()).toBeGreaterThan(
+      sub.periodStart!.getTime(),
+    );
   });
 
   it("has a non-empty string id", () => {

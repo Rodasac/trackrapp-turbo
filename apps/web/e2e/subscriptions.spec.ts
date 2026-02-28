@@ -29,15 +29,24 @@ async function gotoNewSubscription(page: Page): Promise<void> {
 async function goToManualSubDetail(page: Page): Promise<void> {
   await page.goto("/subscriptions");
   // Wait for at least one data row to appear (TanStack Query has resolved).
-  await page.getByRole("row").nth(1).waitFor({ state: "visible", timeout: 10_000 });
+  await page
+    .getByRole("row")
+    .nth(1)
+    .waitFor({ state: "visible", timeout: 10_000 });
   // Search by exact name — guarantees exactly 1 row visible after filter applies
   const searchInput = page.getByPlaceholder(/Search subscriptions/i);
   await searchInput.fill(manualSubName);
   // Wait for the search to narrow the list to exactly our subscription
   await expect(page.getByRole("row").nth(1)).toBeVisible({ timeout: 8_000 });
-  await expect(page.getByRole("row").nth(2)).not.toBeVisible({ timeout: 3_000 }).catch(() => {});
+  await expect(page.getByRole("row").nth(2))
+    .not.toBeVisible({ timeout: 3_000 })
+    .catch(() => {});
   // Now safe: only 1 data row visible, nth(1) Actions button is unambiguous
-  await page.getByRole("row").nth(1).getByRole("button", { name: "Actions" }).click();
+  await page
+    .getByRole("row")
+    .nth(1)
+    .getByRole("button", { name: "Actions" })
+    .click();
   await page.getByRole("menuitem", { name: "View" }).click();
   await page.waitForURL(/\/subscriptions\/\d+$/);
 }
@@ -56,13 +65,18 @@ test("create subscription manually", async ({ page }) => {
   await page.getByLabel("Name *").fill(manualSubName);
   await page.getByLabel("Price *").fill("12.99");
 
-  await pickFutureDate(page, page.getByRole("button", { name: /Next renewal/i }));
+  await pickFutureDate(
+    page,
+    page.getByRole("button", { name: /Next renewal/i }),
+  );
 
   await page.getByRole("button", { name: "Add subscription" }).click();
   await page.waitForURL("**/subscriptions");
 
   await expect(
-    page.locator("[data-sonner-toast]").filter({ hasText: "Subscription added!" }),
+    page
+      .locator("[data-sonner-toast]")
+      .filter({ hasText: "Subscription added!" }),
   ).toBeVisible();
 });
 
@@ -79,11 +93,16 @@ test("create subscription from catalog (Netflix)", async ({ page }) => {
   // Name should be auto-filled
   await expect(page.getByLabel("Name *")).toHaveValue("Netflix");
 
-  await pickFutureDate(page, page.getByRole("button", { name: /Next renewal/i }));
+  await pickFutureDate(
+    page,
+    page.getByRole("button", { name: /Next renewal/i }),
+  );
   await page.getByRole("button", { name: "Add subscription" }).click();
   await page.waitForURL("**/subscriptions");
   await expect(
-    page.locator("[data-sonner-toast]").filter({ hasText: "Subscription added!" }),
+    page
+      .locator("[data-sonner-toast]")
+      .filter({ hasText: "Subscription added!" }),
   ).toBeVisible();
 });
 
@@ -98,11 +117,17 @@ test("create subscription with all optional fields", async ({ page }) => {
   await page.getByRole("combobox", { name: /billing cycle/i }).click();
   await page.getByRole("option", { name: "Yearly" }).click();
 
-  await pickFutureDate(page, page.getByRole("button", { name: /Next renewal/i }));
+  await pickFutureDate(
+    page,
+    page.getByRole("button", { name: /Next renewal/i }),
+  );
 
   // Category: Entertainment
   await page.getByRole("combobox", { name: "Category" }).click();
-  await page.getByRole("option", { name: /entertainment/i }).first().click();
+  await page
+    .getByRole("option", { name: /entertainment/i })
+    .first()
+    .click();
 
   await page.getByLabel("Description").fill("Streaming service");
   await page.getByLabel("Notes").fill("Shared account");
@@ -110,7 +135,9 @@ test("create subscription with all optional fields", async ({ page }) => {
   await page.getByRole("button", { name: "Add subscription" }).click();
   await page.waitForURL("**/subscriptions");
   await expect(
-    page.locator("[data-sonner-toast]").filter({ hasText: "Subscription added!" }),
+    page
+      .locator("[data-sonner-toast]")
+      .filter({ hasText: "Subscription added!" }),
   ).toBeVisible();
 });
 
@@ -160,7 +187,9 @@ test("search filter narrows and clears results", async ({ page }) => {
 
   // Clear — all return
   await searchInput.clear();
-  await expect(page.locator("td").filter({ hasText: "Netflix" }).first()).toBeVisible();
+  await expect(
+    page.locator("td").filter({ hasText: "Netflix" }).first(),
+  ).toBeVisible();
 
   // Non-matching search → empty state
   await searchInput.fill("xyznonexistent999");
@@ -175,11 +204,17 @@ test("category filter shows only matching subscriptions", async ({ page }) => {
 
   const categorySelect = page.getByTestId("category-filter");
   await categorySelect.click();
-  await page.getByRole("option", { name: /entertainment/i }).first().click();
+  await page
+    .getByRole("option", { name: /entertainment/i })
+    .first()
+    .click();
 
   // "Full Sub" should appear (it was tagged as Entertainment)
   await expect(
-    page.locator("td").filter({ hasText: /Full Sub/ }).first(),
+    page
+      .locator("td")
+      .filter({ hasText: /Full Sub/ })
+      .first(),
   ).toBeVisible();
   // Manual Sub has no category — should be filtered out
   await expect(
@@ -228,9 +263,13 @@ test("click Actions → View navigates to detail page", async ({ page }) => {
 test("detail page shows subscription fields", async ({ page }) => {
   await goToManualSubDetail(page);
   // Heading
-  await expect(page.getByRole("heading", { name: "Subscription" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Subscription" }),
+  ).toBeVisible();
   // Name shown as a heading h2
-  await expect(page.getByRole("heading", { name: manualSubName })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: manualSubName }),
+  ).toBeVisible();
   // Price (use .first() because $12.99 also appears in price history after any edit)
   await expect(page.getByText("$12.99").first()).toBeVisible();
   // Edit + Delete buttons
@@ -265,7 +304,9 @@ test("edit subscription updates name and price", async ({ page }) => {
   await page.getByRole("button", { name: "Save changes" }).click();
 
   await expect(
-    page.locator("[data-sonner-toast]").filter({ hasText: "Subscription updated!" }),
+    page
+      .locator("[data-sonner-toast]")
+      .filter({ hasText: "Subscription updated!" }),
   ).toBeVisible();
   // Should return to view mode
   await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
@@ -282,7 +323,9 @@ test("cancel edit returns to view mode", async ({ page }) => {
 
   // Back to view mode: Edit button visible, form gone
   await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Save changes" })).not.toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Save changes" }),
+  ).not.toBeVisible();
 });
 
 test("price history section appears after price edit", async ({ page }) => {
@@ -308,7 +351,9 @@ test("deactivate subscription via dialog", async ({ page }) => {
   await page.getByRole("button", { name: "Deactivate" }).click();
 
   await expect(
-    page.locator("[data-sonner-toast]").filter({ hasText: "Subscription deactivated" }),
+    page
+      .locator("[data-sonner-toast]")
+      .filter({ hasText: "Subscription deactivated" }),
   ).toBeVisible();
 
   // Inactive badge should now appear
@@ -343,7 +388,10 @@ test("show inactive toggle reveals deactivated subscription", async ({
 test("CSV export button triggers download", async ({ page }) => {
   await page.goto("/subscriptions");
   // Wait for list to load (subscriptions created earlier in the chain)
-  await page.getByRole("row").nth(1).waitFor({ state: "visible", timeout: 10_000 });
+  await page
+    .getByRole("row")
+    .nth(1)
+    .waitFor({ state: "visible", timeout: 10_000 });
 
   // Start waiting for the download event before clicking
   const downloadPromise = page.waitForEvent("download");
@@ -363,7 +411,10 @@ test("delete permanently removes subscription", async ({ page }) => {
   await gotoNewSubscription(page);
   await page.getByLabel("Name *").fill(tempName);
   await page.getByLabel("Price *").fill("5.00");
-  await pickFutureDate(page, page.getByRole("button", { name: /Next renewal/i }));
+  await pickFutureDate(
+    page,
+    page.getByRole("button", { name: /Next renewal/i }),
+  );
   await page.getByRole("button", { name: "Add subscription" }).click();
   await page.waitForURL("**/subscriptions");
 
@@ -381,7 +432,9 @@ test("delete permanently removes subscription", async ({ page }) => {
   await page.getByRole("button", { name: "Delete permanently" }).click();
 
   await expect(
-    page.locator("[data-sonner-toast]").filter({ hasText: "Subscription deleted" }),
+    page
+      .locator("[data-sonner-toast]")
+      .filter({ hasText: "Subscription deleted" }),
   ).toBeVisible();
 
   // Should redirect back to /subscriptions

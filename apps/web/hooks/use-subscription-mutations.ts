@@ -1,8 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
-import type { SubscriptionFormValues, CategoryFormValues } from "@repo/shared/validations";
+import type {
+  SubscriptionFormValues,
+  CategoryFormValues,
+} from "@repo/shared/validations";
 
-function invalidateSubscriptionsAndStats(qc: ReturnType<typeof useQueryClient>, id?: number) {
+function invalidateSubscriptionsAndStats(
+  qc: ReturnType<typeof useQueryClient>,
+  id?: number,
+) {
   void qc.invalidateQueries({ queryKey: queryKeys.subscriptions.all });
   void qc.invalidateQueries({ queryKey: queryKeys.dashboard.stats });
   if (id !== undefined) {
@@ -29,7 +35,9 @@ export function useSaveSubscription(
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error ?? "Something went wrong");
+        throw new Error(
+          (data as { error?: string }).error ?? "Something went wrong",
+        );
       }
       return res.json();
     },

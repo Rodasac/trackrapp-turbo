@@ -35,7 +35,11 @@ function NotificationIcon({ type }: { type: NotificationItem["type"] }) {
   }
 }
 
-function NotificationCard({ notification }: { notification: NotificationItem }) {
+function NotificationCard({
+  notification,
+}: {
+  notification: NotificationItem;
+}) {
   const router = useRouter();
   const { mutate: markRead } = useMarkNotificationRead();
 

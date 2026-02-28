@@ -37,8 +37,16 @@ vi.mock("@repo/ui/chart", () => ({
 describe("PriceHistoryChart", () => {
   it("renders chart container when 2+ data points", () => {
     const data = [
-      mockPriceHistory({ id: 1, price: "9.99", recordedAt: "2025-01-01T00:00:00.000Z" }),
-      mockPriceHistory({ id: 2, price: "12.99", recordedAt: "2025-06-01T00:00:00.000Z" }),
+      mockPriceHistory({
+        id: 1,
+        price: "9.99",
+        recordedAt: "2025-01-01T00:00:00.000Z",
+      }),
+      mockPriceHistory({
+        id: 2,
+        price: "12.99",
+        recordedAt: "2025-06-01T00:00:00.000Z",
+      }),
     ];
     renderWithProviders(<PriceHistoryChart data={data} currency="USD" />);
     expect(screen.getByTestId("price-history-chart")).toBeInTheDocument();

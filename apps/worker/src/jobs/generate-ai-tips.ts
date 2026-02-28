@@ -18,9 +18,7 @@ export async function generateAiTips(): Promise<void> {
   const proUsers = await db
     .select({ referenceId: schema.subscriptions.referenceId })
     .from(schema.subscriptions)
-    .where(
-      inArray(schema.subscriptions.status, ["active", "trialing"]),
-    );
+    .where(inArray(schema.subscriptions.status, ["active", "trialing"]));
 
   if (proUsers.length === 0) {
     console.log("[generate-ai-tips] No Pro users found — skipping");
@@ -44,7 +42,9 @@ export async function generateAiTips(): Promise<void> {
         );
 
       if (subs.length === 0) {
-        console.log(`[generate-ai-tips] User ${proUser.referenceId}: 0 subs — skipping`);
+        console.log(
+          `[generate-ai-tips] User ${proUser.referenceId}: 0 subs — skipping`,
+        );
         continue;
       }
 
@@ -56,7 +56,10 @@ export async function generateAiTips(): Promise<void> {
         categoryName: null,
       }));
 
-      const totalMonthly = subs.reduce((sum, s) => sum + parseFloat(s.price), 0);
+      const totalMonthly = subs.reduce(
+        (sum, s) => sum + parseFloat(s.price),
+        0,
+      );
 
       // Delete old tips before generating new ones
       await db
@@ -64,10 +67,16 @@ export async function generateAiTips(): Promise<void> {
         .where(eq(schema.aiTips.userId, proUser.referenceId));
 
       // Generate new tips
-      const tips = await generateTipsForUser(model, subsForPrompt, totalMonthly);
+      const tips = await generateTipsForUser(
+        model,
+        subsForPrompt,
+        totalMonthly,
+      );
 
       if (tips.length === 0) {
-        console.log(`[generate-ai-tips] User ${proUser.referenceId}: AI returned 0 tips`);
+        console.log(
+          `[generate-ai-tips] User ${proUser.referenceId}: AI returned 0 tips`,
+        );
         continue;
       }
 
@@ -94,11 +103,18 @@ export async function generateAiTips(): Promise<void> {
       });
 
       generated++;
-      console.log(`[generate-ai-tips] User ${proUser.referenceId}: ${tips.length} tips generated`);
+      console.log(
+        `[generate-ai-tips] User ${proUser.referenceId}: ${tips.length} tips generated`,
+      );
     } catch (error) {
-      console.error(`[generate-ai-tips] Error for user ${proUser.referenceId}:`, error);
+      console.error(
+        `[generate-ai-tips] Error for user ${proUser.referenceId}:`,
+        error,
+      );
     }
   }
 
-  console.log(`[generate-ai-tips] Done — ${generated}/${proUsers.length} users processed`);
+  console.log(
+    `[generate-ai-tips] Done — ${generated}/${proUsers.length} users processed`,
+  );
 }

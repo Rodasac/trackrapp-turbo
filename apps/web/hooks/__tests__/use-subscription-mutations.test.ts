@@ -12,7 +12,11 @@ import { queryKeys } from "@/lib/query-keys";
 
 function makeWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
+    return React.createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children,
+    );
   };
 }
 
@@ -32,7 +36,9 @@ describe("useSaveSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useSaveSubscription("create"), {
       wrapper: makeWrapper(qc),
     });
@@ -48,7 +54,9 @@ describe("useSaveSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 7 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useSaveSubscription("edit", 7), {
       wrapper: makeWrapper(qc),
     });
@@ -64,7 +72,9 @@ describe("useSaveSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
 
     const { result } = renderHook(() => useSaveSubscription("create"), {
@@ -88,7 +98,9 @@ describe("useCreateCategory", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useCreateCategory(), {
       wrapper: makeWrapper(qc),
     });
@@ -105,7 +117,9 @@ describe("useCreateCategory", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
 
     const { result } = renderHook(() => useCreateCategory(), {
@@ -129,7 +143,9 @@ describe("useDeactivateSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({}), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useDeactivateSubscription(), {
       wrapper: makeWrapper(qc),
     });
@@ -146,7 +162,9 @@ describe("useDeactivateSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({}), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
 
     const { result } = renderHook(() => useDeactivateSubscription(), {
@@ -170,7 +188,9 @@ describe("useDeleteSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({}), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useDeleteSubscription(), {
       wrapper: makeWrapper(qc),
     });

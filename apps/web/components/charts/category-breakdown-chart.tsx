@@ -42,7 +42,15 @@ export function CategoryBreakdownChart({ data }: Props) {
               />
             }
           />
-          <Pie data={data} dataKey="total" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={90}>
+          <Pie
+            data={data}
+            dataKey="total"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            innerRadius={50}
+            outerRadius={90}
+          >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}

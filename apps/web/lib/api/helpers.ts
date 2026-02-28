@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth";
 import type { ZodError } from "zod";
 
-type SessionSuccess = { session: Awaited<ReturnType<typeof auth.api.getSession>> & object };
+type SessionSuccess = {
+  session: Awaited<ReturnType<typeof auth.api.getSession>> & object;
+};
 type SessionError = { error: Response };
 
 /**

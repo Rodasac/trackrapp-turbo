@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { formatPrice, billingCycleLabel, formatRenewalDate, formatShortDate } from "../format";
+import {
+  formatPrice,
+  billingCycleLabel,
+  formatRenewalDate,
+  formatShortDate,
+} from "../format";
 
 describe("formatPrice", () => {
   it("formats USD price", () => {

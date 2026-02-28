@@ -21,7 +21,9 @@ export async function pickFutureDate(
 
   // Navigate to next month to ensure the date is in the future
   // react-day-picker v9 uses "Go to the Next Month" as the aria-label
-  const nextMonthBtn = page.getByRole("button", { name: /go to the next month/i });
+  const nextMonthBtn = page.getByRole("button", {
+    name: /go to the next month/i,
+  });
   await nextMonthBtn.click();
 
   // Pick day 15 (always exists in every month)

@@ -4,9 +4,15 @@ import { MappingStep } from "@/components/csv-import/mapping-step";
 import { TRACKR_EXPORT_HEADERS } from "@repo/shared/column-detect";
 
 vi.mock("@repo/ui/select", () => ({
-  Select: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SelectTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SelectValue: ({ placeholder }: { placeholder: string }) => <span>{placeholder}</span>,
+  Select: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  SelectTrigger: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  SelectValue: ({ placeholder }: { placeholder: string }) => (
+    <span>{placeholder}</span>
+  ),
   SelectContent: () => null,
   SelectItem: () => null,
 }));
@@ -15,7 +21,16 @@ const mockOnContinue = vi.fn();
 
 const trackrHeaders = [...TRACKR_EXPORT_HEADERS];
 const sampleRows = [
-  ["Netflix", "15.99", "USD", "monthly", "2026-03-15", "Entertainment", "2025-01-01", "active"],
+  [
+    "Netflix",
+    "15.99",
+    "USD",
+    "monthly",
+    "2026-03-15",
+    "Entertainment",
+    "2025-01-01",
+    "active",
+  ],
 ];
 
 describe("MappingStep", () => {

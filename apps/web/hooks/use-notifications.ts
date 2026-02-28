@@ -8,7 +8,8 @@ async function fetchNotifications(
   const params = new URLSearchParams();
   if (filters.read !== undefined) params.set("read", String(filters.read));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
-  if (filters.offset !== undefined) params.set("offset", String(filters.offset));
+  if (filters.offset !== undefined)
+    params.set("offset", String(filters.offset));
 
   const res = await fetch(`/api/notifications?${params.toString()}`);
   if (!res.ok) throw new Error("Failed to fetch notifications");

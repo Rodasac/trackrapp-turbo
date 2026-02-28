@@ -16,7 +16,11 @@ import {
 } from "@repo/shared/column-detect";
 import { cn } from "@repo/ui/lib/utils";
 
-const TRACKR_FIELDS: { value: TrackrField; label: string; required: boolean }[] = [
+const TRACKR_FIELDS: {
+  value: TrackrField;
+  label: string;
+  required: boolean;
+}[] = [
   { value: "name", label: "Name", required: true },
   { value: "price", label: "Price", required: true },
   { value: "currency", label: "Currency", required: false },
@@ -27,7 +31,12 @@ const TRACKR_FIELDS: { value: TrackrField; label: string; required: boolean }[] 
   { value: "status", label: "Status", required: false },
 ];
 
-const REQUIRED_FIELDS: TrackrField[] = ["name", "price", "billingCycle", "nextRenewalDate"];
+const REQUIRED_FIELDS: TrackrField[] = [
+  "name",
+  "price",
+  "billingCycle",
+  "nextRenewalDate",
+];
 
 export interface MappedRow {
   name: string;
@@ -73,8 +82,14 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
       currency: row[fieldToIdx["currency"] ?? -1] ?? undefined,
       billingCycle: row[fieldToIdx["billingCycle"] ?? -1] ?? "",
       nextRenewalDate: row[fieldToIdx["nextRenewalDate"] ?? -1] ?? "",
-      startDate: fieldToIdx["startDate"] !== undefined ? (row[fieldToIdx["startDate"]] ?? null) : null,
-      categoryName: fieldToIdx["categoryName"] !== undefined ? (row[fieldToIdx["categoryName"]] ?? null) : null,
+      startDate:
+        fieldToIdx["startDate"] !== undefined
+          ? (row[fieldToIdx["startDate"]] ?? null)
+          : null,
+      categoryName:
+        fieldToIdx["categoryName"] !== undefined
+          ? (row[fieldToIdx["categoryName"]] ?? null)
+          : null,
     }));
 
     onContinue(mapped);
@@ -124,7 +139,8 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
                       onValueChange={(val) =>
                         setMapping((prev) => ({
                           ...prev,
-                          [header]: val === "__skip__" ? null : (val as TrackrField),
+                          [header]:
+                            val === "__skip__" ? null : (val as TrackrField),
                         }))
                       }
                     >
@@ -132,7 +148,9 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
                         <SelectValue placeholder="Skip this column" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="__skip__">Skip this column</SelectItem>
+                        <SelectItem value="__skip__">
+                          Skip this column
+                        </SelectItem>
                         {TRACKR_FIELDS.map((f) => (
                           <SelectItem key={f.value} value={f.value}>
                             {f.label}
@@ -153,7 +171,8 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
       {previewRows.length > 0 && (
         <div>
           <p className="mb-2 text-xs text-muted-foreground">
-            Preview (first {previewRows.length} row{previewRows.length > 1 ? "s" : ""})
+            Preview (first {previewRows.length} row
+            {previewRows.length > 1 ? "s" : ""})
           </p>
           <div className="overflow-x-auto rounded-md border">
             <table className="w-full text-xs">
@@ -170,7 +189,10 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
                 {previewRows.map((row, ri) => (
                   <tr key={ri} className="border-b last:border-0">
                     {row.map((cell, ci) => (
-                      <td key={ci} className="px-3 py-1.5 text-muted-foreground">
+                      <td
+                        key={ci}
+                        className="px-3 py-1.5 text-muted-foreground"
+                      >
                         {cell}
                       </td>
                     ))}

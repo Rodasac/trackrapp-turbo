@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { signUpNewUser, loginUser, signOut, uniqueSuffix } from "./fixtures/auth";
+import {
+  signUpNewUser,
+  loginUser,
+  signOut,
+  uniqueSuffix,
+} from "./fixtures/auth";
 
 // All tests in this file run unauthenticated
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -65,9 +70,7 @@ test("login with valid credentials redirects to dashboard", async ({
   await signOut(page);
   await loginUser(page, creds.email, creds.password);
   await expect(page).toHaveURL(/\/dashboard/);
-  await expect(
-    page.getByRole("heading", { name: "Dashboard" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 });
 
 test("login with wrong password shows error toast", async ({ page }) => {
@@ -94,9 +97,7 @@ test("protected route /dashboard redirects to /login", async ({ page }) => {
   await expect(page).toHaveURL(/\/login\?callbackUrl/);
 });
 
-test("protected route /subscriptions redirects to /login", async ({
-  page,
-}) => {
+test("protected route /subscriptions redirects to /login", async ({ page }) => {
   await page.goto("/subscriptions");
   await expect(page).toHaveURL(/\/login/);
 });

@@ -24,9 +24,7 @@ export function RenewalCalendar() {
   const renewalDates = getRenewalDates(renewals);
 
   // Find renewals on the selected date
-  const selectedDateStr = selectedDate
-    ? toDateString(selectedDate)
-    : null;
+  const selectedDateStr = selectedDate ? toDateString(selectedDate) : null;
   const renewalsOnSelected = selectedDateStr
     ? renewals.filter((r) => r.nextRenewalDate === selectedDateStr)
     : [];
@@ -43,8 +41,7 @@ export function RenewalCalendar() {
           onSelect={setSelectedDate}
           modifiers={{ renewal: renewalDates }}
           modifiersClassNames={{
-            renewal:
-              "bg-brand/20 font-semibold text-brand rounded-full",
+            renewal: "bg-brand/20 font-semibold text-brand rounded-full",
           }}
           className="rounded-md border"
         />

@@ -1,6 +1,12 @@
 "use client";
 
-import { TrendingDown, AlertTriangle, Info, Scale, Sparkles } from "lucide-react";
+import {
+  TrendingDown,
+  AlertTriangle,
+  Info,
+  Scale,
+  Sparkles,
+} from "lucide-react";
 import { Badge } from "@repo/ui/badge";
 import { cn } from "@repo/ui/lib/utils";
 import type { AiTipItem } from "@/lib/types/api";
@@ -11,14 +17,16 @@ const categoryConfig = {
     icon: TrendingDown,
     borderColor: "border-l-emerald-500",
     iconColor: "text-emerald-500",
-    badgeClass: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
+    badgeClass:
+      "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
   },
   warning: {
     label: "Warning",
     icon: AlertTriangle,
     borderColor: "border-l-amber-500",
     iconColor: "text-amber-500",
-    badgeClass: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
+    badgeClass:
+      "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
   },
   info: {
     label: "Info",
@@ -32,7 +40,8 @@ const categoryConfig = {
     icon: Scale,
     borderColor: "border-l-violet-500",
     iconColor: "text-violet-500",
-    badgeClass: "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300",
+    badgeClass:
+      "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300",
   },
 } as const;
 
@@ -71,7 +80,12 @@ export function AiTipCard({ tip, index = 0 }: AiTipCardProps) {
             {tip.title}
           </h3>
         </div>
-        <Badge className={cn("shrink-0 text-xs font-medium border-0", config.badgeClass)}>
+        <Badge
+          className={cn(
+            "shrink-0 text-xs font-medium border-0",
+            config.badgeClass,
+          )}
+        >
           {config.label}
         </Badge>
       </div>

@@ -10,14 +10,27 @@ import { mockSubscriptionDetail, mockCategory } from "@/tests/fixtures";
 vi.mock("@repo/ui/select", () => ({
   Select: ({ children }: { children: React.ReactNode }) =>
     React.createElement("div", { "data-testid": "select" }, children),
-  SelectGroup: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  SelectValue: ({ placeholder }: { placeholder?: string }) => React.createElement("span", null, placeholder),
-  SelectTrigger: ({ children, className }: { children: React.ReactNode; className?: string }) =>
-    React.createElement("button", { type: "button", className }, children),
+  SelectGroup: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  SelectValue: ({ placeholder }: { placeholder?: string }) =>
+    React.createElement("span", null, placeholder),
+  SelectTrigger: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => React.createElement("button", { type: "button", className }, children),
   SelectContent: () => null,
-  SelectLabel: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) =>
-    React.createElement("div", { "data-value": value }, children),
+  SelectLabel: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  SelectItem: ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode;
+    value: string;
+  }) => React.createElement("div", { "data-value": value }, children),
   SelectSeparator: () => null,
   SelectScrollUpButton: () => null,
   SelectScrollDownButton: () => null,
@@ -28,9 +41,12 @@ vi.mock("@repo/ui/calendar", () => ({
 }));
 
 vi.mock("@repo/ui/popover", () => ({
-  Popover: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  PopoverTrigger: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  PopoverContent: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
+  Popover: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  PopoverTrigger: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  PopoverContent: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
 }));
 
 vi.mock("@/hooks/use-subscription", () => ({
@@ -74,10 +90,22 @@ import {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useCategories).mockReturnValue({ data: [] } as never);
-  vi.mocked(useSaveSubscription).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as never);
-  vi.mocked(useCreateCategory).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as never);
-  vi.mocked(useDeactivateSubscription).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as never);
-  vi.mocked(useDeleteSubscription).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as never);
+  vi.mocked(useSaveSubscription).mockReturnValue({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  } as never);
+  vi.mocked(useCreateCategory).mockReturnValue({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  } as never);
+  vi.mocked(useDeactivateSubscription).mockReturnValue({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  } as never);
+  vi.mocked(useDeleteSubscription).mockReturnValue({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  } as never);
 });
 
 describe("SubscriptionDetail", () => {
@@ -113,7 +141,9 @@ describe("SubscriptionDetail", () => {
     } as never);
 
     renderWithProviders(<SubscriptionDetail id={1} />);
-    expect(screen.getByRole("heading", { name: "Netflix" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Netflix" }),
+    ).toBeInTheDocument();
   });
 
   it("renders formatted price and billing cycle", () => {
@@ -187,8 +217,12 @@ describe("SubscriptionDetail", () => {
     await user.click(screen.getByRole("button", { name: /edit/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /save changes/i })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /save changes/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /cancel/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -205,7 +239,9 @@ describe("SubscriptionDetail", () => {
     await user.click(screen.getByRole("button", { name: /cancel/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "Netflix" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Netflix" }),
+      ).toBeInTheDocument();
     });
   });
 

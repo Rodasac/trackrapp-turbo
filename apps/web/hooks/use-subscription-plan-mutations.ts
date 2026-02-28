@@ -35,8 +35,11 @@ export function useOpenBillingPortal() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ returnUrl }: BillingPortalParams) => {
-      const { data, error } = await authClient.subscription.billingPortal({ returnUrl });
-      if (error) throw new Error(error.message ?? "Failed to open billing portal");
+      const { data, error } = await authClient.subscription.billingPortal({
+        returnUrl,
+      });
+      if (error)
+        throw new Error(error.message ?? "Failed to open billing portal");
       return data;
     },
     onSuccess: () => {

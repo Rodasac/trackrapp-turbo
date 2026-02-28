@@ -43,6 +43,16 @@
 }
 
 /* --------------------------------------------------------------------------
+   Chart data-key color variables — referenced as var(--color-<key>) in SVG
+   stroke/fill. Defined here as a global fallback; ChartStyle scopes them
+   more narrowly to each [data-chart] element.
+   -------------------------------------------------------------------------- */
+:root {
+  --color-total: var(--chart-1);
+  --color-price: var(--chart-1);
+}
+
+/* --------------------------------------------------------------------------
    Light theme (neutral palette)
    -------------------------------------------------------------------------- */
 :root {
@@ -98,7 +108,6 @@
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
 }
-
 
 /* --------------------------------------------------------------------------
    Base styles applied by shadcn/ui to all elements

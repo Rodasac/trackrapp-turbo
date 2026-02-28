@@ -1,6 +1,13 @@
 "use client";
 
-import { DollarSign, TrendingUp, Calendar, Activity, Clock, CalendarDays } from "lucide-react";
+import {
+  DollarSign,
+  TrendingUp,
+  Calendar,
+  Activity,
+  Clock,
+  CalendarDays,
+} from "lucide-react";
 import { KpiCard } from "@repo/ui/kpi-card";
 import { formatPrice } from "@repo/shared/format";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";

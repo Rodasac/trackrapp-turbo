@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   if ("error" in result) return result.error;
   const { session } = result;
 
-  const body = await request.json() as { rows: ConfirmedImportRow[] };
+  const body = (await request.json()) as { rows: ConfirmedImportRow[] };
   const rows: ConfirmedImportRow[] = body.rows ?? [];
 
   let imported = 0;

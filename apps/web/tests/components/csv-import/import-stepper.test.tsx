@@ -18,8 +18,14 @@ describe("ImportStepper", () => {
 
   it("marks earlier steps as completed", () => {
     render(<ImportStepper currentStep={3} />);
-    expect(screen.getByTestId("step-1")).toHaveAttribute("data-completed", "true");
-    expect(screen.getByTestId("step-2")).toHaveAttribute("data-completed", "true");
+    expect(screen.getByTestId("step-1")).toHaveAttribute(
+      "data-completed",
+      "true",
+    );
+    expect(screen.getByTestId("step-2")).toHaveAttribute(
+      "data-completed",
+      "true",
+    );
     expect(screen.getByTestId("step-3")).toHaveAttribute("data-active", "true");
   });
 });

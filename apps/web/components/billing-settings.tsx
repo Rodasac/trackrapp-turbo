@@ -32,7 +32,9 @@ export function BillingSettings() {
     );
   }
 
-  const isPro = plan?.plan === "pro" && (plan.status === "active" || plan.status === "trialing");
+  const isPro =
+    plan?.plan === "pro" &&
+    (plan.status === "active" || plan.status === "trialing");
 
   async function handleUpgrade() {
     try {
@@ -52,7 +54,9 @@ export function BillingSettings() {
         returnUrl: `${window.location.origin}/settings?tab=billing`,
       });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to open billing portal");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to open billing portal",
+      );
     }
   }
 

@@ -47,7 +47,12 @@ export function Navbar() {
             </Button>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="hidden sm:inline-flex"
+              >
                 <Link href="/login">Sign in</Link>
               </Button>
               <Button asChild size="sm" className="bg-brand hover:bg-brand/90">

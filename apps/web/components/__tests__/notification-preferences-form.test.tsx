@@ -47,7 +47,9 @@ import {
 
 const mockMutateAsync = vi.fn().mockResolvedValue({});
 
-function setupMocks(prefsOverrides?: Parameters<typeof mockNotificationPreferences>[0]) {
+function setupMocks(
+  prefsOverrides?: Parameters<typeof mockNotificationPreferences>[0],
+) {
   vi.mocked(useNotificationPreferences).mockReturnValue({
     data: mockNotificationPreferences(prefsOverrides),
     isLoading: false,
@@ -142,7 +144,9 @@ describe("NotificationPreferencesForm", () => {
     await user.click(screen.getByRole("button", { name: /save preferences/i }));
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith("Notification preferences saved");
+      expect(toast.success).toHaveBeenCalledWith(
+        "Notification preferences saved",
+      );
     });
   });
 
@@ -172,7 +176,9 @@ describe("NotificationPreferencesForm", () => {
     await user.click(screen.getByRole("button", { name: /save preferences/i }));
 
     await waitFor(() => {
-      const call = mockMutateAsync.mock.calls[0]![0] as { reminderDaysBefore: number[] };
+      const call = mockMutateAsync.mock.calls[0]![0] as {
+        reminderDaysBefore: number[];
+      };
       expect(call.reminderDaysBefore).not.toContain(7);
     });
   });
@@ -187,7 +193,9 @@ describe("NotificationPreferencesForm", () => {
     await user.click(screen.getByRole("button", { name: /save preferences/i }));
 
     await waitFor(() => {
-      const call = mockMutateAsync.mock.calls[0]![0] as { reminderDaysBefore: number[] };
+      const call = mockMutateAsync.mock.calls[0]![0] as {
+        reminderDaysBefore: number[];
+      };
       expect(call.reminderDaysBefore).toContain(1);
       expect(call.reminderDaysBefore).toHaveLength(1);
     });

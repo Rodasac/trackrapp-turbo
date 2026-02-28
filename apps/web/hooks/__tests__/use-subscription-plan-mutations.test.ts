@@ -2,7 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import { useUpgradeToPro, useOpenBillingPortal } from "../use-subscription-plan-mutations";
+import {
+  useUpgradeToPro,
+  useOpenBillingPortal,
+} from "../use-subscription-plan-mutations";
 import { queryKeys } from "@/lib/query-keys";
 
 // vi.mock is hoisted — use vi.hoisted() to share mock references safely
@@ -23,7 +26,11 @@ vi.mock("@/lib/auth-client", () => ({
 
 function makeWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
+    return React.createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children,
+    );
   };
 }
 
@@ -39,7 +46,9 @@ describe("useUpgradeToPro", () => {
 
   it("calls authClient.subscription.upgrade with monthly plan params", async () => {
     mockUpgrade.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useUpgradeToPro(), {
       wrapper: makeWrapper(qc),
     });
@@ -64,7 +73,9 @@ describe("useUpgradeToPro", () => {
 
   it("calls authClient.subscription.upgrade with annual flag when annual=true", async () => {
     mockUpgrade.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useUpgradeToPro(), {
       wrapper: makeWrapper(qc),
     });
@@ -84,7 +95,9 @@ describe("useUpgradeToPro", () => {
 
   it("invalidates subscriptionPlan.all on success", async () => {
     mockUpgrade.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
 
     const { result } = renderHook(() => useUpgradeToPro(), {
@@ -106,8 +119,16 @@ describe("useUpgradeToPro", () => {
   });
 
   it("throws when upgrade returns an error", async () => {
-    mockUpgrade.mockResolvedValue({ data: null, error: { message: "Payment required" } });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    mockUpgrade.mockResolvedValue({
+      data: null,
+      error: { message: "Payment required" },
+    });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     const { result } = renderHook(() => useUpgradeToPro(), {
       wrapper: makeWrapper(qc),
     });
@@ -116,7 +137,8 @@ describe("useUpgradeToPro", () => {
       act(() =>
         result.current.mutateAsync({
           annual: false,
-          successUrl: "http://localhost:3000/settings?tab=billing&upgraded=true",
+          successUrl:
+            "http://localhost:3000/settings?tab=billing&upgraded=true",
           cancelUrl: "http://localhost:3000/pricing",
         }),
       ),
@@ -132,7 +154,9 @@ describe("useOpenBillingPortal", () => {
 
   it("calls authClient.billing.portal with returnUrl", async () => {
     mockBillingPortal.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useOpenBillingPortal(), {
       wrapper: makeWrapper(qc),
     });
@@ -152,7 +176,9 @@ describe("useOpenBillingPortal", () => {
 
   it("invalidates subscriptionPlan.all on success", async () => {
     mockBillingPortal.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
 
     const { result } = renderHook(() => useOpenBillingPortal(), {
@@ -172,8 +198,16 @@ describe("useOpenBillingPortal", () => {
   });
 
   it("throws when billing portal returns an error", async () => {
-    mockBillingPortal.mockResolvedValue({ data: null, error: { message: "Not found" } });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    mockBillingPortal.mockResolvedValue({
+      data: null,
+      error: { message: "Not found" },
+    });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     const { result } = renderHook(() => useOpenBillingPortal(), {
       wrapper: makeWrapper(qc),
     });

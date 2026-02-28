@@ -93,8 +93,7 @@ export function SubscriptionForm({
     // Match category by name
     if (entry.defaultCategory && categories.length > 0) {
       const match = categories.find(
-        (c) =>
-          c.name.toLowerCase() === entry.defaultCategory!.toLowerCase(),
+        (c) => c.name.toLowerCase() === entry.defaultCategory!.toLowerCase(),
       );
       if (match) form.setValue("categoryId", match.id);
     }
@@ -217,7 +216,10 @@ export function SubscriptionForm({
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Next renewal *</FormLabel>
-                <Popover open={nextRenewalOpen} onOpenChange={setNextRenewalOpen}>
+                <Popover
+                  open={nextRenewalOpen}
+                  onOpenChange={setNextRenewalOpen}
+                >
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -303,7 +305,9 @@ export function SubscriptionForm({
               <FormLabel>Category</FormLabel>
               <div className="flex items-center gap-2">
                 <Select
-                  value={field.value !== undefined ? String(field.value) : "none"}
+                  value={
+                    field.value !== undefined ? String(field.value) : "none"
+                  }
                   onValueChange={(v) =>
                     field.onChange(v === "none" ? undefined : Number(v))
                   }

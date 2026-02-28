@@ -37,7 +37,9 @@ describe("subscriptionFormSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((i) => i.path.includes("name"))).toBe(true);
+      expect(result.error.issues.some((i) => i.path.includes("name"))).toBe(
+        true,
+      );
     }
   });
 
@@ -116,7 +118,10 @@ describe("csvImportRowSchema", () => {
   });
 
   it("normalizes billing cycle aliases (month → monthly)", () => {
-    const result = csvImportRowSchema.safeParse({ ...validRow, billingCycle: "month" });
+    const result = csvImportRowSchema.safeParse({
+      ...validRow,
+      billingCycle: "month",
+    });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.billingCycle).toBe("monthly");
@@ -124,7 +129,10 @@ describe("csvImportRowSchema", () => {
   });
 
   it("normalizes billing cycle aliases (annual → yearly)", () => {
-    const result = csvImportRowSchema.safeParse({ ...validRow, billingCycle: "annual" });
+    const result = csvImportRowSchema.safeParse({
+      ...validRow,
+      billingCycle: "annual",
+    });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.billingCycle).toBe("yearly");
@@ -132,7 +140,10 @@ describe("csvImportRowSchema", () => {
   });
 
   it("is case-insensitive for billing cycle (Monthly → monthly)", () => {
-    const result = csvImportRowSchema.safeParse({ ...validRow, billingCycle: "Monthly" });
+    const result = csvImportRowSchema.safeParse({
+      ...validRow,
+      billingCycle: "Monthly",
+    });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.billingCycle).toBe("monthly");
@@ -168,7 +179,9 @@ describe("categoryFormSchema", () => {
     const result = categoryFormSchema.safeParse({ name: "" });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((i) => i.path.includes("name"))).toBe(true);
+      expect(result.error.issues.some((i) => i.path.includes("name"))).toBe(
+        true,
+      );
     }
   });
 

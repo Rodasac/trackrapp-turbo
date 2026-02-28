@@ -15,7 +15,12 @@ describe("detectColumnMapping", () => {
   });
 
   it("maps common aliases case-insensitively", () => {
-    const mapping = detectColumnMapping(["SERVICE", "AMOUNT", "FREQUENCY", "DUE DATE"]);
+    const mapping = detectColumnMapping([
+      "SERVICE",
+      "AMOUNT",
+      "FREQUENCY",
+      "DUE DATE",
+    ]);
     expect(mapping["SERVICE"]).toBe("name");
     expect(mapping["AMOUNT"]).toBe("price");
     expect(mapping["FREQUENCY"]).toBe("billingCycle");

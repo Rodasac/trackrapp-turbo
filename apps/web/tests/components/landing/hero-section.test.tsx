@@ -12,9 +12,7 @@ describe("HeroSection", () => {
 
   it("renders subheadline text", () => {
     render(<HeroSection />);
-    expect(
-      screen.getByText(/never miss a renewal/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/never miss a renewal/i)).toBeInTheDocument();
   });
 
   it("renders 'Start free' CTA linking to /signup", () => {
@@ -27,8 +25,9 @@ describe("HeroSection", () => {
 
   it("renders 'See pricing' CTA linking to #pricing", () => {
     render(<HeroSection />);
-    expect(
-      screen.getByRole("link", { name: /see pricing/i }),
-    ).toHaveAttribute("href", "#pricing");
+    expect(screen.getByRole("link", { name: /see pricing/i })).toHaveAttribute(
+      "href",
+      "#pricing",
+    );
   });
 });

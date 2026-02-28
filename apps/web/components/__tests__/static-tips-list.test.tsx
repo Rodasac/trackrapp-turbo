@@ -33,7 +33,10 @@ const mockTips = [
 
 describe("StaticTipsList", () => {
   it("shows loading skeleton while fetching", () => {
-    mockUseStaticTips.mockReturnValue({ data: undefined, isLoading: true } as never);
+    mockUseStaticTips.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    } as never);
     const { container } = renderWithProviders(<StaticTipsList />);
     expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
   });
@@ -46,22 +49,35 @@ describe("StaticTipsList", () => {
   });
 
   it("renders all tip titles when data is available", () => {
-    mockUseStaticTips.mockReturnValue({ data: mockTips, isLoading: false } as never);
+    mockUseStaticTips.mockReturnValue({
+      data: mockTips,
+      isLoading: false,
+    } as never);
     renderWithProviders(<StaticTipsList />);
     expect(screen.getByTestId("tips-list")).toBeInTheDocument();
     expect(screen.getByText("Switch to annual billing")).toBeInTheDocument();
-    expect(screen.getByText("Your subscription cost per day")).toBeInTheDocument();
+    expect(
+      screen.getByText("Your subscription cost per day"),
+    ).toBeInTheDocument();
     expect(screen.getByText("High Entertainment spend")).toBeInTheDocument();
   });
 
   it("renders tip messages", () => {
-    mockUseStaticTips.mockReturnValue({ data: mockTips, isLoading: false } as never);
+    mockUseStaticTips.mockReturnValue({
+      data: mockTips,
+      isLoading: false,
+    } as never);
     renderWithProviders(<StaticTipsList />);
-    expect(screen.getByText("You could save $30/year by switching to annual.")).toBeInTheDocument();
+    expect(
+      screen.getByText("You could save $30/year by switching to annual."),
+    ).toBeInTheDocument();
   });
 
   it("shows correct badges for each tip type", () => {
-    mockUseStaticTips.mockReturnValue({ data: mockTips, isLoading: false } as never);
+    mockUseStaticTips.mockReturnValue({
+      data: mockTips,
+      isLoading: false,
+    } as never);
     renderWithProviders(<StaticTipsList />);
     expect(screen.getByText("Savings")).toBeInTheDocument();
     expect(screen.getByText("Info")).toBeInTheDocument();

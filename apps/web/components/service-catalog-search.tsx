@@ -21,7 +21,8 @@ export function ServiceCatalogSearch({ onSelect }: ServiceCatalogSearchProps) {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const { data: results = [], isFetching } = useServiceCatalogSearch(debouncedQuery);
+  const { data: results = [], isFetching } =
+    useServiceCatalogSearch(debouncedQuery);
 
   // Close dropdown on outside click
   useEffect(() => {

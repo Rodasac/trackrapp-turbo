@@ -54,7 +54,9 @@ describe("useDashboardCharts", () => {
     expect(result.current.data).toHaveProperty("categoryBreakdown");
     expect(result.current.data).toHaveProperty("topSubscriptions");
     expect(result.current.data?.spendingTrend).toHaveLength(2);
-    expect(result.current.data?.categoryBreakdown[0]?.name).toBe("Entertainment");
+    expect(result.current.data?.categoryBreakdown[0]?.name).toBe(
+      "Entertainment",
+    );
     expect(result.current.data?.topSubscriptions[0]?.name).toBe("Netflix");
   });
 

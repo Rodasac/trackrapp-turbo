@@ -21,9 +21,7 @@ test("Dashboard sidebar link navigates to /dashboard", async ({ page }) => {
   await page.goto("/subscriptions");
   await page.getByRole("link", { name: /^dashboard$/i }).click();
   await expect(page).toHaveURL(/\/dashboard/);
-  await expect(
-    page.getByRole("heading", { name: "Dashboard" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 });
 
 test("Subscriptions sidebar link navigates to /subscriptions", async ({
@@ -49,7 +47,9 @@ test("Notifications page shows 'All caught up' placeholder", async ({
 
 test("Tips page shows Pro badge and Upgrade button", async ({ page }) => {
   await page.goto("/tips");
-  await expect(page.getByRole("heading", { name: "AI Insights" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "AI Insights" }),
+  ).toBeVisible();
   // Pro badge next to heading
   await expect(page.getByText("Pro").first()).toBeVisible();
   // Upgrade CTA
@@ -58,30 +58,24 @@ test("Tips page shows Pro badge and Upgrade button", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("Settings page shows 3 tabs and Billing tab content", async ({
-  page,
-}) => {
+test("Settings page shows 3 tabs and Billing tab content", async ({ page }) => {
   await page.goto("/settings");
-  await expect(
-    page.getByRole("heading", { name: "Settings" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
 
   // Three tabs
   await expect(page.getByRole("tab", { name: "Profile" })).toBeVisible();
-  await expect(
-    page.getByRole("tab", { name: "Notifications" }),
-  ).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Notifications" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Billing" })).toBeVisible();
 
   // Click Billing tab
   await page.getByRole("tab", { name: "Billing" }).click();
   // Billing card title is in a div, not a heading element
   await expect(
-    page.getByRole("tabpanel", { name: "Billing" }).getByText("Billing", { exact: true }),
+    page
+      .getByRole("tabpanel", { name: "Billing" })
+      .getByText("Billing", { exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByText("Manage your subscription plan"),
-  ).toBeVisible();
+  await expect(page.getByText("Manage your subscription plan")).toBeVisible();
 });
 
 // Pricing is a public page — test it both unauthenticated and from the
@@ -94,7 +88,9 @@ test("pricing page shows Free and Pro plan cards", async ({ page }) => {
 
   // Free card — plan names are in div elements, not heading elements
   await expect(page.getByText("Free", { exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Get started free" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Get started free" }),
+  ).toBeVisible();
 
   // Pro card — authenticated users see a Button (not a Link) for upgrade CTA
   await expect(page.getByText("Pro", { exact: true }).first()).toBeVisible();

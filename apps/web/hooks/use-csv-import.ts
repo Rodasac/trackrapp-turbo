@@ -2,7 +2,10 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
-import type { CsvImportPreviewResponse, CsvImportResult } from "@/lib/types/api";
+import type {
+  CsvImportPreviewResponse,
+  CsvImportResult,
+} from "@/lib/types/api";
 
 interface RawImportRow {
   name: string;
@@ -30,7 +33,9 @@ interface ConfirmedImportRow {
 /** Request preview of mapped CSV rows — fuzzy matches services and validates. */
 export function usePreviewCsvImport() {
   return useMutation({
-    mutationFn: async (rows: RawImportRow[]): Promise<CsvImportPreviewResponse> => {
+    mutationFn: async (
+      rows: RawImportRow[],
+    ): Promise<CsvImportPreviewResponse> => {
       const res = await fetch("/api/subscriptions/import/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +54,9 @@ export function usePreviewCsvImport() {
 export function useConfirmCsvImport() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (rows: ConfirmedImportRow[]): Promise<CsvImportResult> => {
+    mutationFn: async (
+      rows: ConfirmedImportRow[],
+    ): Promise<CsvImportResult> => {
       const res = await fetch("/api/subscriptions/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

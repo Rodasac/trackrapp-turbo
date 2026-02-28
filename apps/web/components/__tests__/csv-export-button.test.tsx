@@ -30,10 +30,13 @@ describe("CsvExportButton", () => {
   it("calls /api/subscriptions/export on click", async () => {
     const user = userEvent.setup();
     vi.mocked(fetch).mockResolvedValue(
-      new Response(new Blob(["Name,Price\nNetflix,15.99"], { type: "text/csv" }), {
-        status: 200,
-        headers: { "Content-Type": "text/csv" },
-      }),
+      new Response(
+        new Blob(["Name,Price\nNetflix,15.99"], { type: "text/csv" }),
+        {
+          status: 200,
+          headers: { "Content-Type": "text/csv" },
+        },
+      ),
     );
 
     // Stub anchor click to avoid JSDOM navigation errors

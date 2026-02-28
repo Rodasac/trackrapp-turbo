@@ -39,7 +39,11 @@ import {
   TableRow,
 } from "@repo/ui/table";
 import { toast } from "sonner";
-import { formatPrice, billingCycleLabel, formatRenewalDate } from "@repo/shared/format";
+import {
+  formatPrice,
+  billingCycleLabel,
+  formatRenewalDate,
+} from "@repo/shared/format";
 import { DeleteSubscriptionDialog } from "@/components/delete-subscription-dialog";
 import { CsvExportButton } from "@/components/csv-export-button";
 import { CsvImportButton } from "@/components/csv-import-button";
@@ -223,9 +227,7 @@ export function SubscriptionList() {
           </TableHeader>
           <TableBody>
             {isLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <SkeletonRow key={i} />
-                ))
+              ? Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)
               : subscriptions.map((sub: SubscriptionListItem) => (
                   <TableRow
                     key={sub.id}
@@ -277,7 +279,11 @@ export function SubscriptionList() {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="size-8">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                          >
                             <MoreHorizontal className="size-4" />
                             <span className="sr-only">Actions</span>
                           </Button>
@@ -311,7 +317,9 @@ export function SubscriptionList() {
                               trigger={
                                 <span className="flex cursor-pointer items-center px-2 py-1.5 text-sm">
                                   <Trash2 className="mr-2 size-4 text-destructive" />
-                                  <span className="text-destructive">Delete</span>
+                                  <span className="text-destructive">
+                                    Delete
+                                  </span>
                                 </span>
                               }
                             />
@@ -336,7 +344,9 @@ export function SubscriptionList() {
           ) : (
             <>
               <p className="font-medium">No subscriptions yet</p>
-              <p className="mt-1">Add your first subscription to get started.</p>
+              <p className="mt-1">
+                Add your first subscription to get started.
+              </p>
               <Button asChild className="mt-4">
                 <Link href="/subscriptions/new">
                   <Plus className="size-4" />

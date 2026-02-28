@@ -47,7 +47,10 @@ export async function DELETE(request: Request) {
   const url = new URL(request.url);
   const endpoint = url.searchParams.get("endpoint");
   if (!endpoint) {
-    return Response.json({ error: "endpoint query param required" }, { status: 400 });
+    return Response.json(
+      { error: "endpoint query param required" },
+      { status: 400 },
+    );
   }
 
   await db

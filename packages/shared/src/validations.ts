@@ -40,7 +40,10 @@ export type NotificationPreferencesValues = z.infer<
   typeof notificationPreferencesSchema
 >;
 
-const billingCycleAliases: Record<string, "monthly" | "yearly" | "weekly" | "quarterly"> = {
+const billingCycleAliases: Record<
+  string,
+  "monthly" | "yearly" | "weekly" | "quarterly"
+> = {
   month: "monthly",
   monthly: "monthly",
   mo: "monthly",
@@ -63,14 +66,20 @@ export const csvImportRowSchema = z.object({
     .string()
     .min(1, "Price is required")
     .regex(/^\d+(\.\d{1,2})?$/, "Enter a valid price (e.g. 9.99)"),
-  currency: z.string().optional().transform((v) => v ?? "USD"),
+  currency: z
+    .string()
+    .optional()
+    .transform((v) => v ?? "USD"),
   billingCycle: z
     .string()
     .min(1, "Billing cycle is required")
     .transform((v, ctx) => {
       const alias = billingCycleAliases[v.toLowerCase().trim()];
       if (!alias) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Unknown billing cycle: ${v}` });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Unknown billing cycle: ${v}`,
+        });
         return z.NEVER;
       }
       return alias;

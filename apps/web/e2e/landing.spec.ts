@@ -43,12 +43,18 @@ test("'See pricing' CTA links to #pricing anchor", async ({ page }) => {
 
 test("'Get started' navigates to /signup", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: /get started/i }).first().click();
+  await page
+    .getByRole("link", { name: /get started/i })
+    .first()
+    .click();
   await expect(page).toHaveURL(/\/signup/);
 });
 
 test("'Sign in' link navigates to /login", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: /sign in/i }).first().click();
+  await page
+    .getByRole("link", { name: /sign in/i })
+    .first()
+    .click();
   await expect(page).toHaveURL(/\/login/);
 });

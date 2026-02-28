@@ -52,6 +52,9 @@ export async function GET(request: Request) {
 
   // ── Spending Trend: last 12 months ──────────────────────────────────────
   const now = new Date();
+  const chartRangeStartStr = toDateString(
+    new Date(now.getFullYear(), now.getMonth() - 11, 1),
+  );
   const spendingTrend: SpendingTrendPoint[] = [];
 
   for (let i = 11; i >= 0; i--) {
@@ -61,14 +64,13 @@ export async function GET(request: Request) {
 
     let monthTotal = 0;
     for (const sub of subs) {
-      const startDate = sub.startDate ?? toDateString(sub.createdAt);
+      const startDate = sub.startDate ?? chartRangeStartStr;
       // Sub was active during this month if it started before monthEnd
       // and was either still active OR deactivated after monthStart
       const wasActive =
         startDate <= monthEndStr &&
         (sub.isActive ||
-          (sub.deactivatedAt != null &&
-            sub.deactivatedAt >= monthStart));
+          (sub.deactivatedAt != null && sub.deactivatedAt >= monthStart));
 
       if (!wasActive) continue;
 
@@ -77,9 +79,7 @@ export async function GET(request: Request) {
       let effectivePrice = parseFloat(sub.price);
       if (history.length > 0) {
         // Find the last entry recorded at or before monthEnd
-        const relevant = history.filter(
-          (h) => h.recordedAt <= monthEnd,
-        );
+        const relevant = history.filter((h) => h.recordedAt <= monthEnd);
         if (relevant.length > 0) {
           effectivePrice = parseFloat(relevant[relevant.length - 1]!.price);
         }
@@ -92,12 +92,21 @@ export async function GET(request: Request) {
       month: "short",
       year: "2-digit",
     });
-    spendingTrend.push({ month: label, total: parseFloat(monthTotal.toFixed(2)) });
+    spendingTrend.push({
+      month: label,
+      total: parseFloat(monthTotal.toFixed(2)),
+    });
   }
 
   // ── Category Breakdown (active subs only) ────────────────────────────────
   const activeSubs = subs.filter((s) => s.isActive);
-  const categoryIds = [...new Set(activeSubs.map((s) => s.categoryId).filter((id): id is number => id != null))];
+  const categoryIds = [
+    ...new Set(
+      activeSubs
+        .map((s) => s.categoryId)
+        .filter((id): id is number => id != null),
+    ),
+  ];
 
   const categories =
     categoryIds.length > 0
@@ -116,10 +125,15 @@ export async function GET(request: Request) {
     const name = cat?.name ?? "Uncategorized";
     const color = cat?.color ?? "#94a3b8";
     const existing = categoryTotals.get(name) ?? { total: 0, color };
-    categoryTotals.set(name, { total: existing.total + monthlyRate, color: existing.color });
+    categoryTotals.set(name, {
+      total: existing.total + monthlyRate,
+      color: existing.color,
+    });
   }
 
-  const categoryBreakdown: CategoryBreakdownItem[] = [...categoryTotals.entries()]
+  const categoryBreakdown: CategoryBreakdownItem[] = [
+    ...categoryTotals.entries(),
+  ]
     .map(([name, { total, color }]) => ({
       name,
       total: parseFloat(total.toFixed(2)),

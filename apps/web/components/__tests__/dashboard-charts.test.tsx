@@ -29,7 +29,10 @@ const mockUseDashboardCharts = vi.mocked(useDashboardCharts);
 
 describe("DashboardCharts", () => {
   it("shows loading skeleton while fetching", () => {
-    mockUseDashboardCharts.mockReturnValue({ isLoading: true, data: undefined } as never);
+    mockUseDashboardCharts.mockReturnValue({
+      isLoading: true,
+      data: undefined,
+    } as never);
     renderWithProviders(<DashboardCharts />);
     expect(screen.getByTestId("dashboard-charts-loading")).toBeInTheDocument();
   });
@@ -39,8 +42,12 @@ describe("DashboardCharts", () => {
       isLoading: false,
       data: {
         spendingTrend: [{ month: "Jan '25", total: 45.97 }],
-        categoryBreakdown: [{ name: "Entertainment", total: 30.0, color: "#6366f1" }],
-        topSubscriptions: [{ name: "Netflix", monthlyRate: 15.99, billingCycle: "monthly" }],
+        categoryBreakdown: [
+          { name: "Entertainment", total: 30.0, color: "#6366f1" },
+        ],
+        topSubscriptions: [
+          { name: "Netflix", monthlyRate: 15.99, billingCycle: "monthly" },
+        ],
       },
     } as never);
 
@@ -56,7 +63,10 @@ describe("DashboardCharts", () => {
   });
 
   it("passes empty arrays to charts when data is undefined", () => {
-    mockUseDashboardCharts.mockReturnValue({ isLoading: false, data: undefined } as never);
+    mockUseDashboardCharts.mockReturnValue({
+      isLoading: false,
+      data: undefined,
+    } as never);
     renderWithProviders(<DashboardCharts />);
     expect(screen.getByText("trend-data:0")).toBeInTheDocument();
     expect(screen.getByText("categories:0")).toBeInTheDocument();

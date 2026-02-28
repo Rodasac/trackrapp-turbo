@@ -6,7 +6,10 @@ import { toast } from "sonner";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Skeleton } from "@repo/ui/skeleton";
-import { usePreviewCsvImport, useConfirmCsvImport } from "@/hooks/use-csv-import";
+import {
+  usePreviewCsvImport,
+  useConfirmCsvImport,
+} from "@/hooks/use-csv-import";
 import type { CsvImportPreviewRow } from "@/lib/types/api";
 import type { MappedRow } from "./mapping-step";
 import { cn } from "@repo/ui/lib/utils";
@@ -16,11 +19,23 @@ interface PreviewStepProps {
   onSuccess: () => void;
 }
 
-function MatchBadge({ confidence }: { confidence: CsvImportPreviewRow["matchConfidence"] }) {
+function MatchBadge({
+  confidence,
+}: {
+  confidence: CsvImportPreviewRow["matchConfidence"];
+}) {
   if (confidence === "exact")
-    return <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">Exact</Badge>;
+    return (
+      <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+        Exact
+      </Badge>
+    );
   if (confidence === "fuzzy")
-    return <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">Fuzzy</Badge>;
+    return (
+      <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">
+        Fuzzy
+      </Badge>
+    );
   return <Badge variant="secondary">None</Badge>;
 }
 
@@ -33,13 +48,14 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
 
   useEffect(() => {
     preview.mutate(mappedRows);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const rows = preview.data?.rows ?? [];
   const validRows = rows.filter((r) => r.isValid);
 
-  const allSelected = validRows.length > 0 && validRows.every((r) => selected.has(r.rowIndex));
+  const allSelected =
+    validRows.length > 0 && validRows.every((r) => selected.has(r.rowIndex));
 
   function toggleAll() {
     if (allSelected) {
@@ -65,7 +81,11 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
         name: r.name,
         price: r.price,
         currency: r.currency,
-        billingCycle: r.billingCycle as "monthly" | "yearly" | "weekly" | "quarterly",
+        billingCycle: r.billingCycle as
+          | "monthly"
+          | "yearly"
+          | "weekly"
+          | "quarterly",
         nextRenewalDate: r.nextRenewalDate,
         startDate: r.startDate ?? null,
         categoryId: r.resolvedCategoryId ?? null,
@@ -76,9 +96,13 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
 
     try {
       const result = await confirm.mutateAsync(toImport);
-      toast.success(`Imported ${result.imported} subscription${result.imported !== 1 ? "s" : ""}`);
+      toast.success(
+        `Imported ${result.imported} subscription${result.imported !== 1 ? "s" : ""}`,
+      );
       if (result.failed > 0) {
-        toast.warning(`${result.failed} row${result.failed !== 1 ? "s" : ""} failed to import`);
+        toast.warning(
+          `${result.failed} row${result.failed !== 1 ? "s" : ""} failed to import`,
+        );
       }
       onSuccess();
       router.push("/subscriptions");
@@ -116,7 +140,9 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
           onClick={handleImport}
           disabled={selected.size === 0 || confirm.isPending}
         >
-          {confirm.isPending ? "Importing…" : `Import ${selected.size} Selected`}
+          {confirm.isPending
+            ? "Importing…"
+            : `Import ${selected.size} Selected`}
         </Button>
       </div>
 
@@ -172,7 +198,9 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
                   {row.currency} {row.price}
                 </td>
                 <td className="px-3 py-2 capitalize">{row.billingCycle}</td>
-                <td className="px-3 py-2 tabular-nums">{row.nextRenewalDate}</td>
+                <td className="px-3 py-2 tabular-nums">
+                  {row.nextRenewalDate}
+                </td>
                 <td className="px-3 py-2 text-muted-foreground">
                   {row.categoryName ?? "—"}
                 </td>

@@ -8,10 +8,7 @@ vi.mock("web-push", () => ({
 }));
 
 import webpush from "web-push";
-import {
-  initVapid,
-  sendPushNotification,
-} from "../../src/services/push.js";
+import { initVapid, sendPushNotification } from "../../src/services/push.js";
 
 describe("push service", () => {
   beforeEach(() => {
@@ -57,7 +54,10 @@ describe("push service", () => {
     it("resolves without throwing", async () => {
       await expect(
         sendPushNotification(
-          { endpoint: "https://push.example.com/sub/456", keys: { p256dh: "k", auth: "a" } },
+          {
+            endpoint: "https://push.example.com/sub/456",
+            keys: { p256dh: "k", auth: "a" },
+          },
           { title: "Test", message: "Test msg", url: "/" },
         ),
       ).resolves.toBeUndefined();

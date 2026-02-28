@@ -23,7 +23,9 @@ export async function GET(request: Request) {
   const subs = await db.query.trackedSubscriptions.findMany({
     where: and(
       eq(schema.trackedSubscriptions.userId, session.user.id),
-      search ? ilike(schema.trackedSubscriptions.name, `%${search}%`) : undefined,
+      search
+        ? ilike(schema.trackedSubscriptions.name, `%${search}%`)
+        : undefined,
       categoryNum !== null
         ? eq(schema.trackedSubscriptions.categoryId, categoryNum)
         : undefined,
@@ -33,12 +35,13 @@ export async function GET(request: Request) {
     ),
     with: { category: true },
     orderBy: (() => {
-      const col = {
-        name: schema.trackedSubscriptions.name,
-        price: schema.trackedSubscriptions.price,
-        createdAt: schema.trackedSubscriptions.createdAt,
-        nextRenewalDate: schema.trackedSubscriptions.nextRenewalDate,
-      }[sort] ?? schema.trackedSubscriptions.nextRenewalDate;
+      const col =
+        {
+          name: schema.trackedSubscriptions.name,
+          price: schema.trackedSubscriptions.price,
+          createdAt: schema.trackedSubscriptions.createdAt,
+          nextRenewalDate: schema.trackedSubscriptions.nextRenewalDate,
+        }[sort] ?? schema.trackedSubscriptions.nextRenewalDate;
       return [order === "desc" ? desc(col) : asc(col)];
     })(),
   });

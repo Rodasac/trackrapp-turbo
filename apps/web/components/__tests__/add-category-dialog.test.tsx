@@ -28,7 +28,9 @@ beforeEach(() => {
 describe("AddCategoryDialog", () => {
   it("renders the trigger button initially", () => {
     renderWithProviders(<AddCategoryDialog onCreated={vi.fn()} />);
-    expect(screen.getByRole("button", { name: /new category/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /new category/i }),
+    ).toBeInTheDocument();
   });
 
   it("opens the dialog when trigger is clicked", async () => {
@@ -37,7 +39,9 @@ describe("AddCategoryDialog", () => {
     await user.click(screen.getByRole("button", { name: /new category/i }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     // Dialog has Name input (use placeholder since "Icon (emoji or name)" also matches /name/i)
-    expect(screen.getByPlaceholderText("e.g. Entertainment")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("e.g. Entertainment"),
+    ).toBeInTheDocument();
   });
 
   it("shows validation error when submitting empty name", async () => {
@@ -53,7 +57,13 @@ describe("AddCategoryDialog", () => {
   it("calls mutateAsync and onCreated on successful submit", async () => {
     const user = userEvent.setup();
     const onCreated = vi.fn();
-    const createdCat = { id: 5, name: "Work", color: null, icon: null, userId: "u1" };
+    const createdCat = {
+      id: 5,
+      name: "Work",
+      color: null,
+      icon: null,
+      userId: "u1",
+    };
     mockMutateAsync.mockResolvedValue(createdCat);
 
     renderWithProviders(<AddCategoryDialog onCreated={onCreated} />);

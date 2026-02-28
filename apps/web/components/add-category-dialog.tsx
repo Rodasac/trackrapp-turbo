@@ -22,7 +22,10 @@ import {
   FormMessage,
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
-import { categoryFormSchema, type CategoryFormValues } from "@repo/shared/validations";
+import {
+  categoryFormSchema,
+  type CategoryFormValues,
+} from "@repo/shared/validations";
 import { useCreateCategory } from "@/hooks/use-subscription-mutations";
 import type { Category } from "@repo/database";
 

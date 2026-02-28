@@ -23,16 +23,39 @@ vi.mock("next/navigation", () => ({
 
 // Radix UI Select throws on value="". Use simple mock.
 vi.mock("@repo/ui/select", () => ({
-  Select: ({ children, value }: { children: React.ReactNode; value?: string }) =>
-    React.createElement("div", { "data-testid": "select", "data-value": value }, children),
-  SelectGroup: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  SelectValue: ({ placeholder }: { placeholder?: string }) => React.createElement("span", null, placeholder),
-  SelectTrigger: ({ children, className }: { children: React.ReactNode; className?: string }) =>
-    React.createElement("button", { type: "button", className }, children),
+  Select: ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode;
+    value?: string;
+  }) =>
+    React.createElement(
+      "div",
+      { "data-testid": "select", "data-value": value },
+      children,
+    ),
+  SelectGroup: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  SelectValue: ({ placeholder }: { placeholder?: string }) =>
+    React.createElement("span", null, placeholder),
+  SelectTrigger: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => React.createElement("button", { type: "button", className }, children),
   SelectContent: () => null, // Don't render options to avoid duplicate text nodes
-  SelectLabel: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) =>
-    React.createElement("div", { "data-value": value }, children),
+  SelectLabel: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  SelectItem: ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode;
+    value: string;
+  }) => React.createElement("div", { "data-value": value }, children),
   SelectSeparator: () => null,
   SelectScrollUpButton: () => null,
   SelectScrollDownButton: () => null,
@@ -40,15 +63,16 @@ vi.mock("@repo/ui/select", () => ({
 
 // Calendar and Popover are complex UI; mock them so date pickers don't break tests
 vi.mock("@repo/ui/calendar", () => ({
-  Calendar: () =>
-    React.createElement("div", { "data-testid": "calendar" }),
+  Calendar: () => React.createElement("div", { "data-testid": "calendar" }),
 }));
 
 vi.mock("@repo/ui/popover", () => ({
-  Popover: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
+  Popover: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
   PopoverTrigger: ({ children }: { children: React.ReactNode }) =>
     React.createElement("div", null, children),
-  PopoverContent: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
+  PopoverContent: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
 }));
 
 vi.mock("@/hooks/use-categories", () => ({
@@ -65,7 +89,11 @@ vi.mock("@/hooks/use-subscription-mutations", () => ({
 // Mock ServiceCatalogSearch to avoid complex interactions in this test
 vi.mock("@/components/service-catalog-search", () => ({
   ServiceCatalogSearch: ({ onSelect }: { onSelect: () => void }) => (
-    <input data-testid="catalog-search" placeholder="catalog-search" onChange={() => onSelect()} />
+    <input
+      data-testid="catalog-search"
+      placeholder="catalog-search"
+      onChange={() => onSelect()}
+    />
   ),
 }));
 
@@ -225,6 +253,8 @@ describe("SubscriptionForm", () => {
     // SelectValue mock renders placeholder — with SelectContent=null no duplicate
     expect(screen.getByText("No category")).toBeInTheDocument();
     // The "New category" add button is also present
-    expect(screen.getByRole("button", { name: /new category/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /new category/i }),
+    ).toBeInTheDocument();
   });
 });

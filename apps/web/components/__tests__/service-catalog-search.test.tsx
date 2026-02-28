@@ -58,7 +58,10 @@ describe("ServiceCatalogSearch", () => {
   it("renders results after typing", async () => {
     const user = userEvent.setup();
     const entry = mockServiceCatalogEntry({ id: 1, name: "Netflix" });
-    mockUseSearch.mockReturnValue({ data: [entry], isFetching: false } as never);
+    mockUseSearch.mockReturnValue({
+      data: [entry],
+      isFetching: false,
+    } as never);
 
     renderWithProviders(<ServiceCatalogSearch onSelect={vi.fn()} />);
 
@@ -73,7 +76,10 @@ describe("ServiceCatalogSearch", () => {
   it("calls onSelect when a result is clicked", async () => {
     const user = userEvent.setup();
     const entry = mockServiceCatalogEntry({ id: 1, name: "Netflix" });
-    mockUseSearch.mockReturnValue({ data: [entry], isFetching: false } as never);
+    mockUseSearch.mockReturnValue({
+      data: [entry],
+      isFetching: false,
+    } as never);
 
     const onSelect = vi.fn();
     renderWithProviders(<ServiceCatalogSearch onSelect={onSelect} />);
@@ -81,7 +87,10 @@ describe("ServiceCatalogSearch", () => {
     await user.type(screen.getByPlaceholderText(/search for a service/i), "N");
     await waitFor(() => screen.getByText("Netflix"));
     // Use pointer mousedown (component uses onMouseDown, not onClick)
-    await user.pointer({ target: screen.getByText("Netflix"), keys: "[MouseLeft>]" });
+    await user.pointer({
+      target: screen.getByText("Netflix"),
+      keys: "[MouseLeft>]",
+    });
 
     expect(onSelect).toHaveBeenCalledWith(entry);
   });
@@ -91,7 +100,10 @@ describe("ServiceCatalogSearch", () => {
     mockUseSearch.mockReturnValue({ data: [], isFetching: false } as never);
 
     renderWithProviders(<ServiceCatalogSearch onSelect={vi.fn()} />);
-    await user.type(screen.getByPlaceholderText(/search for a service/i), "xyz");
+    await user.type(
+      screen.getByPlaceholderText(/search for a service/i),
+      "xyz",
+    );
 
     await waitFor(() => {
       expect(screen.getByText(/no matches/i)).toBeInTheDocument();
@@ -101,7 +113,10 @@ describe("ServiceCatalogSearch", () => {
   it("shows Enter manually button when results exist", async () => {
     const user = userEvent.setup();
     const entry = mockServiceCatalogEntry();
-    mockUseSearch.mockReturnValue({ data: [entry], isFetching: false } as never);
+    mockUseSearch.mockReturnValue({
+      data: [entry],
+      isFetching: false,
+    } as never);
 
     renderWithProviders(<ServiceCatalogSearch onSelect={vi.fn()} />);
     await user.type(screen.getByPlaceholderText(/search for a service/i), "N");
@@ -114,10 +129,15 @@ describe("ServiceCatalogSearch", () => {
   it("clears input when Enter manually is clicked", async () => {
     const user = userEvent.setup();
     const entry = mockServiceCatalogEntry();
-    mockUseSearch.mockReturnValue({ data: [entry], isFetching: false } as never);
+    mockUseSearch.mockReturnValue({
+      data: [entry],
+      isFetching: false,
+    } as never);
 
     renderWithProviders(<ServiceCatalogSearch onSelect={vi.fn()} />);
-    const input = screen.getByPlaceholderText(/search for a service/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(
+      /search for a service/i,
+    ) as HTMLInputElement;
     await user.type(input, "N");
     await waitFor(() => screen.getByText(/enter manually/i));
 

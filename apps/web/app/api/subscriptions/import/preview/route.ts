@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   if ("error" in result) return result.error;
   const { session } = result;
 
-  const body = await request.json() as { rows: RawImportRow[] };
+  const body = (await request.json()) as { rows: RawImportRow[] };
   const rows: RawImportRow[] = body.rows ?? [];
 
   // Fetch full service catalog once for fuzzy matching

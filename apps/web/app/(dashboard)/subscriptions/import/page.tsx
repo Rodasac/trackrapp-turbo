@@ -6,7 +6,10 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { ImportStepper } from "@/components/csv-import/import-stepper";
 import { UploadStep } from "@/components/csv-import/upload-step";
-import { MappingStep, type MappedRow } from "@/components/csv-import/mapping-step";
+import {
+  MappingStep,
+  type MappedRow,
+} from "@/components/csv-import/mapping-step";
 import { PreviewStep } from "@/components/csv-import/preview-step";
 import type { ParsedCsv } from "@repo/shared/csv";
 

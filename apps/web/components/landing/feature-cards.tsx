@@ -63,10 +63,7 @@ export function FeatureCards() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map(({ icon: Icon, title, description }) => (
-            <Card
-              key={title}
-              className="hover:shadow-md transition-shadow"
-            >
+            <Card key={title} className="hover:shadow-md transition-shadow">
               <CardContent className="pt-6">
                 <div className="bg-brand/10 text-brand mb-4 flex size-10 items-center justify-center rounded-full">
                   <Icon className="size-5" />

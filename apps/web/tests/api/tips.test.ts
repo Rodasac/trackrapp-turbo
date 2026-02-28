@@ -56,12 +56,21 @@ describe("GET /api/tips", () => {
       session: { user: { id: "user-1" } },
     });
     const mockTips = [
-      { id: 1, title: "Save", message: "Switch annual", category: "savings", generatedAt: new Date(), expiresAt: new Date() },
+      {
+        id: 1,
+        title: "Save",
+        message: "Switch annual",
+        category: "savings",
+        generatedAt: new Date(),
+        expiresAt: new Date(),
+      },
     ];
     mockDbFrom.mockReturnValue({
-      where: vi.fn()
-        .mockResolvedValueOnce([{ status: "active" }])          // Pro check (no orderBy)
-        .mockReturnValueOnce({                                    // tips query (has orderBy)
+      where: vi
+        .fn()
+        .mockResolvedValueOnce([{ status: "active" }]) // Pro check (no orderBy)
+        .mockReturnValueOnce({
+          // tips query (has orderBy)
           orderBy: vi.fn().mockResolvedValueOnce(mockTips),
         }),
     });
@@ -77,9 +86,11 @@ describe("GET /api/tips", () => {
       session: { user: { id: "user-1" } },
     });
     mockDbFrom.mockReturnValue({
-      where: vi.fn()
-        .mockResolvedValueOnce([{ status: "active" }])   // Pro check
-        .mockReturnValueOnce({                             // tips query
+      where: vi
+        .fn()
+        .mockResolvedValueOnce([{ status: "active" }]) // Pro check
+        .mockReturnValueOnce({
+          // tips query
           orderBy: vi.fn().mockResolvedValueOnce([]),
         }),
     });

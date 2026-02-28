@@ -88,9 +88,9 @@ describe("parseJobName", () => {
   });
 
   it("calls process.exit(1) for an unknown job name", () => {
-    expect(() =>
-      parseJobName(["node", "run-job.ts", "unknown-job"]),
-    ).toThrow("process.exit called");
+    expect(() => parseJobName(["node", "run-job.ts", "unknown-job"])).toThrow(
+      "process.exit called",
+    );
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 });

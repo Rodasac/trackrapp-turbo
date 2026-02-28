@@ -68,15 +68,19 @@ export async function PUT(
   if (data.name !== undefined) updateData.name = data.name;
   if (data.price !== undefined) updateData.price = data.price;
   if (data.currency !== undefined) updateData.currency = data.currency;
-  if (data.billingCycle !== undefined) updateData.billingCycle = data.billingCycle;
+  if (data.billingCycle !== undefined)
+    updateData.billingCycle = data.billingCycle;
   if (data.nextRenewalDate !== undefined)
     updateData.nextRenewalDate = data.nextRenewalDate;
-  if (data.startDate !== undefined) updateData.startDate = data.startDate || null;
-  if (data.categoryId !== undefined) updateData.categoryId = data.categoryId ?? null;
+  if (data.startDate !== undefined)
+    updateData.startDate = data.startDate || null;
+  if (data.categoryId !== undefined)
+    updateData.categoryId = data.categoryId ?? null;
   if (data.serviceCatalogId !== undefined)
     updateData.serviceCatalogId = data.serviceCatalogId ?? null;
   if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl || null;
-  if (data.websiteUrl !== undefined) updateData.websiteUrl = data.websiteUrl || null;
+  if (data.websiteUrl !== undefined)
+    updateData.websiteUrl = data.websiteUrl || null;
   if (data.description !== undefined)
     updateData.description = data.description || null;
   if (data.notes !== undefined) updateData.notes = data.notes || null;

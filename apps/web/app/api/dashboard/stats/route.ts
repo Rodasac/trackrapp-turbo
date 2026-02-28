@@ -21,7 +21,9 @@ export async function GET(request: Request) {
 
   const now = new Date();
   const todayStr = toDateString(now);
-  const sevenDaysLaterStr = toDateString(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+  const sevenDaysLaterStr = toDateString(
+    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  );
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   const endOfMonthStr = toDateString(endOfMonth);
   const daysInMonth = endOfMonth.getDate();

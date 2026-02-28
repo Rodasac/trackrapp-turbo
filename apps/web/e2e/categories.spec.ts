@@ -67,9 +67,9 @@ test("create new category appears in dropdown", async ({ page }) => {
   // the trigger text updates reliably.
   const categoryCombobox = page.getByRole("combobox", { name: "Category" });
   await categoryCombobox.click();
-  await expect(
-    page.getByRole("option", { name: catName }),
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("option", { name: catName })).toBeVisible({
+    timeout: 10_000,
+  });
   await page.getByRole("option", { name: catName }).click();
 
   // Trigger should now show the category name
@@ -107,9 +107,7 @@ test("cancel category dialog does not create category", async ({ page }) => {
     .filter({ hasText: /no category/i });
   await categoryTrigger.click();
 
-  await expect(
-    page.getByRole("option", { name: catName }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("option", { name: catName })).not.toBeVisible();
 
   await page.keyboard.press("Escape");
 });

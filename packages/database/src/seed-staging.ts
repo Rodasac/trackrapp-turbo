@@ -314,7 +314,9 @@ async function seedStaging() {
   ]);
 
   console.log(`    ✓  User created: ${DEMO_PRO_EMAIL}`);
-  console.log(`    ✓  Custom categories: ${insertedCustomCats.map((c) => c.name).join(", ")}`);
+  console.log(
+    `    ✓  Custom categories: ${insertedCustomCats.map((c) => c.name).join(", ")}`,
+  );
 
   // Stripe subscription (Pro plan)
   const stripeSubData = buildStripeSubscription(proUser.id);
@@ -322,7 +324,11 @@ async function seedStaging() {
   console.log(`    ✓  Stripe pro subscription inserted`);
 
   // Tracked subscriptions
-  const proSubData = buildProSubscriptions(proUser.id, proCategoryMap, catalogMap);
+  const proSubData = buildProSubscriptions(
+    proUser.id,
+    proCategoryMap,
+    catalogMap,
+  );
   const insertedProSubs = await db
     .insert(schema.trackedSubscriptions)
     .values(proSubData)
@@ -334,7 +340,9 @@ async function seedStaging() {
   // Price history
   const priceHistoryData = buildPriceHistory(proSubIds);
   await db.insert(schema.priceHistory).values(priceHistoryData);
-  console.log(`    ✓  ${priceHistoryData.length} price history records inserted`);
+  console.log(
+    `    ✓  ${priceHistoryData.length} price history records inserted`,
+  );
 
   // Notifications
   const proNotifications = buildNotifications(proUser.id, proSubIds, 12);
@@ -365,7 +373,11 @@ async function seedStaging() {
   await db.insert(schema.accounts).values(freeAccount);
   console.log(`    ✓  User created: ${DEMO_FREE_EMAIL}`);
 
-  const freeSubData = buildFreeSubscriptions(freeUser.id, systemCategoryMap, catalogMap);
+  const freeSubData = buildFreeSubscriptions(
+    freeUser.id,
+    systemCategoryMap,
+    catalogMap,
+  );
   const insertedFreeSubs = await db
     .insert(schema.trackedSubscriptions)
     .values(freeSubData)

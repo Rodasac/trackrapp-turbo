@@ -98,8 +98,8 @@ describe("generate-ai-tips job", () => {
   it("queries Pro users and generates tips", async () => {
     // First select: Pro users
     mockSelectResult
-      .mockResolvedValueOnce([PRO_USER])  // Pro users
-      .mockResolvedValueOnce(SUB_DATA);   // user's subscriptions
+      .mockResolvedValueOnce([PRO_USER]) // Pro users
+      .mockResolvedValueOnce(SUB_DATA); // user's subscriptions
 
     await generateAiTips();
     expect(mockGetAiModel).toHaveBeenCalledWith("anthropic");
@@ -108,8 +108,8 @@ describe("generate-ai-tips job", () => {
 
   it("skips users with 0 active subscriptions", async () => {
     mockSelectResult
-      .mockResolvedValueOnce([PRO_USER])  // Pro users
-      .mockResolvedValueOnce([]);          // no subscriptions
+      .mockResolvedValueOnce([PRO_USER]) // Pro users
+      .mockResolvedValueOnce([]); // no subscriptions
 
     await generateAiTips();
     expect(mockGenerateTipsForUser).not.toHaveBeenCalled();

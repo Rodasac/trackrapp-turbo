@@ -192,9 +192,7 @@ export function mockTrialingPlan(
   };
 }
 
-export function mockRenewalItem(
-  overrides?: Partial<RenewalItem>,
-): RenewalItem {
+export function mockRenewalItem(overrides?: Partial<RenewalItem>): RenewalItem {
   return {
     id: 1,
     name: "Netflix",

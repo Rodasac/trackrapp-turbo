@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -18,7 +12,7 @@ import type { SpendingTrendPoint } from "@/lib/types/api";
 const chartConfig = {
   total: {
     label: "Monthly spend",
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
@@ -37,13 +31,22 @@ export function SpendingTrendChart({ data }: Props) {
 
   return (
     <ChartContainer config={chartConfig} className="h-64 w-full">
-      <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+      <LineChart
+        data={data}
+        margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
+      >
         <CartesianGrid vertical={false} />
-        <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+        <XAxis
+          dataKey="month"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+        />
         <YAxis
           tickLine={false}
           axisLine={false}
           tickMargin={8}
+          domain={[0, "auto"]}
           tickFormatter={(v: number) => `$${v}`}
         />
         <ChartTooltip

@@ -92,10 +92,16 @@ describe("POST /api/subscriptions/import", () => {
       callCount++;
       if (callCount === 1) {
         // First subscription insert fails
-        return { values: vi.fn().mockReturnThis(), returning: vi.fn().mockRejectedValue(new Error("DB error")) };
+        return {
+          values: vi.fn().mockReturnThis(),
+          returning: vi.fn().mockRejectedValue(new Error("DB error")),
+        };
       }
       // Second subscription insert succeeds
-      return { values: vi.fn().mockReturnThis(), returning: vi.fn().mockResolvedValue([{ id: 2, price: "9.99" }]) };
+      return {
+        values: vi.fn().mockReturnThis(),
+        returning: vi.fn().mockResolvedValue([{ id: 2, price: "9.99" }]),
+      };
     });
 
     const rows = [validRow, { ...validRow, name: "Spotify", price: "9.99" }];

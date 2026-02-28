@@ -20,6 +20,8 @@ export async function runCleanup(): Promise<number> {
     .execute()) as { rowCount?: number };
 
   const deleted = result?.rowCount ?? 0;
-  console.log(`[cleanup] Deleted ${deleted} read notifications older than ${RETENTION_DAYS} days`);
+  console.log(
+    `[cleanup] Deleted ${deleted} read notifications older than ${RETENTION_DAYS} days`,
+  );
   return deleted;
 }

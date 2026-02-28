@@ -9,7 +9,11 @@ vi.mock("@/lib/auth", () => ({
   },
 }));
 
-import { requireSession, validationErrorResponse, parseIdParam } from "../helpers";
+import {
+  requireSession,
+  validationErrorResponse,
+  parseIdParam,
+} from "../helpers";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
 

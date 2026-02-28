@@ -32,9 +32,12 @@ describe("useSubscriptions", () => {
       new Response(JSON.stringify([]), { status: 200 }),
     );
 
-    const { result } = renderHook(() => useSubscriptions({ search: "netflix" }), {
-      wrapper: createWrapper(),
-    });
+    const { result } = renderHook(
+      () => useSubscriptions({ search: "netflix" }),
+      {
+        wrapper: createWrapper(),
+      },
+    );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     const url = vi.mocked(fetch).mock.calls[0]![0] as string;
@@ -46,10 +49,9 @@ describe("useSubscriptions", () => {
       new Response(JSON.stringify([]), { status: 200 }),
     );
 
-    const { result } = renderHook(
-      () => useSubscriptions({ active: false }),
-      { wrapper: createWrapper() },
-    );
+    const { result } = renderHook(() => useSubscriptions({ active: false }), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     const url = vi.mocked(fetch).mock.calls[0]![0] as string;
@@ -73,7 +75,10 @@ describe("useSubscriptions", () => {
   });
 
   it("returns data on success", async () => {
-    const items = [mockSubscriptionListItem(), mockSubscriptionListItem({ id: 2, name: "Spotify" })];
+    const items = [
+      mockSubscriptionListItem(),
+      mockSubscriptionListItem({ id: 2, name: "Spotify" }),
+    ];
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify(items), { status: 200 }),
     );

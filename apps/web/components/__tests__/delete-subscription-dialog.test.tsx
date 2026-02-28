@@ -83,7 +83,10 @@ describe("DeleteSubscriptionDialog", () => {
     mockDeactivate.mockResolvedValue({});
 
     renderWithProviders(
-      <DeleteSubscriptionDialog {...defaultProps} onDeactivate={onDeactivate} />,
+      <DeleteSubscriptionDialog
+        {...defaultProps}
+        onDeactivate={onDeactivate}
+      />,
     );
     await user.click(screen.getByRole("button", { name: /^delete$/i }));
     await user.click(screen.getByRole("button", { name: /^deactivate$/i }));
@@ -104,7 +107,9 @@ describe("DeleteSubscriptionDialog", () => {
       <DeleteSubscriptionDialog {...defaultProps} onDelete={onDelete} />,
     );
     await user.click(screen.getByRole("button", { name: /^delete$/i }));
-    await user.click(screen.getByRole("button", { name: /delete permanently/i }));
+    await user.click(
+      screen.getByRole("button", { name: /delete permanently/i }),
+    );
 
     await waitFor(() => {
       expect(mockDelete).toHaveBeenCalledWith(1);
@@ -133,7 +138,9 @@ describe("DeleteSubscriptionDialog", () => {
 
     renderWithProviders(<DeleteSubscriptionDialog {...defaultProps} />);
     await user.click(screen.getByRole("button", { name: /^delete$/i }));
-    await user.click(screen.getByRole("button", { name: /delete permanently/i }));
+    await user.click(
+      screen.getByRole("button", { name: /delete permanently/i }),
+    );
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Failed to delete");
@@ -160,6 +167,8 @@ describe("DeleteSubscriptionDialog", () => {
     renderWithProviders(<DeleteSubscriptionDialog {...defaultProps} />);
     // Trigger button itself is not pending; buttons inside dialog are
     // Just verify the component renders without crashing when pending
-    expect(screen.getByRole("button", { name: /^delete$/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^delete$/i }),
+    ).toBeInTheDocument();
   });
 });

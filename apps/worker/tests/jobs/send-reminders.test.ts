@@ -108,7 +108,7 @@ function setupDbMocks(options: {
   // so it must return a Promise. Use mockResolvedValueOnce per DB query call.
   const mockWhere = vi
     .fn()
-    .mockResolvedValueOnce(prefs)   // first select: notificationPreferences
+    .mockResolvedValueOnce(prefs) // first select: notificationPreferences
     .mockResolvedValueOnce(pushSubs); // second select: pushSubscriptions
   const mockFrom = vi.fn(() => ({ where: mockWhere }));
   vi.mocked(db.select).mockReturnValue({ from: mockFrom } as ReturnType<

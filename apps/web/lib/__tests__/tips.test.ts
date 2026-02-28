@@ -2,7 +2,9 @@ import { describe, it, expect } from "vitest";
 import { generateStaticTips } from "../tips";
 import type { SubscriptionListItem } from "@/lib/types/api";
 
-function makeSub(overrides: Partial<SubscriptionListItem> = {}): SubscriptionListItem {
+function makeSub(
+  overrides: Partial<SubscriptionListItem> = {},
+): SubscriptionListItem {
   return {
     id: 1,
     name: "Netflix",
@@ -40,7 +42,13 @@ describe("generateStaticTips", () => {
   });
 
   it("warns about high-spend category when it exceeds 40%", () => {
-    const entertainment = { id: 1, name: "Entertainment", color: null, icon: null, userId: null };
+    const entertainment = {
+      id: 1,
+      name: "Entertainment",
+      color: null,
+      icon: null,
+      userId: null,
+    };
     const subs = [
       makeSub({ id: 1, price: "50.00", category: entertainment }),
       makeSub({ id: 2, name: "Spotify", price: "9.99", category: null }),
@@ -52,9 +60,27 @@ describe("generateStaticTips", () => {
   });
 
   it("does not warn about high-spend when category is below 40%", () => {
-    const ent = { id: 1, name: "Entertainment", color: null, icon: null, userId: null };
-    const prod = { id: 2, name: "Productivity", color: null, icon: null, userId: null };
-    const health = { id: 3, name: "Health", color: null, icon: null, userId: null };
+    const ent = {
+      id: 1,
+      name: "Entertainment",
+      color: null,
+      icon: null,
+      userId: null,
+    };
+    const prod = {
+      id: 2,
+      name: "Productivity",
+      color: null,
+      icon: null,
+      userId: null,
+    };
+    const health = {
+      id: 3,
+      name: "Health",
+      color: null,
+      icon: null,
+      userId: null,
+    };
     // Each category is ~33% — none exceed 40%
     const subs = [
       makeSub({ id: 1, price: "20.00", category: ent }),
@@ -79,7 +105,9 @@ describe("generateStaticTips", () => {
   it("does not warn about forgotten subs with future renewal date", () => {
     const subs = [makeSub({ nextRenewalDate: "2026-04-01" })];
     const tips = generateStaticTips(subs);
-    expect(tips.find((t) => t.id === "forgotten-subscriptions")).toBeUndefined();
+    expect(
+      tips.find((t) => t.id === "forgotten-subscriptions"),
+    ).toBeUndefined();
   });
 
   it("always includes daily cost tip when there are subscriptions", () => {
@@ -92,7 +120,13 @@ describe("generateStaticTips", () => {
   });
 
   it("warns about overlapping services when 2+ subs share a category", () => {
-    const ent = { id: 1, name: "Entertainment", color: null, icon: null, userId: null };
+    const ent = {
+      id: 1,
+      name: "Entertainment",
+      color: null,
+      icon: null,
+      userId: null,
+    };
     const subs = [
       makeSub({ id: 1, name: "Netflix", category: ent }),
       makeSub({ id: 2, name: "Disney+", category: ent }),
@@ -105,8 +139,20 @@ describe("generateStaticTips", () => {
   });
 
   it("does not warn about overlap when subs are in different categories", () => {
-    const ent = { id: 1, name: "Entertainment", color: null, icon: null, userId: null };
-    const prod = { id: 2, name: "Productivity", color: null, icon: null, userId: null };
+    const ent = {
+      id: 1,
+      name: "Entertainment",
+      color: null,
+      icon: null,
+      userId: null,
+    };
+    const prod = {
+      id: 2,
+      name: "Productivity",
+      color: null,
+      icon: null,
+      userId: null,
+    };
     const subs = [
       makeSub({ id: 1, category: ent }),
       makeSub({ id: 2, category: prod }),

@@ -124,7 +124,7 @@ export function buildCustomCategories(userId: string): NewCategory[] {
 
 export function buildStripeSubscription(userId: string): StripeSubInsert {
   const periodStart = daysAgo(15);
-  const periodEnd = daysFromNow(15);
+  const periodEnd = daysFromNow(350); // Next year
 
   return {
     id: randomUUID(),
@@ -566,8 +566,7 @@ const NOTIFICATION_TEMPLATES: Array<{
   {
     type: "price_change",
     title: "Figma billing cycle changed",
-    message:
-      "Figma updated its pricing. Your plan is now billed at $15/month.",
+    message: "Figma updated its pricing. Your plan is now billed at $15/month.",
     isRead: true,
     useSubId: true,
   },
@@ -590,8 +589,7 @@ const NOTIFICATION_TEMPLATES: Array<{
   {
     type: "renewal_reminder",
     title: "QuickBooks renews soon",
-    message:
-      "Your QuickBooks subscription ($30.00/month) renews in 14 days.",
+    message: "Your QuickBooks subscription ($30.00/month) renews in 14 days.",
     isRead: false,
     useSubId: true,
   },

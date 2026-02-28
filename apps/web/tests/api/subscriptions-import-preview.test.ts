@@ -58,8 +58,9 @@ function makeSelectChain(returnValue: unknown) {
   };
   mockSelect.mockReturnValue(chain as never);
   // make the chain awaitable
-  (chain as unknown as { then: unknown }).then = (resolve: (v: unknown) => unknown) =>
-    Promise.resolve(returnValue).then(resolve);
+  (chain as unknown as { then: unknown }).then = (
+    resolve: (v: unknown) => unknown,
+  ) => Promise.resolve(returnValue).then(resolve);
   return chain;
 }
 
@@ -73,19 +74,25 @@ describe("POST /api/subscriptions/import/preview", () => {
 
   it("returns 401 when not authenticated", async () => {
     mockGetSession.mockResolvedValue(null as never);
-    const req = new Request("http://localhost/api/subscriptions/import/preview", {
-      method: "POST",
-      body: JSON.stringify({ rows: [validRow] }),
-    });
+    const req = new Request(
+      "http://localhost/api/subscriptions/import/preview",
+      {
+        method: "POST",
+        body: JSON.stringify({ rows: [validRow] }),
+      },
+    );
     const res = await POST(req);
     expect(res.status).toBe(401);
   });
 
   it("returns preview rows with matched service", async () => {
-    const req = new Request("http://localhost/api/subscriptions/import/preview", {
-      method: "POST",
-      body: JSON.stringify({ rows: [validRow] }),
-    });
+    const req = new Request(
+      "http://localhost/api/subscriptions/import/preview",
+      {
+        method: "POST",
+        body: JSON.stringify({ rows: [validRow] }),
+      },
+    );
     const res = await POST(req);
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -96,11 +103,19 @@ describe("POST /api/subscriptions/import/preview", () => {
   });
 
   it("returns validation errors per row", async () => {
-    const invalidRow = { name: "", price: "bad", billingCycle: "monthly", nextRenewalDate: "2026-03-15" };
-    const req = new Request("http://localhost/api/subscriptions/import/preview", {
-      method: "POST",
-      body: JSON.stringify({ rows: [invalidRow] }),
-    });
+    const invalidRow = {
+      name: "",
+      price: "bad",
+      billingCycle: "monthly",
+      nextRenewalDate: "2026-03-15",
+    };
+    const req = new Request(
+      "http://localhost/api/subscriptions/import/preview",
+      {
+        method: "POST",
+        body: JSON.stringify({ rows: [invalidRow] }),
+      },
+    );
     const res = await POST(req);
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -109,10 +124,13 @@ describe("POST /api/subscriptions/import/preview", () => {
   });
 
   it("returns fuzzy match confidence for close names", async () => {
-    const req = new Request("http://localhost/api/subscriptions/import/preview", {
-      method: "POST",
-      body: JSON.stringify({ rows: [{ ...validRow, name: "Nettflix" }] }),
-    });
+    const req = new Request(
+      "http://localhost/api/subscriptions/import/preview",
+      {
+        method: "POST",
+        body: JSON.stringify({ rows: [{ ...validRow, name: "Nettflix" }] }),
+      },
+    );
     const res = await POST(req);
     const body = await res.json();
     expect(body.rows[0].matchConfidence).toBe("fuzzy");
@@ -120,12 +138,24 @@ describe("POST /api/subscriptions/import/preview", () => {
 
   it("resolves categoryName to categoryId from user categories", async () => {
     mockFindManyCategories.mockResolvedValue([
-      { id: 5, name: "Entertainment", color: null, icon: null, userId: "user-1", createdAt: new Date() },
+      {
+        id: 5,
+        name: "Entertainment",
+        color: null,
+        icon: null,
+        userId: "user-1",
+        createdAt: new Date(),
+      },
     ] as never);
-    const req = new Request("http://localhost/api/subscriptions/import/preview", {
-      method: "POST",
-      body: JSON.stringify({ rows: [{ ...validRow, categoryName: "Entertainment" }] }),
-    });
+    const req = new Request(
+      "http://localhost/api/subscriptions/import/preview",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          rows: [{ ...validRow, categoryName: "Entertainment" }],
+        }),
+      },
+    );
     const res = await POST(req);
     const body = await res.json();
     expect(body.rows[0].resolvedCategoryId).toBe(5);

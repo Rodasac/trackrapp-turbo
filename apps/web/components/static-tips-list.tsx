@@ -25,7 +25,15 @@ const typeConfig = {
     label: "Info",
     className: "text-blue-600 dark:text-blue-400",
   },
-} satisfies Record<StaticTip["type"], { icon: React.ComponentType<{ className?: string }>; badgeVariant: "default" | "destructive" | "secondary"; label: string; className: string }>;
+} satisfies Record<
+  StaticTip["type"],
+  {
+    icon: React.ComponentType<{ className?: string }>;
+    badgeVariant: "default" | "destructive" | "secondary";
+    label: string;
+    className: string;
+  }
+>;
 
 interface TipItemProps {
   tip: StaticTip;

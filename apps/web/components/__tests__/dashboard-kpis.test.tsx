@@ -47,7 +47,10 @@ describe("DashboardKpis", () => {
 
   it("shows cost per day and remaining this month", () => {
     mockUseDashboardStats.mockReturnValue({
-      data: mockDashboardStats({ costPerDay: "1.53", remainingThisMonth: "15.99" }),
+      data: mockDashboardStats({
+        costPerDay: "1.53",
+        remainingThisMonth: "15.99",
+      }),
     } as never);
     renderWithProviders(<DashboardKpis />);
     expect(screen.getByText("$1.53")).toBeInTheDocument();

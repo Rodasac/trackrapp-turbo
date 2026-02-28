@@ -21,5 +21,8 @@ export function useSubscriptionPlan(opts?: UseSubscriptionPlanOptions) {
 /** Convenience hook — returns true when the user has an active or trialing Pro plan. */
 export function useIsPro() {
   const { data } = useSubscriptionPlan();
-  return data?.plan === "pro" && (data.status === "active" || data.status === "trialing");
+  return (
+    data?.plan === "pro" &&
+    (data.status === "active" || data.status === "trialing")
+  );
 }

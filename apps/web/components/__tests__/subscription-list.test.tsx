@@ -8,16 +8,39 @@ import { mockSubscriptionListItem, mockCategory } from "@/tests/fixtures";
 
 // Radix UI Select throws on value="". Use a simple mock so tests can render.
 vi.mock("@repo/ui/select", () => ({
-  Select: ({ children, value }: { children: React.ReactNode; value?: string }) =>
-    React.createElement("div", { "data-testid": "select", "data-value": value }, children),
-  SelectGroup: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  SelectValue: ({ placeholder }: { placeholder?: string }) => React.createElement("span", null, placeholder),
-  SelectTrigger: ({ children, className }: { children: React.ReactNode; className?: string }) =>
-    React.createElement("button", { type: "button", className }, children),
+  Select: ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode;
+    value?: string;
+  }) =>
+    React.createElement(
+      "div",
+      { "data-testid": "select", "data-value": value },
+      children,
+    ),
+  SelectGroup: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  SelectValue: ({ placeholder }: { placeholder?: string }) =>
+    React.createElement("span", null, placeholder),
+  SelectTrigger: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => React.createElement("button", { type: "button", className }, children),
   SelectContent: () => null, // Don't render options to avoid duplicate text nodes
-  SelectLabel: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) =>
-    React.createElement("div", { "data-value": value }, children),
+  SelectLabel: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  SelectItem: ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode;
+    value: string;
+  }) => React.createElement("div", { "data-value": value }, children),
   SelectSeparator: () => null,
   SelectScrollUpButton: () => null,
   SelectScrollDownButton: () => null,

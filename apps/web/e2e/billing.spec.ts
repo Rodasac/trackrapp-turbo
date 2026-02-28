@@ -48,9 +48,15 @@ test("pricing page renders both plan cards", async ({ page }) => {
   await page.goto("/pricing");
 
   // Target the card titles specifically
-  await expect(page.getByRole("heading", { name: "Simple pricing" })).toBeVisible();
-  await expect(page.locator("[data-slot='card-title']").filter({ hasText: "Free" })).toBeVisible();
-  await expect(page.locator("[data-slot='card-title']").filter({ hasText: "Pro" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Simple pricing" }),
+  ).toBeVisible();
+  await expect(
+    page.locator("[data-slot='card-title']").filter({ hasText: "Free" }),
+  ).toBeVisible();
+  await expect(
+    page.locator("[data-slot='card-title']").filter({ hasText: "Pro" }),
+  ).toBeVisible();
 });
 
 test("pricing page shows monthly price by default", async ({ page }) => {
@@ -113,7 +119,9 @@ test("tips page shows Pro badge in the heading", async ({ page }) => {
 
   await page.goto("/tips");
 
-  await expect(page.getByRole("heading", { name: "AI Insights" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "AI Insights" }),
+  ).toBeVisible();
   // Pro badge is visible
   await expect(page.getByText("Pro")).toBeVisible();
 });

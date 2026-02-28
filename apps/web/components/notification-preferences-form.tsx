@@ -156,10 +156,14 @@ export function NotificationPreferencesForm() {
                         if (checked) {
                           // Keep at least one day selected
                           if (field.value.length > 1) {
-                            field.onChange(field.value.filter((d) => d !== value));
+                            field.onChange(
+                              field.value.filter((d) => d !== value),
+                            );
                           }
                         } else {
-                          field.onChange([...field.value, value].sort((a, b) => b - a));
+                          field.onChange(
+                            [...field.value, value].sort((a, b) => b - a),
+                          );
                         }
                       }}
                       className={[
