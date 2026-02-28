@@ -51,6 +51,7 @@ import { useCategories } from "@/hooks/use-categories";
 import { useSubscriptions } from "@/hooks/use-subscriptions";
 import { useDeactivateSubscription } from "@/hooks/use-subscription-mutations";
 import type { SubscriptionListItem } from "@/lib/types/api";
+import { DynamicIcon } from "lucide-react/dynamic";
 
 function computeImgSrc(
   logoUrl: string | null,
@@ -169,7 +170,10 @@ export function SubscriptionList() {
             <SelectItem value="all">All categories</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat.id} value={String(cat.id)}>
-                {cat.icon ? `${cat.icon} ` : ""}
+                <DynamicIcon
+                  name={cat.icon ? `${cat.icon}` : "circle-question-mark"}
+                  size={16}
+                />
                 {cat.name}
               </SelectItem>
             ))}
@@ -266,7 +270,14 @@ export function SubscriptionList() {
                               : undefined
                           }
                         >
-                          {sub.category.icon ? `${sub.category.icon} ` : ""}
+                          <DynamicIcon
+                            name={
+                              sub.category.icon
+                                ? `${sub.category.icon}`
+                                : "circle-question-mark"
+                            }
+                            size={16}
+                          />
                           {sub.category.name}
                         </Badge>
                       ) : (

@@ -18,7 +18,7 @@
     "clean": "pnpm dlx rimraf node_modules/"
   },
   "dependencies": {
-    "lucide-react":"^0.575.0",
+    "lucide-react": "^0.575.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

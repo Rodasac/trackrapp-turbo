@@ -51,7 +51,13 @@ test("create new category appears in dropdown", async ({ page }) => {
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Name", { exact: true }).first().fill(catName);
   await dialog.getByLabel("Color (hex)").fill("#6366f1");
-  await dialog.getByLabel(/icon/i).fill("🎯");
+  // Use the new autocomplete: type to filter, then click the result
+  await page.getByPlaceholder("Search icons...").fill("heart");
+  await page
+    .getByRole("option", { name: "heart" })
+    .first()
+    .waitFor({ state: "visible", timeout: 5_000 });
+  await page.getByRole("option", { name: "heart" }).first().click();
 
   // Submit
   await page.getByRole("button", { name: "Create" }).click();

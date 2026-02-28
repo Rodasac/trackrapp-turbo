@@ -12,6 +12,22 @@ vi.mock("@/hooks/use-subscription-mutations", () => ({
   useDeleteSubscription: vi.fn(),
 }));
 
+// Simple stub so tests don't need to handle icon autocomplete interactions
+vi.mock("@/components/icon-search", () => ({
+  IconSearch: ({
+    onChange,
+  }: {
+    value: string | undefined;
+    onChange: (v: string | undefined) => void;
+  }) => (
+    <input
+      aria-label="Icon search"
+      placeholder="Search icons..."
+      onChange={(e) => onChange(e.target.value || undefined)}
+    />
+  ),
+}));
+
 import { useCreateCategory } from "@/hooks/use-subscription-mutations";
 const mockUseCreateCategory = vi.mocked(useCreateCategory);
 
@@ -105,5 +121,26 @@ describe("AddCategoryDialog", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
+  });
+
+  it("dialog submit does not trigger parent form submit", async () => {
+    const user = userEvent.setup();
+    const parentOnSubmit = vi.fn((e: React.FormEvent) => e.preventDefault());
+    mockMutateAsync.mockResolvedValue({ id: 1, name: "Work" });
+
+    renderWithProviders(
+      <form onSubmit={parentOnSubmit}>
+        <AddCategoryDialog onCreated={vi.fn()} />
+      </form>,
+    );
+
+    await user.click(screen.getByRole("button", { name: /new category/i }));
+    await user.type(screen.getByPlaceholderText(/entertainment/i), "Work");
+    await user.click(screen.getByRole("button", { name: /^create$/i }));
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalled();
+    });
+    expect(parentOnSubmit).not.toHaveBeenCalled();
   });
 });
