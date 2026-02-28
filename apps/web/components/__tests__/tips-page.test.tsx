@@ -9,6 +9,10 @@ vi.mock("@/hooks/use-subscription-plan", () => ({
   useIsPro: vi.fn(),
 }));
 
+vi.mock("@/hooks/use-ai-tips", () => ({
+  useAiTips: vi.fn(() => ({ data: [], isLoading: false })),
+}));
+
 import { useSubscriptionPlan } from "@/hooks/use-subscription-plan";
 
 describe("TipsPage", () => {
