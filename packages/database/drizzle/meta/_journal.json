@@ -8,6 +8,13 @@
       "when": 1772226822755,
       "tag": "0000_crazy_wolfsbane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772280564164,
+      "tag": "0001_premium_professor_monster",
+      "breakpoints": true
     }
   ]
 }

@@ -172,6 +172,31 @@ export const priceHistory = pgTable(
   ],
 );
 
+// ─── AI Tips ──────────────────────────────────────────────────────────────────
+
+export const aiTipCategoryEnum = pgEnum("ai_tip_category", [
+  "savings",
+  "warning",
+  "info",
+  "comparison",
+]);
+
+export const aiTips = pgTable(
+  "ai_tips",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    message: text("message").notNull(),
+    category: aiTipCategoryEnum("category").notNull(),
+    generatedAt: timestamp("generated_at").defaultNow().notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+  },
+  (table) => [index("ai_tips_userId_idx").on(table.userId)],
+);
+
 // ─── Relations ──────────────────────────────────────────────────────────────────
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
@@ -244,6 +269,13 @@ export const pushSubscriptionsRelations = relations(
   }),
 );
 
+export const aiTipsRelations = relations(aiTips, ({ one }) => ({
+  user: one(users, {
+    fields: [aiTips.userId],
+    references: [users.id],
+  }),
+}));
+
 // Extend usersRelations with app-specific relations (merged by Drizzle at init).
 export const usersAppRelations = relations(users, ({ one, many }) => ({
   notificationPreferences: one(notificationPreferences, {
@@ -252,6 +284,7 @@ export const usersAppRelations = relations(users, ({ one, many }) => ({
   }),
   pushSubscriptions: many(pushSubscriptions),
   trackedSubscriptions: many(trackedSubscriptions),
+  aiTips: many(aiTips),
 }));
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
@@ -270,3 +303,5 @@ export type NewNotificationPreferences =
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
 export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;
 export type PriceHistory = typeof priceHistory.$inferSelect;
+export type AiTip = typeof aiTips.$inferSelect;
+export type NewAiTip = typeof aiTips.$inferInsert;
