@@ -23,7 +23,7 @@ Build a multi-user subscription tracker with automatic renewal reminders, expens
 | --------- | ------------------------------------ | -------------- |
 | MVP (1+2) | Auth + CRUD + Stripe + Notifications | ✅ Complete    |
 | Phase 3   | Dashboard & Insights                 | ✅ Complete    |
-| Phase 4   | AI Tips + Polish                     | 🔄 In progress |
+| Phase 4   | AI Tips + Polish                     | ✅ Complete    |
 
 ---
 
@@ -38,7 +38,7 @@ Build a multi-user subscription tracker with automatic renewal reminders, expens
 | 4.1  | Dark mode                  | ✅ Complete    |
 | 4.2  | Landing/marketing page     | ✅ Complete    |
 | 4.3  | CSV import                 | ✅ Complete    |
-| 4.4  | AI tips (worker + web)     | ⬜ Not started |
+| 4.4  | AI tips (worker + web)     | ✅ Complete    |
 
 ---
 
