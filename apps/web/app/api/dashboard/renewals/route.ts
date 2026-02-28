@@ -1,7 +1,7 @@
 import { db, schema } from "@repo/database";
 import { requireSession } from "@/lib/api/helpers";
 import { toDateString } from "@repo/shared/dates";
-import { and, eq, gte, lte } from "drizzle-orm";
+import { and, asc, eq, gte, lte } from "drizzle-orm";
 
 export async function GET(request: Request) {
   const result = await requireSession(request);
@@ -23,7 +23,8 @@ export async function GET(request: Request) {
         gte(schema.trackedSubscriptions.nextRenewalDate, todayStr),
         lte(schema.trackedSubscriptions.nextRenewalDate, thirtyDaysLaterStr),
       ),
-    );
+    )
+    .orderBy(asc(schema.trackedSubscriptions.nextRenewalDate));
 
   const renewals = subs.map((sub) => ({
     id: sub.id,

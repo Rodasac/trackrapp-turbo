@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, CircleQuestionMarkIcon } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { Calendar } from "@repo/ui/calendar";
 import {
@@ -37,6 +37,7 @@ import { AddCategoryDialog } from "@/components/add-category-dialog";
 import { useCategories } from "@/hooks/use-categories";
 import { useSaveSubscription } from "@/hooks/use-subscription-mutations";
 import type { Category, ServiceCatalogEntry } from "@repo/database";
+import { DynamicIcon } from "lucide-react/dynamic";
 
 interface SubscriptionFormProps {
   mode: "create" | "edit";
@@ -321,7 +322,13 @@ export function SubscriptionForm({
                     <SelectItem value="none">No category</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={String(cat.id)}>
-                        {cat.icon ? `${cat.icon} ` : ""}
+                        <DynamicIcon
+                          name={
+                            cat.icon ? `${cat.icon}` : "circle-question-mark"
+                          }
+                          fallback={() => <CircleQuestionMarkIcon />}
+                          size={16}
+                        />
                         {cat.name}
                       </SelectItem>
                     ))}

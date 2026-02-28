@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { CircleQuestionMarkIcon, icons, Plus } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import {
   Dialog,
@@ -28,6 +28,14 @@ import {
 } from "@repo/shared/validations";
 import { useCreateCategory } from "@/hooks/use-subscription-mutations";
 import type { Category } from "@repo/database";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui/select";
+import { DynamicIcon, dynamicIconImports } from "lucide-react/dynamic";
 
 interface AddCategoryDialogProps {
   onCreated: (category: Category) => void;
@@ -106,11 +114,40 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
                 control={form.control}
                 name="icon"
                 render={({ field }) => (
+                  //Select
                   <FormItem>
-                    <FormLabel>Icon (emoji or name)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="🎬" {...field} />
-                    </FormControl>
+                    <FormLabel>Icon (name from lucide)</FormLabel>
+                    <div className="flex items-center gap-2">
+                      <Select
+                        value={
+                          field.value !== undefined
+                            ? String(field.value)
+                            : "none"
+                        }
+                        onValueChange={(v) =>
+                          field.onChange(v === "none" ? undefined : Number(v))
+                        }
+                      >
+                        <FormControl>
+                          <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="No category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">No category</SelectItem>
+                          {Object.keys(dynamicIconImports).map((cat) => (
+                            <SelectItem key={cat} value={String(cat)}>
+                              <DynamicIcon
+                                name={cat as keyof typeof dynamicIconImports}
+                                fallback={() => <CircleQuestionMarkIcon />}
+                                size={16}
+                              />
+                              {cat}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

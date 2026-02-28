@@ -1,10 +1,11 @@
 /** Wire types matching the JSON shape returned by API routes (string dates from serialization). */
+import { IconName } from "lucide-react/dynamic";
 
 export interface CategoryItem {
   id: number;
   name: string;
   color: string | null;
-  icon: string | null;
+  icon: IconName | null;
   userId: string | null;
 }
 

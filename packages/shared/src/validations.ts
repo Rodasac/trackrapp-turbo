@@ -1,3 +1,4 @@
+import { dynamicIconImports } from "lucide-react/dynamic";
 import { z } from "zod";
 
 export const subscriptionFormSchema = z.object({
@@ -23,7 +24,11 @@ export type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>;
 export const categoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   color: z.string().optional(),
-  icon: z.string().optional(),
+  icon: z
+    .enum(Array.from([...Object.keys(dynamicIconImports), "none"]), {
+      error: "Invalid icon name",
+    })
+    .optional(),
 });
 
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;

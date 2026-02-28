@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@/tests/test-utils";
 import { RenewalCalendar } from "../renewal-calendar";
 
@@ -94,12 +95,62 @@ describe("RenewalCalendar", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows renewal summary count when renewals exist", () => {
+  it("shows all renewals in list when no date selected", () => {
     mockUseRenewalCalendar.mockReturnValue({
       data: mockRenewals,
       isLoading: false,
     } as never);
     renderWithProviders(<RenewalCalendar />);
-    expect(screen.getByText(/2 renewals this month/)).toBeInTheDocument();
+    const list = screen.getByTestId("renewal-list");
+    expect(within(list).getByText("Netflix")).toBeInTheDocument();
+    expect(within(list).getByText("Spotify")).toBeInTheDocument();
+  });
+
+  it("shows all renewals with dates and billing cycle when no date selected", () => {
+    mockUseRenewalCalendar.mockReturnValue({
+      data: mockRenewals,
+      isLoading: false,
+    } as never);
+    renderWithProviders(<RenewalCalendar />);
+    const list = screen.getByTestId("renewal-list");
+    // Dates shown in unfiltered view
+    expect(within(list).getByText("Mar 5, 2026")).toBeInTheDocument();
+    expect(within(list).getByText("Mar 10, 2026")).toBeInTheDocument();
+    // Billing cycle labels appear in each item
+    const items = within(list).getAllByRole("listitem");
+    expect(items).toHaveLength(2);
+    items.forEach((item) => expect(item).toHaveTextContent("/mo"));
+  });
+
+  it("filters to selected date and shows clear button", async () => {
+    const user = userEvent.setup();
+    mockUseRenewalCalendar.mockReturnValue({
+      data: mockRenewals,
+      isLoading: false,
+    } as never);
+    renderWithProviders(<RenewalCalendar />);
+
+    await user.click(screen.getByTestId("select-date"));
+
+    const list = screen.getByTestId("renewal-list");
+    expect(within(list).getByText("Netflix")).toBeInTheDocument();
+    expect(within(list).queryByText("Spotify")).not.toBeInTheDocument();
+    expect(screen.getByTestId("clear-date-filter")).toBeInTheDocument();
+  });
+
+  it("clear button restores full list", async () => {
+    const user = userEvent.setup();
+    mockUseRenewalCalendar.mockReturnValue({
+      data: mockRenewals,
+      isLoading: false,
+    } as never);
+    renderWithProviders(<RenewalCalendar />);
+
+    await user.click(screen.getByTestId("select-date"));
+    await user.click(screen.getByTestId("clear-date-filter"));
+
+    const list = screen.getByTestId("renewal-list");
+    expect(within(list).getByText("Netflix")).toBeInTheDocument();
+    expect(within(list).getByText("Spotify")).toBeInTheDocument();
   });
 });
