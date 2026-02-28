@@ -13,7 +13,10 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx --env-file=.env src/seed.ts",
+    "db:seed-staging": "tsx --env-file=.env src/seed-staging.ts",
     "db:studio": "drizzle-kit studio",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "check-types": "tsc --noEmit",
     "clean": "pnpm dlx rimraf node_modules/"
   },
@@ -24,10 +27,14 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/vitest-config": "workspace:*",
     "@types/node": "^24.10.13",
+    "@vitest/coverage-istanbul": "^4.0.18",
+    "better-auth": "^1.2.7",
     "drizzle-kit": "^0.31.9",
     "eslint": "^10.0.2",
     "tsx": "^4.21.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
   }
 }

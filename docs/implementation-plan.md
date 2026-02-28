@@ -260,9 +260,29 @@ Update `docs/progress.md` after each step completion.
 
 ---
 
-## Future Features (not planned)
+## Future Features (Prioritized)
 
-- Add default values or select one by item on import (e.g. default category, expiration date, renewal date, recurring)
-- Shared/family subscription splitting
-- Payment method tracking (which card each sub bills to)
-- Bank connection via Plaid for automatic detection
+| Priority | Feature | Est. Time | Difficulty | Rationale |
+|----------|---------|-----------|------------|-----------|
+| 1 | Default values on import | 1–2 days | Low | Extends existing CSV import (Step 4.3). UI defaults + fallback logic only. No new tables or APIs. |
+| 2 | Payment method tracking | 3–5 days | Medium | New `payment_methods` table + FK on `tracked_subscriptions`. Standard CRUD pattern, self-contained. |
+| 3 | Shared/family splitting | 5–8 days | Medium-High | New `subscription_splits` table. UX design decisions needed. KPIs/charts need "your share" toggle. |
+| 4 | Bank/Open Banking connection | 10–15+ days | High | External APIs, PSD2/Open Banking compliance. EU-first: Tink, Salt Edge, or GoCardless Bank Account Data (Nordigen) for Spain/Europe; Plaid as US fallback. Automatic subscription detection from bank transactions. |
+
+### Feature Details
+
+#### 1. Default values on import
+Extends the CSV import flow (Step 4.3) with a defaults step: users can pre-set category, billing cycle, and currency before mapping columns. When a column isn't mapped, the default fills in. No schema changes required — purely UI logic + fallback in the parse/validate step.
+
+#### 2. Payment method tracking
+New `payment_methods` table (id, userId, label, last4, brand, expiryMonth, expiryYear). Add optional `paymentMethodId` FK to `tracked_subscriptions`. CRUD in Settings → Payment Methods. Filter subscriptions by card in the list view. Aggregate "per card" spending in analytics.
+
+#### 3. Shared/family subscription splitting
+New `subscription_splits` table (id, subscriptionId, userId, sharePercent, shareAmount). Allows assigning a subscription cost across multiple family members or roommates. Dashboard KPIs and charts get a toggle for "total cost" vs "your share". Requires invite or link mechanism for non-registered members.
+
+#### 4. Bank/Open Banking connection
+Connect bank accounts to automatically detect subscription transactions. EU-first approach using PSD2-compliant providers:
+- **Spain/Europe**: GoCardless Bank Account Data (formerly Nordigen), Tink, or Salt Edge
+- **US fallback**: Plaid
+
+Transaction matching uses merchant name + recurring amount patterns to suggest new subscriptions. Requires OAuth bank authorization flow, webhook handling for new transactions, and a review queue for suggested subscriptions.

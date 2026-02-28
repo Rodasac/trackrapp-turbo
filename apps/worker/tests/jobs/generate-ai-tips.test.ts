@@ -8,8 +8,6 @@ const {
   mockDeleteWhere,
   mockInsertValues,
   mockSelectResult,
-  mockSelectWhere,
-  mockSelectFrom,
   mockSelect,
 } = vi.hoisted(() => {
   const mockSelectResult = vi.fn();
