@@ -1,4 +1,4 @@
-import { generateText } from "ai";
+import { generateText, type LanguageModel } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
@@ -17,7 +17,7 @@ const tipSchema = z.object({
   category: z.enum(["savings", "warning", "info", "comparison"]),
 });
 
-export function getAiModel(provider: "anthropic" | "openai") {
+export function getAiModel(provider: "anthropic" | "openai"): LanguageModel {
   if (provider === "openai") {
     return openai("gpt-4o-mini");
   }
@@ -51,7 +51,7 @@ export function parseTipsResponse(
 ): { title: string; message: string; category: "savings" | "warning" | "info" | "comparison" }[] {
   // Try to extract JSON from markdown code blocks
   const codeBlockMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
-  const jsonStr = codeBlockMatch ? codeBlockMatch[1] : text;
+  const jsonStr = (codeBlockMatch ? codeBlockMatch[1] : undefined) ?? text;
 
   try {
     const parsed = JSON.parse(jsonStr.trim());
@@ -71,7 +71,7 @@ export function parseTipsResponse(
 }
 
 export async function generateTipsForUser(
-  model: ReturnType<typeof getAiModel>,
+  model: LanguageModel,
   subs: SubscriptionForPrompt[],
   totalMonthlySpend: number,
 ): Promise<{ title: string; message: string; category: "savings" | "warning" | "info" | "comparison" }[]> {
