@@ -113,7 +113,7 @@ test("tips page shows Pro badge in the heading", async ({ page }) => {
 
   await page.goto("/tips");
 
-  await expect(page.getByRole("heading", { name: "Tips" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI Insights" })).toBeVisible();
   // Pro badge is visible
   await expect(page.getByText("Pro")).toBeVisible();
 });

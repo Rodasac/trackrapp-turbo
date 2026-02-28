@@ -49,7 +49,7 @@ test("Notifications page shows 'All caught up' placeholder", async ({
 
 test("Tips page shows Pro badge and Upgrade button", async ({ page }) => {
   await page.goto("/tips");
-  await expect(page.getByRole("heading", { name: "Tips" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI Insights" })).toBeVisible();
   // Pro badge next to heading
   await expect(page.getByText("Pro").first()).toBeVisible();
   // Upgrade CTA
