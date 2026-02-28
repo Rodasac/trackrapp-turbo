@@ -30,20 +30,32 @@ describe("AI service", () => {
   describe("getAiModel", () => {
     it("returns anthropic model for anthropic provider", () => {
       getAiModel("anthropic");
-      expect(anthropic).toHaveBeenCalledWith("claude-sonnet-4-5-20250514");
+      expect(anthropic).toHaveBeenCalledWith("claude-sonnet-4-6");
     });
 
     it("returns openai model for openai provider", () => {
       getAiModel("openai");
-      expect(openai).toHaveBeenCalledWith("gpt-4o-mini");
+      expect(openai).toHaveBeenCalledWith("gpt-5-mini");
     });
   });
 
   describe("buildPrompt", () => {
     it("includes subscription names, prices, and total spend", () => {
       const subs = [
-        { name: "Netflix", price: "15.99", currency: "USD", billingCycle: "monthly", categoryName: "Streaming" },
-        { name: "Spotify", price: "9.99", currency: "USD", billingCycle: "monthly", categoryName: "Music" },
+        {
+          name: "Netflix",
+          price: "15.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: "Streaming",
+        },
+        {
+          name: "Spotify",
+          price: "9.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: "Music",
+        },
       ];
       const { system, user } = buildPrompt(subs, 25.98);
       expect(system).toContain("financial advisor");
@@ -55,7 +67,13 @@ describe("AI service", () => {
 
     it("includes billing cycle and category in prompt", () => {
       const subs = [
-        { name: "Adobe CC", price: "54.99", currency: "USD", billingCycle: "monthly", categoryName: "Software" },
+        {
+          name: "Adobe CC",
+          price: "54.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: "Software",
+        },
       ];
       const { user } = buildPrompt(subs, 54.99);
       expect(user).toContain("monthly");
@@ -66,7 +84,11 @@ describe("AI service", () => {
   describe("parseTipsResponse", () => {
     it("parses valid JSON array", () => {
       const json = JSON.stringify([
-        { title: "Save money", message: "Switch to annual", category: "savings" },
+        {
+          title: "Save money",
+          message: "Switch to annual",
+          category: "savings",
+        },
       ]);
       const tips = parseTipsResponse(json);
       expect(tips).toHaveLength(1);
@@ -74,7 +96,8 @@ describe("AI service", () => {
     });
 
     it("extracts JSON from markdown code blocks", () => {
-      const text = "Here are your tips:\n```json\n" +
+      const text =
+        "Here are your tips:\n```json\n" +
         JSON.stringify([{ title: "Tip", message: "Msg", category: "info" }]) +
         "\n```";
       const tips = parseTipsResponse(text);
@@ -97,10 +120,12 @@ describe("AI service", () => {
     });
 
     it("filters out tips with invalid category", () => {
-      const tips = parseTipsResponse(JSON.stringify([
-        { title: "Valid", message: "Msg", category: "savings" },
-        { title: "Invalid", message: "Msg", category: "unknown" },
-      ]));
+      const tips = parseTipsResponse(
+        JSON.stringify([
+          { title: "Valid", message: "Msg", category: "savings" },
+          { title: "Invalid", message: "Msg", category: "unknown" },
+        ]),
+      );
       expect(tips).toHaveLength(1);
       expect(tips[0].title).toBe("Valid");
     });
@@ -109,12 +134,24 @@ describe("AI service", () => {
   describe("generateTipsForUser", () => {
     it("calls generateText and returns parsed tips", async () => {
       const mockTips = [
-        { title: "Save on streaming", message: "Consider annual plan", category: "savings" },
+        {
+          title: "Save on streaming",
+          message: "Consider annual plan",
+          category: "savings",
+        },
       ];
-      vi.mocked(generateText).mockResolvedValue({ text: JSON.stringify(mockTips) } as never);
+      vi.mocked(generateText).mockResolvedValue({
+        text: JSON.stringify(mockTips),
+      } as never);
 
       const subs = [
-        { name: "Netflix", price: "15.99", currency: "USD", billingCycle: "monthly", categoryName: "Streaming" },
+        {
+          name: "Netflix",
+          price: "15.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: "Streaming",
+        },
       ];
       const model = getAiModel("anthropic");
       const tips = await generateTipsForUser(model, subs, 15.99);
