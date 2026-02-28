@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { subscriptionFormSchema, categoryFormSchema } from "../validations";
+import {
+  subscriptionFormSchema,
+  categoryFormSchema,
+  csvImportRowSchema,
+} from "../validations";
 
 const validSubscription = {
   name: "Netflix",
@@ -83,6 +87,64 @@ describe("subscriptionFormSchema", () => {
     if (result.success) {
       expect(result.data.startDate).toBeUndefined();
       expect(result.data.notes).toBeUndefined();
+    }
+  });
+});
+
+describe("csvImportRowSchema", () => {
+  const validRow = {
+    name: "Netflix",
+    price: "15.99",
+    currency: "USD",
+    billingCycle: "monthly",
+    nextRenewalDate: "2026-03-15",
+  };
+
+  it("accepts a valid row", () => {
+    const result = csvImportRowSchema.safeParse(validRow);
+    expect(result.success).toBe(true);
+  });
+
+  it("fails when name is missing", () => {
+    const result = csvImportRowSchema.safeParse({ ...validRow, name: "" });
+    expect(result.success).toBe(false);
+  });
+
+  it("fails when price is not a valid decimal", () => {
+    const result = csvImportRowSchema.safeParse({ ...validRow, price: "abc" });
+    expect(result.success).toBe(false);
+  });
+
+  it("normalizes billing cycle aliases (month → monthly)", () => {
+    const result = csvImportRowSchema.safeParse({ ...validRow, billingCycle: "month" });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.billingCycle).toBe("monthly");
+    }
+  });
+
+  it("normalizes billing cycle aliases (annual → yearly)", () => {
+    const result = csvImportRowSchema.safeParse({ ...validRow, billingCycle: "annual" });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.billingCycle).toBe("yearly");
+    }
+  });
+
+  it("is case-insensitive for billing cycle (Monthly → monthly)", () => {
+    const result = csvImportRowSchema.safeParse({ ...validRow, billingCycle: "Monthly" });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.billingCycle).toBe("monthly");
+    }
+  });
+
+  it("defaults currency to USD when not provided", () => {
+    const { currency, ...withoutCurrency } = validRow;
+    const result = csvImportRowSchema.safeParse(withoutCurrency);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.currency).toBe("USD");
     }
   });
 });

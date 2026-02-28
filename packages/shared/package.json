@@ -9,7 +9,9 @@
     "./dates": "./src/dates.ts",
     "./billing": "./src/billing.ts",
     "./validations": "./src/validations.ts",
-    "./csv": "./src/csv.ts"
+    "./csv": "./src/csv.ts",
+    "./fuzzy-match": "./src/fuzzy-match.ts",
+    "./column-detect": "./src/column-detect.ts"
   },
   "scripts": {
     "test": "vitest run",

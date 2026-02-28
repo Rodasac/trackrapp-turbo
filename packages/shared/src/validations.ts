@@ -40,6 +40,48 @@ export type NotificationPreferencesValues = z.infer<
   typeof notificationPreferencesSchema
 >;
 
+const billingCycleAliases: Record<string, "monthly" | "yearly" | "weekly" | "quarterly"> = {
+  month: "monthly",
+  monthly: "monthly",
+  mo: "monthly",
+  year: "yearly",
+  yearly: "yearly",
+  annual: "yearly",
+  annually: "yearly",
+  yr: "yearly",
+  week: "weekly",
+  weekly: "weekly",
+  wk: "weekly",
+  quarter: "quarterly",
+  quarterly: "quarterly",
+  qtr: "quarterly",
+};
+
+export const csvImportRowSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  price: z
+    .string()
+    .min(1, "Price is required")
+    .regex(/^\d+(\.\d{1,2})?$/, "Enter a valid price (e.g. 9.99)"),
+  currency: z.string().optional().transform((v) => v ?? "USD"),
+  billingCycle: z
+    .string()
+    .min(1, "Billing cycle is required")
+    .transform((v, ctx) => {
+      const alias = billingCycleAliases[v.toLowerCase().trim()];
+      if (!alias) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Unknown billing cycle: ${v}` });
+        return z.NEVER;
+      }
+      return alias;
+    }),
+  nextRenewalDate: z.string().min(1, "Next renewal date is required"),
+  startDate: z.string().optional(),
+  categoryName: z.string().optional(),
+});
+
+export type CsvImportRowValues = z.infer<typeof csvImportRowSchema>;
+
 export const pushSubscriptionSchema = z.object({
   endpoint: z.string().url(),
   keys: z.object({
