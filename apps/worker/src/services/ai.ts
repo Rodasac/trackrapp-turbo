@@ -2,6 +2,7 @@ import { generateText, type LanguageModel } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
+import { groq } from "@ai-sdk/groq";
 
 export interface SubscriptionForPrompt {
   name: string;
@@ -17,11 +18,15 @@ const tipSchema = z.object({
   category: z.enum(["savings", "warning", "info", "comparison"]),
 });
 
-export function getAiModel(provider: "anthropic" | "openai"): LanguageModel {
+export function getAiModel(
+  provider: "anthropic" | "openai" | "groq",
+): LanguageModel {
   if (provider === "openai") {
-    return openai("gpt-4o-mini");
+    return openai("gpt-5-mini");
+  } else if (provider === "groq") {
+    return groq("qwen/qwen3-32b");
   }
-  return anthropic("claude-sonnet-4-5-20250514");
+  return anthropic("claude-sonnet-4-6");
 }
 
 export function buildPrompt(
@@ -46,9 +51,11 @@ Provide 3-5 personalized tips as a JSON array of objects with "title", "message"
   return { system, user };
 }
 
-export function parseTipsResponse(
-  text: string,
-): { title: string; message: string; category: "savings" | "warning" | "info" | "comparison" }[] {
+export function parseTipsResponse(text: string): {
+  title: string;
+  message: string;
+  category: "savings" | "warning" | "info" | "comparison";
+}[] {
   // Try to extract JSON from markdown code blocks
   const codeBlockMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
   const jsonStr = (codeBlockMatch ? codeBlockMatch[1] : undefined) ?? text;
@@ -74,7 +81,13 @@ export async function generateTipsForUser(
   model: LanguageModel,
   subs: SubscriptionForPrompt[],
   totalMonthlySpend: number,
-): Promise<{ title: string; message: string; category: "savings" | "warning" | "info" | "comparison" }[]> {
+): Promise<
+  {
+    title: string;
+    message: string;
+    category: "savings" | "warning" | "info" | "comparison";
+  }[]
+> {
   try {
     const { system, user } = buildPrompt(subs, totalMonthlySpend);
     const result = await generateText({

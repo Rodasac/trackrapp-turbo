@@ -1,3 +1,4 @@
+CREATE TYPE "public"."ai_tip_category" AS ENUM('savings', 'warning', 'info', 'comparison');--> statement-breakpoint
 CREATE TYPE "public"."billing_cycle" AS ENUM('monthly', 'yearly', 'weekly', 'quarterly');--> statement-breakpoint
 CREATE TYPE "public"."notification_type" AS ENUM('renewal_reminder', 'price_change', 'tip', 'system');--> statement-breakpoint
 CREATE TABLE "accounts" (
@@ -65,6 +66,16 @@ CREATE TABLE "verifications" (
 	"expires_at" timestamp NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "ai_tips" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"title" text NOT NULL,
+	"message" text NOT NULL,
+	"category" "ai_tip_category" NOT NULL,
+	"generated_at" timestamp DEFAULT now() NOT NULL,
+	"expires_at" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "categories" (
@@ -151,6 +162,7 @@ CREATE TABLE "tracked_subscriptions" (
 --> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_tips" ADD CONSTRAINT "ai_tips_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "categories" ADD CONSTRAINT "categories_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "notification_preferences" ADD CONSTRAINT "notification_preferences_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -163,6 +175,7 @@ ALTER TABLE "tracked_subscriptions" ADD CONSTRAINT "tracked_subscriptions_servic
 CREATE INDEX "accounts_userId_idx" ON "accounts" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "sessions_userId_idx" ON "sessions" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "verifications_identifier_idx" ON "verifications" USING btree ("identifier");--> statement-breakpoint
+CREATE INDEX "ai_tips_userId_idx" ON "ai_tips" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "notifications_userId_idx" ON "notifications" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "price_history_subscriptionId_idx" ON "price_history" USING btree ("tracked_subscription_id");--> statement-breakpoint
 CREATE INDEX "tracked_subscriptions_userId_idx" ON "tracked_subscriptions" USING btree ("user_id");

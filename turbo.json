@@ -7,6 +7,10 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
+        "AI_PROVIDER",
+        "OPENAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GROQ_API_KEY",
         "MAILPIT_URL",
         "NODE_ENV",
         "NEXT_TELEMETRY_DISABLED",
@@ -39,6 +43,10 @@
       "cache": false,
       "persistent": true,
       "env": [
+        "AI_PROVIDER",
+        "OPENAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GROQ_API_KEY",
         "MAILPIT_URL",
         "NODE_ENV",
         "NEXT_TELEMETRY_DISABLED",
@@ -69,6 +77,10 @@
       "dependsOn": ["transit", "@repo/vitest-config#build"],
       "outputs": ["coverage.json"],
       "env": [
+        "AI_PROVIDER",
+        "OPENAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GROQ_API_KEY",
         "MAILPIT_URL",
         "NODE_ENV",
         "NEXT_TELEMETRY_DISABLED",

@@ -33,7 +33,7 @@ export function validateEnv(): Env {
 }
 
 export interface AiEnv {
-  provider: "anthropic" | "openai";
+  provider: "anthropic" | "openai" | "groq";
   apiKey: string;
 }
 
@@ -42,11 +42,22 @@ export interface AiEnv {
  * (the job will skip gracefully). Called lazily inside the job, not at startup.
  */
 export function validateAiEnv(): AiEnv | null {
-  const provider = (process.env.AI_PROVIDER || "anthropic") as "anthropic" | "openai";
-  const apiKey =
-    provider === "openai"
-      ? process.env.OPENAI_API_KEY
-      : process.env.ANTHROPIC_API_KEY;
+  const provider = (process.env.AI_PROVIDER || "anthropic") as
+    | "anthropic"
+    | "openai"
+    | "groq";
+  let apiKey: string | undefined;
+  switch (provider) {
+    case "anthropic":
+      apiKey = process.env.ANTHROPIC_API_KEY;
+      break;
+    case "openai":
+      apiKey = process.env.OPENAI_API_KEY;
+      break;
+    case "groq":
+      apiKey = process.env.GROQ_API_KEY;
+      break;
+  }
 
   if (!apiKey) return null;
 
