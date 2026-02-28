@@ -1,4 +1,5 @@
 @import "@repo/tailwind-config";
+@import "uploadthing/tw/v4.css";
 
 /* Scan the shared UI package for Tailwind classes */
 @source "../../../packages/ui/src";

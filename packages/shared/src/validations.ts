@@ -96,6 +96,34 @@ export const csvImportRowSchema = z.object({
 
 export type CsvImportRowValues = z.infer<typeof csvImportRowSchema>;
 
+export const profileFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  image: z.string().optional(),
+});
+
+export type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
+const strongPassword = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Must contain at least one number")
+  .regex(/[^A-Za-z0-9]/, "Must contain at least one symbol");
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(8, "Password must be at least 8 characters"),
+    newPassword: strongPassword,
+    confirmPassword: strongPassword,
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  });
+
+export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+
 export const pushSubscriptionSchema = z.object({
   endpoint: z.string().url(),
   keys: z.object({

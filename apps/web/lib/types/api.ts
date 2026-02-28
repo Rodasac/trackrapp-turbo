@@ -153,6 +153,10 @@ export interface CsvImportResult {
   errors: { rowIndex: number; message: string }[];
 }
 
+export interface AccountProviderResponse {
+  provider: "credential" | "google";
+}
+
 export interface AiTipItem {
   id: number;
   title: string;

@@ -103,5 +103,6 @@ import { db, schema } from "@repo/database";
 | `apps/web`       | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Stripe                       |
 | `apps/worker`    | `RESEND_API_KEY`                              | Email delivery               |
 | `apps/worker`    | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`      | Web push notifications       |
+| `apps/web`       | `UPLOADTHING_TOKEN`                           | Uploadthing file uploads     |
 
 Each app reads `DATABASE_URL` directly from the environment (not from `packages/database`).

@@ -10,6 +10,7 @@ import type {
   NotificationItem,
   NotificationPreferencesResponse,
   SubscriptionPlanResponse,
+  AccountProviderResponse,
 } from "@/lib/types/api";
 
 export function mockCategory(overrides?: Partial<CategoryItem>): CategoryItem {
@@ -211,6 +212,15 @@ export function mockStaticTip(overrides?: Partial<StaticTip>): StaticTip {
     title: "Your subscription cost per day",
     message: "You spend $1.50/day across all subscriptions.",
     type: "info",
+    ...overrides,
+  };
+}
+
+export function mockAccountProvider(
+  overrides?: Partial<AccountProviderResponse>,
+): AccountProviderResponse {
+  return {
+    provider: "credential",
     ...overrides,
   };
 }

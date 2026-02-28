@@ -14,6 +14,7 @@ import {
 } from "@repo/ui/card";
 import { NotificationPreferencesForm } from "@/components/notification-preferences-form";
 import { BillingSettings } from "@/components/billing-settings";
+import { ProfileForm } from "@/components/profile-form";
 
 function SettingsContent() {
   const searchParams = useSearchParams();
@@ -47,13 +48,11 @@ function SettingsContent() {
             <CardHeader>
               <CardTitle>Profile</CardTitle>
               <CardDescription>
-                Update your name and email address
+                Update your profile information
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-muted-foreground rounded border border-dashed py-8 text-center text-sm">
-                Profile form — coming in Step 4
-              </div>
+              <ProfileForm />
             </CardContent>
           </Card>
         </TabsContent>

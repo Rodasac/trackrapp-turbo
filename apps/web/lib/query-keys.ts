@@ -52,4 +52,7 @@ export const queryKeys = {
   aiTips: {
     all: ["ai-tips"] as const,
   },
+  accountProvider: {
+    all: ["account-provider"] as const,
+  },
 } as const;
