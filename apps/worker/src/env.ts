@@ -31,3 +31,24 @@ export function validateEnv(): Env {
   }
   return result.data;
 }
+
+export interface AiEnv {
+  provider: "anthropic" | "openai";
+  apiKey: string;
+}
+
+/**
+ * Validate AI-specific env vars. Returns null if no API key is configured
+ * (the job will skip gracefully). Called lazily inside the job, not at startup.
+ */
+export function validateAiEnv(): AiEnv | null {
+  const provider = (process.env.AI_PROVIDER || "anthropic") as "anthropic" | "openai";
+  const apiKey =
+    provider === "openai"
+      ? process.env.OPENAI_API_KEY
+      : process.env.ANTHROPIC_API_KEY;
+
+  if (!apiKey) return null;
+
+  return { provider, apiKey };
+}
