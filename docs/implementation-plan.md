@@ -37,7 +37,7 @@ Build a multi-user subscription tracker with automatic renewal reminders, expens
 | ---- | -------------------------- |---------------|
 | 4.1  | Dark mode                  | ✅ Complete    |
 | 4.2  | Landing/marketing page     | ✅ Complete    |
-| 4.3  | CSV import                 | ⬜ Not started |
+| 4.3  | CSV import                 | ✅ Complete    |
 | 4.4  | AI tips (worker + web)     | ⬜ Not started |
 
 ---
@@ -262,6 +262,7 @@ Update `docs/progress.md` after each step completion.
 
 ## Future Features (not planned)
 
+- Add default values or select one by item on import (e.g. default category, expiration date, renewal date, recurring)
 - Shared/family subscription splitting
 - Payment method tracking (which card each sub bills to)
 - Bank connection via Plaid for automatic detection

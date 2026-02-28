@@ -38,11 +38,11 @@
 
 ## Phase 4: AI Tips + Polish
 
-| Step | Description                   | Status         | Notes            |
-| ---- | ----------------------------- | -------------- | ---------------- |
+| Step | Description                   | Status        | Notes            |
+| ---- | ----------------------------- |---------------| ---------------- |
 | 4.1  | Claude API worker integration | ⬜ Not started | Requires Phase 3 |
 | 4.2  | ai_tips table + weekly job    | ⬜ Not started |                  |
-| 4.3  | CSV import                    | ⬜ Not started |                  |
+| 4.3  | CSV import                    | ✅ Complete    |                  |
 | 4.4  | Landing/marketing page        | ✅ Complete    | Navbar, HeroSection, FeatureCards, PricingSection, Footer; pricing-data.ts shared module; 20 new unit tests + 7 E2E tests (81 total) |
 | 4.5  | Dark mode                     | ✅ Complete    | ThemeToggle, ThemeProvider (next-themes), CSS class-based toggle, useSyncExternalStore mounted guard; 74 E2E tests |
 
