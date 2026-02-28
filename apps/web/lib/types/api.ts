@@ -119,3 +119,35 @@ export interface SubscriptionPlanResponse {
   periodEnd: string | null;
   stripeSubscriptionId: string | null;
 }
+
+export interface CsvImportPreviewRow {
+  rowIndex: number;
+  name: string;
+  price: string;
+  currency: string;
+  billingCycle: string;
+  nextRenewalDate: string;
+  startDate: string | null;
+  categoryName: string | null;
+  matchedService: {
+    id: number;
+    name: string;
+    logoUrl: string | null;
+    websiteUrl: string | null;
+    defaultCategory: string | null;
+  } | null;
+  matchConfidence: "exact" | "fuzzy" | "none";
+  resolvedCategoryId: number | null;
+  isValid: boolean;
+  errors: { field: string; message: string }[];
+}
+
+export interface CsvImportPreviewResponse {
+  rows: CsvImportPreviewRow[];
+}
+
+export interface CsvImportResult {
+  imported: number;
+  failed: number;
+  errors: { rowIndex: number; message: string }[];
+}

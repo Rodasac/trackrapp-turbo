@@ -42,6 +42,7 @@ import { toast } from "sonner";
 import { formatPrice, billingCycleLabel, formatRenewalDate } from "@repo/shared/format";
 import { DeleteSubscriptionDialog } from "@/components/delete-subscription-dialog";
 import { CsvExportButton } from "@/components/csv-export-button";
+import { CsvImportButton } from "@/components/csv-import-button";
 import { useCategories } from "@/hooks/use-categories";
 import { useSubscriptions } from "@/hooks/use-subscriptions";
 import { useDeactivateSubscription } from "@/hooks/use-subscription-mutations";
@@ -203,6 +204,7 @@ export function SubscriptionList() {
           </Label>
         </div>
 
+        <CsvImportButton />
         <CsvExportButton />
       </div>
 
