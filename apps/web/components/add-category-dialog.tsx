@@ -47,7 +47,7 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
-    defaultValues: { name: "", color: "", icon: "" },
+    defaultValues: { name: "", color: "", icon: undefined },
   });
 
   async function onSubmit(values: CategoryFormValues) {
@@ -125,16 +125,16 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
                             : "none"
                         }
                         onValueChange={(v) =>
-                          field.onChange(v === "none" ? undefined : Number(v))
+                          field.onChange(v === "none" ? undefined : v)
                         }
                       >
                         <FormControl>
                           <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="No category" />
+                            <SelectValue placeholder="No icon" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="none">No category</SelectItem>
+                          <SelectItem value="none">No icon</SelectItem>
                           {Object.keys(dynamicIconImports).map((cat) => (
                             <SelectItem key={cat} value={String(cat)}>
                               <DynamicIcon

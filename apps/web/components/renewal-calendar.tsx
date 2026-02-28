@@ -43,6 +43,7 @@ export function RenewalCalendar() {
       <CardContent className="flex flex-col gap-3">
         <Calendar
           mode="single"
+          numberOfMonths={2}
           selected={selectedDate}
           onSelect={setSelectedDate}
           modifiers={{ renewal: renewalDates }}

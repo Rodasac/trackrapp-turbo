@@ -3,6 +3,7 @@ import { requireSession } from "@/lib/api/helpers";
 import { eq, and } from "drizzle-orm";
 import { generateStaticTips } from "@/lib/tips";
 import type { SubscriptionListItem } from "@/lib/types/api";
+import type { IconName } from "lucide-react/dynamic";
 
 export async function GET(request: Request) {
   const result = await requireSession(request);
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
           id: sub.category.id,
           name: sub.category.name,
           color: sub.category.color,
-          icon: sub.category.icon,
+          icon: sub.category.icon as IconName | null,
           userId: sub.category.userId,
         }
       : null,
