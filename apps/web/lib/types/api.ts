@@ -151,3 +151,12 @@ export interface CsvImportResult {
   failed: number;
   errors: { rowIndex: number; message: string }[];
 }
+
+export interface AiTipItem {
+  id: number;
+  title: string;
+  message: string;
+  category: "savings" | "warning" | "info" | "comparison";
+  generatedAt: string;
+  expiresAt: string;
+}

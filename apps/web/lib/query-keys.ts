@@ -49,4 +49,7 @@ export const queryKeys = {
   subscriptionPlan: {
     all: ["subscription-plan"] as const,
   },
+  aiTips: {
+    all: ["ai-tips"] as const,
+  },
 } as const;
