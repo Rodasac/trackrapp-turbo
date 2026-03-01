@@ -46,6 +46,11 @@ vi.mock("@/components/change-password-form", () => ({
     <div data-testid="change-password-form">Change Password Form</div>
   ),
 }));
+vi.mock("@/components/change-email-form", () => ({
+  ChangeEmailForm: () => (
+    <div data-testid="change-email-form">Change Email Form</div>
+  ),
+}));
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
@@ -184,5 +189,37 @@ describe("ProfileForm", () => {
     await user.click(screen.getByRole("button", { name: /save/i }));
 
     await waitFor(() => expect(toast.error).toHaveBeenCalled());
+  });
+
+  it("shows current email from session", () => {
+    setupMocks({ provider: "credential" });
+    renderWithProviders(<ProfileForm />);
+    expect(screen.getByText("test@example.com")).toBeTruthy();
+  });
+
+  it("shows Change email button for credential users", () => {
+    setupMocks({ provider: "credential" });
+    renderWithProviders(<ProfileForm />);
+    expect(
+      screen.getByRole("button", { name: /change email/i }),
+    ).toBeTruthy();
+  });
+
+  it("does not show Change email button for Google users", () => {
+    setupMocks({ provider: "google" });
+    renderWithProviders(<ProfileForm />);
+    expect(
+      screen.queryByRole("button", { name: /change email/i }),
+    ).toBeNull();
+  });
+
+  it("reveals ChangeEmailForm when Change email button is clicked", async () => {
+    const user = userEvent.setup();
+    setupMocks({ provider: "credential" });
+    renderWithProviders(<ProfileForm />);
+
+    expect(screen.queryByTestId("change-email-form")).toBeNull();
+    await user.click(screen.getByRole("button", { name: /change email/i }));
+    expect(screen.getByTestId("change-email-form")).toBeTruthy();
   });
 });

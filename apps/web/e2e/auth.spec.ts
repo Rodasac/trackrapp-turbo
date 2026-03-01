@@ -21,18 +21,21 @@ test("landing page shows CTA buttons", async ({ page }) => {
   await expect(header.getByRole("link", { name: /sign in/i })).toBeVisible();
 });
 
-test("signup creates account and auto-logs in to dashboard", async ({
+test("signup redirects to check-email page (email verification required)", async ({
   page,
 }) => {
   const id = uniqueSuffix();
+  const email = `e2e-${id}@test.local`;
   await page.goto("/signup");
   await page.getByLabel("Name").fill(`E2E User ${id}`);
-  await page.getByLabel("Email").fill(`e2e-${id}@test.local`);
+  await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("Password123!");
   await page.getByRole("button", { name: "Create account" }).click();
-  // Better Auth creates a session on signup; proxy redirects /login → /dashboard
-  await page.waitForURL("**/dashboard**");
-  await expect(page).toHaveURL(/\/dashboard/);
+  // Email verification required: redirects to /check-email
+  await page.waitForURL("**/check-email**");
+  await expect(page).toHaveURL(/\/check-email/);
+  await expect(page.getByText("Check your email", { exact: true })).toBeVisible();
+  await expect(page.getByText(email)).toBeVisible();
 });
 
 test("signup shows validation errors for empty fields", async ({ page }) => {

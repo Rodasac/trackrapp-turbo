@@ -18,7 +18,10 @@ export function uniqueName(base: string): string {
 
 /**
  * Sign up a new user via the UI and return their credentials.
- * The caller is responsible for landing on the login page after this.
+ * Handles the email-verification flow:
+ * 1. Fills and submits the signup form → redirected to /check-email
+ * 2. Calls the dev-only /api/test/verify-email to set emailVerified=true
+ * 3. Logs in via the login form → lands on /dashboard
  */
 export async function signUpNewUser(
   page: Page,
@@ -34,7 +37,20 @@ export async function signUpNewUser(
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Create account" }).click();
-  // Better Auth auto-creates a session on signup; proxy redirects /login → /dashboard
+
+  // With requireEmailVerification, Better Auth redirects to /check-email
+  await page.waitForURL("**/check-email**");
+
+  // Verify email via dev-only endpoint (bypasses actual email sending)
+  await page.request.post("/api/test/verify-email", {
+    data: { email },
+  });
+
+  // Now log in normally
+  await page.goto("/login");
+  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Password").fill(password);
+  await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL("**/dashboard**");
 
   return { name, email, password };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ import { useAccountProvider } from "@/hooks/use-account-provider";
 import { useUpdateProfile } from "@/hooks/use-profile-mutations";
 import { AvatarUpload } from "@/components/avatar-upload";
 import { ChangePasswordForm } from "@/components/change-password-form";
+import { ChangeEmailForm } from "@/components/change-email-form";
 import {
   profileFormSchema,
   type ProfileFormValues,
@@ -31,6 +32,7 @@ export function ProfileForm() {
   const { data: providerData, isLoading: providerLoading } =
     useAccountProvider();
   const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
+  const [showChangeEmail, setShowChangeEmail] = useState(false);
 
   const user = sessionData?.user;
   const isLoading = sessionLoading || providerLoading;
@@ -118,6 +120,28 @@ export function ProfileForm() {
           </Button>
         </form>
       </Form>
+
+      {/* Email section */}
+      <Separator />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-medium">Email</h3>
+            <p className="text-muted-foreground text-sm">{user?.email}</p>
+          </div>
+          {isCredentialUser && !showChangeEmail && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowChangeEmail(true)}
+            >
+              Change email
+            </Button>
+          )}
+        </div>
+        {showChangeEmail && <ChangeEmailForm />}
+      </div>
 
       {/* Password section — only for email/password users */}
       {isCredentialUser && (

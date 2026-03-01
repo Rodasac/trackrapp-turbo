@@ -133,3 +133,9 @@ export const pushSubscriptionSchema = z.object({
     auth: z.string().min(1),
   }),
 });
+
+export const changeEmailSchema = z.object({
+  newEmail: z.string().email("Enter a valid email address"),
+});
+
+export type ChangeEmailValues = z.infer<typeof changeEmailSchema>;
