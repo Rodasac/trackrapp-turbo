@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Pencil,
   X,
@@ -56,7 +57,10 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
-  const [mode, setMode] = useState<"view" | "edit">("view");
+  const searchParams = useSearchParams();
+  const [mode, setMode] = useState<"view" | "edit">(
+    searchParams.get("edit") ? "edit" : "view",
+  );
   const { data: sub, isLoading, isError } = useSubscription(id);
   const { data: prefs } = useUserPreferences();
   const renewMutation = useRenewSubscription();
