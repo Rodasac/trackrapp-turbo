@@ -85,6 +85,10 @@ export async function PUT(
     updateData.description = data.description || null;
   if (data.notes !== undefined) updateData.notes = data.notes || null;
 
+  // autoRenew is not in form schema — handle separately
+  const bodyRaw = body as { autoRenew?: boolean | null };
+  if ("autoRenew" in bodyRaw) updateData.autoRenew = bodyRaw.autoRenew ?? null;
+
   const [updated] = await db
     .update(schema.trackedSubscriptions)
     .set(updateData)
@@ -97,6 +101,41 @@ export async function PUT(
       price: data.price,
     });
   }
+
+  return Response.json(updated);
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const authResult = await requireSession(request);
+  if ("error" in authResult) return authResult.error;
+  const { session } = authResult;
+
+  const { id } = await params;
+  const idResult = parseIdParam(id);
+  if ("error" in idResult) return idResult.error;
+  const { idNum } = idResult;
+
+  const body = (await request.json()) as { action?: string };
+  if (body.action !== "reactivate") {
+    return Response.json({ error: "Unknown action" }, { status: 400 });
+  }
+
+  const existing = await db.query.trackedSubscriptions.findFirst({
+    where: and(
+      eq(schema.trackedSubscriptions.id, idNum),
+      eq(schema.trackedSubscriptions.userId, session.user.id),
+    ),
+  });
+  if (!existing) return Response.json({ error: "Not found" }, { status: 404 });
+
+  const [updated] = await db
+    .update(schema.trackedSubscriptions)
+    .set({ isActive: true, deactivatedAt: null })
+    .where(eq(schema.trackedSubscriptions.id, idNum))
+    .returning();
 
   return Response.json(updated);
 }

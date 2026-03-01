@@ -62,6 +62,31 @@ vi.mock("@/hooks/use-subscription-mutations", () => ({
   useCreateCategory: vi.fn(),
   useDeactivateSubscription: vi.fn(),
   useDeleteSubscription: vi.fn(),
+  useRenewSubscription: vi.fn(),
+  useUndoRenewal: vi.fn(),
+  useReactivateSubscription: vi.fn(),
+}));
+
+vi.mock("@/hooks/use-user-preferences", () => ({
+  useUserPreferences: vi.fn(),
+}));
+
+vi.mock("@repo/ui/switch", () => ({
+  Switch: ({
+    checked,
+    onCheckedChange,
+    id,
+  }: {
+    checked: boolean;
+    onCheckedChange: (v: boolean) => void;
+    id?: string;
+  }) =>
+    React.createElement("button", {
+      role: "switch",
+      "aria-checked": checked,
+      id,
+      onClick: () => onCheckedChange(!checked),
+    }),
 }));
 
 vi.mock("@/components/service-catalog-search", () => ({
@@ -85,26 +110,27 @@ import {
   useCreateCategory,
   useDeactivateSubscription,
   useDeleteSubscription,
+  useRenewSubscription,
+  useUndoRenewal,
+  useReactivateSubscription,
 } from "@/hooks/use-subscription-mutations";
+import { useUserPreferences } from "@/hooks/use-user-preferences";
+
+const pendingMutation = { mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false };
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useCategories).mockReturnValue({ data: [] } as never);
-  vi.mocked(useSaveSubscription).mockReturnValue({
-    mutateAsync: vi.fn(),
-    isPending: false,
-  } as never);
-  vi.mocked(useCreateCategory).mockReturnValue({
-    mutateAsync: vi.fn(),
-    isPending: false,
-  } as never);
-  vi.mocked(useDeactivateSubscription).mockReturnValue({
-    mutateAsync: vi.fn(),
-    isPending: false,
-  } as never);
-  vi.mocked(useDeleteSubscription).mockReturnValue({
-    mutateAsync: vi.fn(),
-    isPending: false,
+  vi.mocked(useSaveSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useCreateCategory).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useDeactivateSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useDeleteSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useRenewSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useUndoRenewal).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useReactivateSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useUserPreferences).mockReturnValue({
+    data: { autoRenewDefault: true },
+    isLoading: false,
   } as never);
 });
 
@@ -276,14 +302,107 @@ describe("SubscriptionDetail", () => {
     expect(screen.getByText("Price history")).toBeInTheDocument();
   });
 
-  it("renders the delete dialog trigger", () => {
+  it("renders the delete dialog trigger for inactive subscriptions", () => {
     vi.mocked(useSubscription).mockReturnValue({
-      data: mockSubscriptionDetail(),
+      data: mockSubscriptionDetail({ isActive: false }),
       isLoading: false,
       isError: false,
     } as never);
 
     renderWithProviders(<SubscriptionDetail id={1} />);
     expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+  });
+
+  it("shows Cancel button for active subscriptions (not Delete)", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({ isActive: true }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+  });
+
+  it("shows Renew button when subscription is due and active", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({
+        isActive: true,
+        nextRenewalDate: "2025-01-01", // past date → due
+        previousRenewalDate: null,
+      }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    expect(screen.getByRole("button", { name: /renew/i })).toBeInTheDocument();
+  });
+
+  it("shows Undo Renewal button when previousRenewalDate is set", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({
+        isActive: true,
+        nextRenewalDate: "2026-04-01",
+        previousRenewalDate: "2026-03-01",
+      }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    expect(screen.getByRole("button", { name: /undo renewal/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^renew$/i })).not.toBeInTheDocument();
+  });
+
+  it("shows Reactivate button for inactive subscriptions", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({ isActive: false }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    expect(screen.getByRole("button", { name: /reactivate/i })).toBeInTheDocument();
+  });
+
+  it("shows Due badge when renewal date is past and subscription is active", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({
+        isActive: true,
+        nextRenewalDate: "2025-01-01",
+      }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    expect(screen.getByText("Due")).toBeInTheDocument();
+  });
+
+  it("shows auto-renew switch using global default when autoRenew is null", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({ autoRenew: null }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    const switchEl = screen.getByRole("switch");
+    expect(switchEl).toHaveAttribute("aria-checked", "true"); // default is true
+    expect(screen.getByText("(using default)")).toBeInTheDocument();
+  });
+
+  it("shows auto-renew switch with explicit value when set", () => {
+    vi.mocked(useSubscription).mockReturnValue({
+      data: mockSubscriptionDetail({ autoRenew: false }),
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionDetail id={1} />);
+    const switchEl = screen.getByRole("switch");
+    expect(switchEl).toHaveAttribute("aria-checked", "false");
   });
 });

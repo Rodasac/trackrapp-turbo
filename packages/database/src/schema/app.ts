@@ -89,6 +89,8 @@ export const trackedSubscriptions = pgTable(
     websiteUrl: text("website_url"),
     isActive: boolean("is_active").notNull().default(true),
     deactivatedAt: timestamp("deactivated_at"),
+    autoRenew: boolean("auto_renew"),
+    previousRenewalDate: date("previous_renewal_date"),
     notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
@@ -197,6 +199,22 @@ export const aiTips = pgTable(
   (table) => [index("ai_tips_userId_idx").on(table.userId)],
 );
 
+// ─── User Preferences ──────────────────────────────────────────────────────────
+
+export const userPreferences = pgTable("user_preferences", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  autoRenewDefault: boolean("auto_renew_default").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
 // ─── Relations ──────────────────────────────────────────────────────────────────
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
@@ -276,11 +294,25 @@ export const aiTipsRelations = relations(aiTips, ({ one }) => ({
   }),
 }));
 
+export const userPreferencesRelations = relations(
+  userPreferences,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userPreferences.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
 // Extend usersRelations with app-specific relations (merged by Drizzle at init).
 export const usersAppRelations = relations(users, ({ one, many }) => ({
   notificationPreferences: one(notificationPreferences, {
     fields: [users.id],
     references: [notificationPreferences.userId],
+  }),
+  userPreferences: one(userPreferences, {
+    fields: [users.id],
+    references: [userPreferences.userId],
   }),
   pushSubscriptions: many(pushSubscriptions),
   trackedSubscriptions: many(trackedSubscriptions),
@@ -305,3 +337,5 @@ export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;
 export type PriceHistory = typeof priceHistory.$inferSelect;
 export type AiTip = typeof aiTips.$inferSelect;
 export type NewAiTip = typeof aiTips.$inferInsert;
+export type UserPreferences = typeof userPreferences.$inferSelect;
+export type NewUserPreferences = typeof userPreferences.$inferInsert;

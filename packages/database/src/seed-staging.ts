@@ -22,6 +22,7 @@ import {
   buildPriceHistory,
   buildNotifications,
   buildNotificationPreferences,
+  buildUserPreferences,
   buildAiTips,
   DEMO_PRO_EMAIL,
   DEMO_FREE_EMAIL,
@@ -359,6 +360,11 @@ async function seedStaging() {
   await db.insert(schema.aiTips).values(aiTipsData);
   console.log(`    ✓  ${aiTipsData.length} AI tips inserted`);
 
+  // User preferences (auto-renew global default: true)
+  const proUserPrefs = buildUserPreferences(proUser.id, true);
+  await db.insert(schema.userPreferences).values(proUserPrefs);
+  console.log(`    ✓  User preferences inserted (autoRenewDefault: true)`);
+
   // ── 6. Free user ──────────────────────────────────────────────────────────────
 
   console.log("\n  [Free user]");
@@ -393,6 +399,11 @@ async function seedStaging() {
   const freePrefs = buildNotificationPreferences(freeUser.id);
   await db.insert(schema.notificationPreferences).values(freePrefs);
   console.log(`    ✓  Notification preferences inserted`);
+
+  // User preferences (auto-renew global default: false — for variety in demo)
+  const freeUserPrefs = buildUserPreferences(freeUser.id, false);
+  await db.insert(schema.userPreferences).values(freeUserPrefs);
+  console.log(`    ✓  User preferences inserted (autoRenewDefault: false)`);
 
   // ── Done ──────────────────────────────────────────────────────────────────────
 

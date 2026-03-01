@@ -38,6 +38,8 @@ export async function GET(request: Request) {
           userId: sub.category.userId,
         }
       : null,
+    autoRenew: sub.autoRenew ?? null,
+    previousRenewalDate: sub.previousRenewalDate ?? null,
   }));
 
   const tips = generateStaticTips(items);

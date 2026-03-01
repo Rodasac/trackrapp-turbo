@@ -55,4 +55,7 @@ export const queryKeys = {
   accountProvider: {
     all: ["account-provider"] as const,
   },
+  userPreferences: {
+    all: ["userPreferences"] as const,
+  },
 } as const;

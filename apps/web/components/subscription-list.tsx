@@ -10,6 +10,9 @@ import {
   Trash2,
   Search,
   Plus,
+  RefreshCw,
+  Undo2,
+  RotateCcw,
 } from "lucide-react";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
@@ -44,12 +47,18 @@ import {
   billingCycleLabel,
   formatRenewalDate,
 } from "@repo/shared/format";
+import { isDue } from "@repo/shared/billing";
 import { DeleteSubscriptionDialog } from "@/components/delete-subscription-dialog";
 import { CsvExportButton } from "@/components/csv-export-button";
 import { CsvImportButton } from "@/components/csv-import-button";
 import { useCategories } from "@/hooks/use-categories";
 import { useSubscriptions } from "@/hooks/use-subscriptions";
-import { useDeactivateSubscription } from "@/hooks/use-subscription-mutations";
+import {
+  useDeactivateSubscription,
+  useRenewSubscription,
+  useUndoRenewal,
+  useReactivateSubscription,
+} from "@/hooks/use-subscription-mutations";
 import type { SubscriptionListItem } from "@/lib/types/api";
 import { DynamicIcon } from "lucide-react/dynamic";
 
@@ -132,13 +141,43 @@ export function SubscriptionList() {
     active: showInactive ? undefined : true,
   });
   const deactivate = useDeactivateSubscription();
+  const renew = useRenewSubscription();
+  const undoRenewal = useUndoRenewal();
+  const reactivate = useReactivateSubscription();
 
   async function handleDeactivate(id: number) {
     try {
       await deactivate.mutateAsync(id);
-      toast.success("Subscription deactivated");
+      toast.success("Subscription cancelled");
     } catch {
-      toast.error("Failed to deactivate");
+      toast.error("Failed to cancel");
+    }
+  }
+
+  async function handleRenew(id: number) {
+    try {
+      await renew.mutateAsync(id);
+      toast.success("Renewed");
+    } catch {
+      toast.error("Failed to renew");
+    }
+  }
+
+  async function handleUndoRenewal(id: number) {
+    try {
+      await undoRenewal.mutateAsync(id);
+      toast.success("Renewal undone");
+    } catch {
+      toast.error("Failed to undo renewal");
+    }
+  }
+
+  async function handleReactivate(id: number) {
+    try {
+      await reactivate.mutateAsync(id);
+      toast.success("Subscription reactivated");
+    } catch {
+      toast.error("Failed to reactivate");
     }
   }
 
@@ -285,7 +324,17 @@ export function SubscriptionList() {
                       )}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {formatRenewalDate(sub.nextRenewalDate)}
+                      <div className="flex items-center gap-2">
+                        {formatRenewalDate(sub.nextRenewalDate)}
+                        {sub.isActive && isDue(sub.nextRenewalDate) && (
+                          <Badge
+                            variant="outline"
+                            className="border-amber-500 text-xs text-amber-600 dark:text-amber-400"
+                          >
+                            Due
+                          </Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -312,13 +361,32 @@ export function SubscriptionList() {
                               Edit
                             </Link>
                           </DropdownMenuItem>
+                          {sub.isActive && isDue(sub.nextRenewalDate) && !sub.previousRenewalDate && (
+                            <DropdownMenuItem onClick={() => handleRenew(sub.id)}>
+                              <RefreshCw className="mr-2 size-4" />
+                              Renew
+                            </DropdownMenuItem>
+                          )}
+                          {sub.previousRenewalDate && (
+                            <DropdownMenuItem onClick={() => handleUndoRenewal(sub.id)}>
+                              <Undo2 className="mr-2 size-4" />
+                              Undo renewal
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuSeparator />
-                          {sub.isActive && (
+                          {sub.isActive ? (
                             <DropdownMenuItem
                               onClick={() => handleDeactivate(sub.id)}
                             >
                               <PowerOff className="mr-2 size-4" />
-                              Deactivate
+                              Cancel subscription
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem
+                              onClick={() => handleReactivate(sub.id)}
+                            >
+                              <RotateCcw className="mr-2 size-4" />
+                              Reactivate
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuItem asChild>

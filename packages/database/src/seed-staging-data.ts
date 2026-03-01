@@ -5,6 +5,7 @@ import type {
   NewNotification,
   NewNotificationPreferences,
   NewAiTip,
+  NewUserPreferences,
 } from "./schema/app.js";
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
@@ -169,6 +170,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("Netflix"),
       websiteUrl: "https://netflix.com",
       isActive: true,
+      autoRenew: true, // explicit: always auto-renew
     },
     {
       userId,
@@ -182,6 +184,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("Disney+"),
       websiteUrl: "https://disneyplus.com",
       isActive: true,
+      autoRenew: null, // use global default
     },
     // Music
     {
@@ -190,12 +193,13 @@ export function buildProSubscriptions(
       price: "11.99",
       currency: "USD",
       billingCycle: "monthly",
-      nextRenewalDate: dateStringFromNow(5),
+      nextRenewalDate: dateStringFromNow(-2), // past-due — shows "Due" badge
       startDate: dateStringFromNow(-730),
       categoryId: music,
       serviceCatalogId: catalogMap.get("Spotify"),
       websiteUrl: "https://spotify.com",
       isActive: true,
+      autoRenew: true,
     },
     {
       userId,
@@ -210,6 +214,7 @@ export function buildProSubscriptions(
       websiteUrl: "https://music.apple.com",
       isActive: false,
       deactivatedAt: daysAgo(60),
+      autoRenew: null,
     },
     // Productivity
     {
@@ -224,6 +229,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("Notion"),
       websiteUrl: "https://notion.so",
       isActive: true,
+      autoRenew: null, // use global default
     },
     {
       userId,
@@ -237,6 +243,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("GitHub"),
       websiteUrl: "https://github.com",
       isActive: true,
+      autoRenew: false, // explicit: never auto-renew
     },
     {
       userId,
@@ -244,12 +251,13 @@ export function buildProSubscriptions(
       price: "15.00",
       currency: "USD",
       billingCycle: "monthly",
-      nextRenewalDate: dateStringFromNow(20),
+      nextRenewalDate: dateStringFromNow(-5), // past-due — shows "Due" badge
       startDate: dateStringFromNow(-240),
       categoryId: productivity,
       serviceCatalogId: catalogMap.get("Figma"),
       websiteUrl: "https://figma.com",
       isActive: true,
+      autoRenew: null, // use global default
     },
     // Gaming
     {
@@ -264,6 +272,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("Xbox Game Pass"),
       websiteUrl: "https://xbox.com/game-pass",
       isActive: true,
+      autoRenew: true,
     },
     // Cloud Storage
     {
@@ -278,6 +287,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("iCloud+"),
       websiteUrl: "https://icloud.com",
       isActive: true,
+      autoRenew: true,
     },
     {
       userId,
@@ -292,6 +302,7 @@ export function buildProSubscriptions(
       websiteUrl: "https://dropbox.com",
       isActive: false,
       deactivatedAt: daysAgo(30),
+      autoRenew: null,
     },
     // Health & Fitness
     {
@@ -306,6 +317,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("Calm"),
       websiteUrl: "https://calm.com",
       isActive: true,
+      autoRenew: null,
     },
     // News & Reading
     {
@@ -320,6 +332,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("The New York Times"),
       websiteUrl: "https://nytimes.com",
       isActive: true,
+      autoRenew: false, // explicit: manual renewal only
     },
     // Education
     {
@@ -334,6 +347,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("Duolingo Plus"),
       websiteUrl: "https://duolingo.com",
       isActive: true,
+      autoRenew: null,
     },
     {
       userId,
@@ -348,6 +362,7 @@ export function buildProSubscriptions(
       websiteUrl: "https://coursera.org",
       isActive: false,
       deactivatedAt: daysAgo(10),
+      autoRenew: null,
     },
     // Finance
     {
@@ -362,6 +377,7 @@ export function buildProSubscriptions(
       serviceCatalogId: catalogMap.get("QuickBooks"),
       websiteUrl: "https://quickbooks.intuit.com",
       isActive: true,
+      autoRenew: true,
     },
     // Custom — no catalog entry
     {
@@ -376,6 +392,7 @@ export function buildProSubscriptions(
       serviceCatalogId: undefined,
       isActive: true,
       notes: "Annual VPN subscription for privacy",
+      autoRenew: null,
     },
     {
       userId,
@@ -389,6 +406,7 @@ export function buildProSubscriptions(
       serviceCatalogId: undefined,
       isActive: true,
       notes: "Local gym — basic plan",
+      autoRenew: null,
     },
     {
       userId,
@@ -401,6 +419,7 @@ export function buildProSubscriptions(
       categoryId: productivity,
       serviceCatalogId: undefined,
       isActive: true,
+      autoRenew: true,
     },
   ];
 }
@@ -430,6 +449,7 @@ export function buildFreeSubscriptions(
       serviceCatalogId: catalogMap.get("Netflix"),
       websiteUrl: "https://netflix.com",
       isActive: true,
+      autoRenew: null, // use global default
     },
     {
       userId,
@@ -437,12 +457,13 @@ export function buildFreeSubscriptions(
       price: "11.99",
       currency: "USD",
       billingCycle: "monthly",
-      nextRenewalDate: dateStringFromNow(5),
+      nextRenewalDate: dateStringFromNow(-3), // past-due — shows "Due" badge
       startDate: dateStringFromNow(-90),
       categoryId: music,
       serviceCatalogId: catalogMap.get("Spotify"),
       websiteUrl: "https://spotify.com",
       isActive: true,
+      autoRenew: true,
     },
     {
       userId,
@@ -456,6 +477,7 @@ export function buildFreeSubscriptions(
       serviceCatalogId: catalogMap.get("iCloud+"),
       websiteUrl: "https://icloud.com",
       isActive: true,
+      autoRenew: true,
     },
     {
       userId,
@@ -469,6 +491,7 @@ export function buildFreeSubscriptions(
       serviceCatalogId: catalogMap.get("Notion"),
       websiteUrl: "https://notion.so",
       isActive: true,
+      autoRenew: null,
     },
     {
       userId,
@@ -482,6 +505,7 @@ export function buildFreeSubscriptions(
       serviceCatalogId: catalogMap.get("GitHub"),
       websiteUrl: "https://github.com",
       isActive: true,
+      autoRenew: false, // explicit: manual renewal
     },
   ];
 }
@@ -654,6 +678,18 @@ export function buildNotificationPreferences(
     emailEnabled: true,
     pushEnabled: false,
     reminderDaysBefore: [7, 3, 1],
+  };
+}
+
+// ─── buildUserPreferences ─────────────────────────────────────────────────────
+
+export function buildUserPreferences(
+  userId: string,
+  autoRenewDefault: boolean = true,
+): NewUserPreferences {
+  return {
+    userId,
+    autoRenewDefault,
   };
 }
 

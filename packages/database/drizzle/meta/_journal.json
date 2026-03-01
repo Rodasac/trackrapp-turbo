@@ -8,6 +8,13 @@
       "when": 1772284708463,
       "tag": "0000_cynical_namor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772368611491,
+      "tag": "0001_flowery_gideon",
+      "breakpoints": true
     }
   ]
 }
