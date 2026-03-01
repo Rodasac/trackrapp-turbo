@@ -68,7 +68,7 @@ const ALIAS_MAP: Record<string, TrackrField> = {
 };
 
 export function detectColumnMapping(
-  headers: string[],
+  headers: Readonly<string[]>,
 ): Record<string, TrackrField | null> {
   const result: Record<string, TrackrField | null> = {};
   for (const header of headers) {
