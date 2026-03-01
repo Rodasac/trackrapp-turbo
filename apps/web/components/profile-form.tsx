@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -21,15 +21,16 @@ import { useAccountProvider } from "@/hooks/use-account-provider";
 import { useUpdateProfile } from "@/hooks/use-profile-mutations";
 import { AvatarUpload } from "@/components/avatar-upload";
 import { ChangePasswordForm } from "@/components/change-password-form";
-import { profileFormSchema, type ProfileFormValues } from "@repo/shared/validations";
+import {
+  profileFormSchema,
+  type ProfileFormValues,
+} from "@repo/shared/validations";
 
 export function ProfileForm() {
   const { data: sessionData, isPending: sessionLoading } = useSession();
-  const { data: providerData, isLoading: providerLoading } = useAccountProvider();
+  const { data: providerData, isLoading: providerLoading } =
+    useAccountProvider();
   const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
-
-  // Pending image URL from upload — only committed on Save
-  const [pendingImage, setPendingImage] = useState<string | null>(null);
 
   const user = sessionData?.user;
   const isLoading = sessionLoading || providerLoading;
@@ -47,11 +48,25 @@ export function ProfileForm() {
     }
   }, [user, form]);
 
+  async function handleAvatarUpload(url: string) {
+    try {
+      await updateProfile({
+        name: form.getValues("name") || user?.name || "",
+        image: url,
+      });
+      toast.success("Photo updated");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to save photo",
+      );
+    }
+  }
+
   async function onSubmit(values: ProfileFormValues) {
     try {
       await updateProfile({
         name: values.name,
-        image: pendingImage ?? (user?.image ?? undefined),
+        image: user?.image ?? undefined,
       });
       toast.success("Profile saved");
     } catch (err) {
@@ -78,9 +93,9 @@ export function ProfileForm() {
     <div className="space-y-6">
       {/* Avatar section */}
       <AvatarUpload
-        image={pendingImage ?? user?.image}
+        image={user?.image}
         name={user?.name ?? ""}
-        onUploadComplete={(url) => setPendingImage(url)}
+        onUploadComplete={handleAvatarUpload}
       />
 
       {/* Name + Save */}

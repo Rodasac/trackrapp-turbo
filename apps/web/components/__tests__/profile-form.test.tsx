@@ -92,9 +92,9 @@ describe("ProfileForm", () => {
   it("renders the name input pre-populated from session", () => {
     setupMocks({ name: "Jane Doe" });
     renderWithProviders(<ProfileForm />);
-    expect(
-      (screen.getByLabelText(/name/i) as HTMLInputElement).value,
-    ).toBe("Jane Doe");
+    expect((screen.getByLabelText(/name/i) as HTMLInputElement).value).toBe(
+      "Jane Doe",
+    );
   });
 
   it("renders the avatar upload section", () => {
@@ -138,21 +138,32 @@ describe("ProfileForm", () => {
     );
   });
 
-  it("updates image when avatar is uploaded before save", async () => {
+  it("immediately saves image to DB when avatar is uploaded", async () => {
     const user = userEvent.setup();
     setupMocks({ name: "Jane" });
     renderWithProviders(<ProfileForm />);
 
     // Trigger the avatar upload (mocked button sets the URL)
     await user.click(screen.getByRole("button", { name: /upload avatar/i }));
-    await user.click(screen.getByRole("button", { name: /save/i }));
 
+    // Should save immediately — no need to click Save
     await waitFor(() =>
       expect(mockMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           image: "https://utfs.io/f/new-avatar.jpg",
         }),
       ),
+    );
+  });
+
+  it("shows Photo updated toast when avatar upload completes", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<ProfileForm />);
+
+    await user.click(screen.getByRole("button", { name: /upload avatar/i }));
+
+    await waitFor(() =>
+      expect(toast.success).toHaveBeenCalledWith("Photo updated"),
     );
   });
 

@@ -34,9 +34,9 @@ test("settings profile tab shows Change photo button", async ({ page }) => {
 
   await page.goto("/settings");
 
-  await expect(
-    page.getByRole("button", { name: /change photo/i }),
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("button", { name: /change photo/i })).toBeVisible(
+    { timeout: 10_000 },
+  );
 });
 
 test("updating name saves and shows success toast", async ({ page }) => {
@@ -58,9 +58,9 @@ test("email/password user sees change password section", async ({ page }) => {
 
   await page.goto("/settings");
 
-  await expect(page.getByText(/change password/i)).toBeVisible({
-    timeout: 10_000,
-  });
+  await expect(
+    page.getByRole("heading", { name: /change password/i }),
+  ).toBeVisible({ timeout: 10_000 });
   await expect(page.getByLabel(/current password/i)).toBeVisible();
 });
 
@@ -75,7 +75,7 @@ test("change password shows error for wrong current password", async ({
   });
 
   await page.getByLabel(/current password/i).fill("WrongPass1!");
-  await page.getByLabel("New password").fill("NewPass456@");
+  await page.getByLabel("New password", { exact: true }).fill("NewPass456@");
   await page.getByLabel(/confirm new password/i).fill("NewPass456@");
   await page.getByRole("button", { name: /change password/i }).click();
 
@@ -96,7 +96,7 @@ test("change password succeeds with valid current password", async ({
   });
 
   await page.getByLabel(/current password/i).fill(password);
-  await page.getByLabel("New password").fill("NewPass456@");
+  await page.getByLabel("New password", { exact: true }).fill("NewPass456@");
   await page.getByLabel(/confirm new password/i).fill("NewPass456@");
   await page.getByRole("button", { name: /change password/i }).click();
 
@@ -113,7 +113,7 @@ test("clicking Notifications tab switches to notifications view", async ({
   await page.goto("/settings");
   await page.getByRole("tab", { name: /notifications/i }).click();
 
-  await expect(
-    page.getByText(/choose how and when you receive/i),
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByText(/choose how and when you receive/i)).toBeVisible({
+    timeout: 10_000,
+  });
 });
