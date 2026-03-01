@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -23,7 +24,7 @@ import {
   FormMessage,
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
-import { signIn } from "@/lib/auth-client";
+import { signIn, authClient } from "@/lib/auth-client";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email address"),
@@ -34,17 +35,42 @@ type FormValues = z.infer<typeof schema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [isResending, setIsResending] = useState(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { email: "", password: "" },
   });
 
   async function onSubmit(values: FormValues) {
+    setUnverifiedEmail(null);
     const { error } = await signIn.email(values);
     if (error) {
-      toast.error(error.message ?? "Invalid email or password");
+      if (error.message === "Email not verified") {
+        setUnverifiedEmail(values.email);
+      } else {
+        toast.error(error.message ?? "Invalid email or password");
+      }
     } else {
       router.push("/dashboard");
+    }
+  }
+
+  async function handleResendVerification() {
+    if (!unverifiedEmail) return;
+    setIsResending(true);
+    try {
+      const { error } = await authClient.sendVerificationEmail({
+        email: unverifiedEmail,
+        callbackURL: "/dashboard",
+      });
+      if (error) {
+        toast.error(error.message ?? "Failed to resend verification email");
+      } else {
+        toast.success("Verification email sent");
+      }
+    } finally {
+      setIsResending(false);
     }
   }
 
@@ -98,6 +124,23 @@ export default function LoginPage() {
                 </FormItem>
               )}
             />
+            {unverifiedEmail && (
+              <div className="bg-muted rounded-md p-3 text-sm">
+                <p className="font-medium">Please verify your email first.</p>
+                <p className="text-muted-foreground mt-1">
+                  We sent a link to {unverifiedEmail}.
+                </p>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="mt-1 h-auto p-0 text-sm"
+                  onClick={handleResendVerification}
+                  disabled={isResending}
+                >
+                  {isResending ? "Sending…" : "Resend verification email"}
+                </Button>
+              </div>
+            )}
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}

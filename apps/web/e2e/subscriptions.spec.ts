@@ -24,23 +24,47 @@ async function gotoNewSubscription(page: Page): Promise<void> {
 
 // Navigate from the subscriptions list to the Manual Sub detail page.
 // Uses search to guarantee exactly 1 row is visible, avoiding strict-mode
-// violations when filter({ hasText }) would match multiple rows (e.g., if
-// manualSubName is undefined, Playwright treats it as a no-op filter).
+// violations when filter({ hasText }) would match multiple rows.
+// Resilient against module re-evaluation (which resets manualSubName to
+// undefined): falls back to the stable "Manual Sub" prefix and recovers
+// the actual name from the page so subsequent assertions still work.
 async function goToManualSubDetail(page: Page): Promise<void> {
   await page.goto("/subscriptions");
-  // Wait for at least one data row to appear (TanStack Query has resolved).
-  await page
-    .getByRole("row")
-    .nth(1)
-    .waitFor({ state: "visible", timeout: 10_000 });
-  // Search by exact name — guarantees exactly 1 row visible after filter applies
+  // Wait for actual subscription data to appear (not just loading skeleton rows).
+  await expect(
+    page.locator("td").filter({ hasText: "Manual Sub" }).first(),
+  ).toBeVisible({ timeout: 10_000 });
+
   const searchInput = page.getByPlaceholder(/Search subscriptions/i);
-  await searchInput.fill(manualSubName);
-  // Wait for the search to narrow the list to exactly our subscription
+  // Always search by the stable "Manual Sub" prefix so this helper works even
+  // if manualSubName was reset by a module re-evaluation.
+  const searchResponse = page.waitForResponse(
+    (r) =>
+      r.url().includes("/api/subscriptions") &&
+      r.url().includes("search=") &&
+      r.status() === 200,
+    { timeout: 8_000 },
+  );
+  await searchInput.fill("Manual Sub");
+  await searchResponse;
+
+  // Wait for exactly 1 data row
   await expect(page.getByRole("row").nth(1)).toBeVisible({ timeout: 8_000 });
   await expect(page.getByRole("row").nth(2))
     .not.toBeVisible({ timeout: 3_000 })
     .catch(() => {});
+
+  // If manualSubName was lost (module re-eval), recover it from the name cell
+  if (!manualSubName) {
+    const nameText = await page
+      .getByRole("row")
+      .nth(1)
+      .getByRole("cell")
+      .nth(1)
+      .textContent();
+    manualSubName = nameText?.trim() ?? "Manual Sub";
+  }
+
   // Now safe: only 1 data row visible, nth(1) Actions button is unambiguous
   await page
     .getByRole("row")
@@ -170,10 +194,14 @@ test("search filter narrows and clears results", async ({ page }) => {
 
   const searchInput = page.getByPlaceholder(/Search subscriptions/i);
 
-  // Filter to Manual Sub only — wait for the filtered API response so we
-  // don't assert on stale data before TanStack Query refetches
+  // Filter to Manual Sub only — wait for the search-filtered response.
+  // The predicate includes "search=" to avoid resolving with a concurrent
+  // background refetch that doesn't contain the search parameter.
   const filterResponse = page.waitForResponse(
-    (r) => r.url().includes("/api/subscriptions") && r.status() === 200,
+    (r) =>
+      r.url().includes("/api/subscriptions") &&
+      r.url().includes("search=") &&
+      r.status() === 200,
     { timeout: 8_000 },
   );
   await searchInput.fill("Manual Sub");
@@ -185,11 +213,16 @@ test("search filter narrows and clears results", async ({ page }) => {
     page.locator("td").filter({ hasText: "Netflix" }),
   ).not.toBeVisible({ timeout: 5_000 });
 
-  // Clear — all return
+  // Clear — all return (wait for the unfiltered response)
+  const clearResponse = page.waitForResponse(
+    (r) => r.url().includes("/api/subscriptions") && r.status() === 200,
+    { timeout: 8_000 },
+  );
   await searchInput.clear();
+  await clearResponse;
   await expect(
     page.locator("td").filter({ hasText: "Netflix" }).first(),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 5_000 });
 
   // Non-matching search → empty state
   await searchInput.fill("xyznonexistent999");
@@ -221,12 +254,17 @@ test("category filter shows only matching subscriptions", async ({ page }) => {
     page.locator("td").filter({ hasText: manualSubName }),
   ).not.toBeVisible();
 
-  // Revert to all
+  // Revert to all — wait for the unfiltered response before asserting
+  const allResponse = page.waitForResponse(
+    (r) => r.url().includes("/api/subscriptions") && r.status() === 200,
+    { timeout: 8_000 },
+  );
   await categorySelect.click();
   await page.getByRole("option", { name: "All categories" }).click();
+  await allResponse;
   await expect(
     page.locator("td").filter({ hasText: manualSubName }).first(),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 5_000 });
 });
 
 test("sort order changes row order", async ({ page }) => {

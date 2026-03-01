@@ -45,8 +45,8 @@ export default function SignupPage() {
     if (error) {
       toast.error(error.message ?? "Sign up failed");
     } else {
-      toast.success("Account created — please sign in.");
-      router.push("/login");
+      toast.success("Account created — check your email.");
+      router.push(`/check-email?email=${encodeURIComponent(values.email)}`);
     }
   }
 
