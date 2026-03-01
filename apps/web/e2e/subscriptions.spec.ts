@@ -189,8 +189,10 @@ test("list shows all subscriptions", async ({ page }) => {
 
 test("search filter narrows and clears results", async ({ page }) => {
   await page.goto("/subscriptions");
-  // Wait for list to load
-  await expect(page.getByText("No subscriptions yet")).not.toBeVisible();
+  // Wait for list to load — positive wait avoids passing during skeleton phase
+  await expect(
+    page.locator("td").filter({ hasText: "Netflix" }).first(),
+  ).toBeVisible({ timeout: 10_000 });
 
   const searchInput = page.getByPlaceholder(/Search subscriptions/i);
 
@@ -207,22 +209,18 @@ test("search filter narrows and clears results", async ({ page }) => {
   await searchInput.fill("Manual Sub");
   await filterResponse;
   await expect(
-    page.locator("td").filter({ hasText: manualSubName }).first(),
+    page.locator("td").filter({ hasText: manualSubName ?? "Manual Sub" }).first(),
   ).toBeVisible();
   await expect(
     page.locator("td").filter({ hasText: "Netflix" }),
   ).not.toBeVisible({ timeout: 5_000 });
 
-  // Clear — all return (wait for the unfiltered response)
-  const clearResponse = page.waitForResponse(
-    (r) => r.url().includes("/api/subscriptions") && r.status() === 200,
-    { timeout: 8_000 },
-  );
+  // Clear — TanStack Query may serve cached unfiltered data (no network request),
+  // so rely on the positive data assertion instead of waitForResponse.
   await searchInput.clear();
-  await clearResponse;
   await expect(
     page.locator("td").filter({ hasText: "Netflix" }).first(),
-  ).toBeVisible({ timeout: 5_000 });
+  ).toBeVisible({ timeout: 10_000 });
 
   // Non-matching search → empty state
   await searchInput.fill("xyznonexistent999");
@@ -237,10 +235,16 @@ test("category filter shows only matching subscriptions", async ({ page }) => {
 
   const categorySelect = page.getByTestId("category-filter");
   await categorySelect.click();
-  await page
-    .getByRole("option", { name: /entertainment/i })
-    .first()
-    .click();
+
+  const categoryResponse = page.waitForResponse(
+    (r) =>
+      r.url().includes("/api/subscriptions") &&
+      r.url().includes("category=") &&
+      r.status() === 200,
+    { timeout: 8_000 },
+  );
+  await page.getByRole("option", { name: /entertainment/i }).first().click();
+  await categoryResponse;
 
   // "Full Sub" should appear (it was tagged as Entertainment)
   await expect(
@@ -251,20 +255,16 @@ test("category filter shows only matching subscriptions", async ({ page }) => {
   ).toBeVisible();
   // Manual Sub has no category — should be filtered out
   await expect(
-    page.locator("td").filter({ hasText: manualSubName }),
-  ).not.toBeVisible();
+    page.locator("td").filter({ hasText: manualSubName ?? "Manual Sub" }),
+  ).toHaveCount(0);
 
-  // Revert to all — wait for the unfiltered response before asserting
-  const allResponse = page.waitForResponse(
-    (r) => r.url().includes("/api/subscriptions") && r.status() === 200,
-    { timeout: 8_000 },
-  );
+  // Revert to all — TanStack Query may serve cached unfiltered data (no network
+  // request), so rely on the positive data assertion instead of waitForResponse.
   await categorySelect.click();
   await page.getByRole("option", { name: "All categories" }).click();
-  await allResponse;
   await expect(
-    page.locator("td").filter({ hasText: manualSubName }).first(),
-  ).toBeVisible({ timeout: 5_000 });
+    page.locator("td").filter({ hasText: manualSubName ?? "Manual Sub" }).first(),
+  ).toBeVisible({ timeout: 10_000 });
 });
 
 test("sort order changes row order", async ({ page }) => {
