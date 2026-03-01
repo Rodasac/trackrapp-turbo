@@ -113,7 +113,9 @@ const strongPassword = z
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(8, "Password must be at least 8 characters"),
+    currentPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters"),
     newPassword: strongPassword,
     confirmPassword: strongPassword,
   })

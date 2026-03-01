@@ -56,7 +56,11 @@ export function ChangePasswordForm() {
             <FormItem>
               <FormLabel>Current password</FormLabel>
               <FormControl>
-                <Input type="password" autoComplete="current-password" {...field} />
+                <Input
+                  type="password"
+                  autoComplete="current-password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

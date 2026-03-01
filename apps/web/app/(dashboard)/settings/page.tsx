@@ -47,9 +47,7 @@ function SettingsContent() {
           <Card>
             <CardHeader>
               <CardTitle>Profile</CardTitle>
-              <CardDescription>
-                Update your profile information
-              </CardDescription>
+              <CardDescription>Update your profile information</CardDescription>
             </CardHeader>
             <CardContent>
               <ProfileForm />

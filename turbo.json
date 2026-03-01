@@ -5,33 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": [
-        "AI_PROVIDER",
-        "OPENAI_API_KEY",
-        "ANTHROPIC_API_KEY",
-        "GROQ_API_KEY",
-        "MAILPIT_URL",
-        "NODE_ENV",
-        "NEXT_TELEMETRY_DISABLED",
-        "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET",
-        "STRIPE_SECRET_KEY",
-        "STRIPE_WEBHOOK_SECRET",
-        "STRIPE_PRO_MONTHLY_PRICE_ID",
-        "STRIPE_PRO_ANNUAL_PRICE_ID",
-        "DATABASE_URL",
-        "SKIP_INTEGRATION",
-        "SMTP_HOST",
-        "SMTP_PORT",
-        "SMTP_SECURE",
-        "SMTP_USER",
-        "SMTP_PASS",
-        "SMTP_FROM",
-        "VAPID_PUBLIC_KEY",
-        "VAPID_PRIVATE_KEY",
-        "VAPID_SUBJECT"
-      ]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -41,33 +15,7 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true,
-      "env": [
-        "AI_PROVIDER",
-        "OPENAI_API_KEY",
-        "ANTHROPIC_API_KEY",
-        "GROQ_API_KEY",
-        "MAILPIT_URL",
-        "NODE_ENV",
-        "NEXT_TELEMETRY_DISABLED",
-        "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET",
-        "STRIPE_SECRET_KEY",
-        "STRIPE_WEBHOOK_SECRET",
-        "STRIPE_PRO_MONTHLY_PRICE_ID",
-        "STRIPE_PRO_ANNUAL_PRICE_ID",
-        "DATABASE_URL",
-        "SKIP_INTEGRATION",
-        "SMTP_HOST",
-        "SMTP_PORT",
-        "SMTP_SECURE",
-        "SMTP_USER",
-        "SMTP_PASS",
-        "SMTP_FROM",
-        "VAPID_PUBLIC_KEY",
-        "VAPID_PRIVATE_KEY",
-        "VAPID_SUBJECT"
-      ]
+      "persistent": true
     },
     "clean": {
       "cache": false
@@ -75,33 +23,7 @@
     "test": {
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/vitest.config.ts"],
       "dependsOn": ["transit", "@repo/vitest-config#build"],
-      "outputs": ["coverage.json"],
-      "env": [
-        "AI_PROVIDER",
-        "OPENAI_API_KEY",
-        "ANTHROPIC_API_KEY",
-        "GROQ_API_KEY",
-        "MAILPIT_URL",
-        "NODE_ENV",
-        "NEXT_TELEMETRY_DISABLED",
-        "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET",
-        "STRIPE_SECRET_KEY",
-        "STRIPE_WEBHOOK_SECRET",
-        "STRIPE_PRO_MONTHLY_PRICE_ID",
-        "STRIPE_PRO_ANNUAL_PRICE_ID",
-        "DATABASE_URL",
-        "SKIP_INTEGRATION",
-        "SMTP_HOST",
-        "SMTP_PORT",
-        "SMTP_SECURE",
-        "SMTP_USER",
-        "SMTP_PASS",
-        "SMTP_FROM",
-        "VAPID_PUBLIC_KEY",
-        "VAPID_PRIVATE_KEY",
-        "VAPID_SUBJECT"
-      ]
+      "outputs": ["coverage.json"]
     },
     "transit": {
       "dependsOn": ["^transit"]
@@ -126,5 +48,32 @@
       "persistent": true,
       "env": ["DATABASE_URL"]
     }
-  }
+  },
+  "globalEnv": [
+    "AI_PROVIDER",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "GROQ_API_KEY",
+    "MAILPIT_URL",
+    "NODE_ENV",
+    "NEXT_TELEMETRY_DISABLED",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_PRO_MONTHLY_PRICE_ID",
+    "STRIPE_PRO_ANNUAL_PRICE_ID",
+    "DATABASE_URL",
+    "SKIP_INTEGRATION",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_SECURE",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "SMTP_FROM",
+    "UPLOADTHING_TOKEN",
+    "VAPID_PUBLIC_KEY",
+    "VAPID_PRIVATE_KEY",
+    "VAPID_SUBJECT"
+  ]
 }

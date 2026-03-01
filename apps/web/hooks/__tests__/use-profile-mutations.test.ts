@@ -2,10 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import {
-  useUpdateProfile,
-  useChangePassword,
-} from "../use-profile-mutations";
+import { useUpdateProfile, useChangePassword } from "../use-profile-mutations";
 
 const { mockUpdateUser, mockChangePassword } = vi.hoisted(() => ({
   mockUpdateUser: vi.fn(),

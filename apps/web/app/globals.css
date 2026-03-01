@@ -1,8 +1,10 @@
 @import "@repo/tailwind-config";
-@import "uploadthing/tw/v4.css";
+
+@import "../node_modules/uploadthing/tw/v4.css";
 
 /* Scan the shared UI package for Tailwind classes */
 @source "../../../packages/ui/src";
+@source "../node_modules/@uploadthing/react/dist";
 
 html,
 body {

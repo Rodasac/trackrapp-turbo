@@ -56,9 +56,7 @@ export function ProfileForm() {
       });
       toast.success("Photo updated");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to save photo",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to save photo");
     }
   }
 

@@ -62,9 +62,7 @@ describe("AvatarUpload", () => {
     renderWithProviders(
       <AvatarUpload name="Jane" onUploadComplete={vi.fn()} />,
     );
-    expect(
-      screen.getByRole("button", { name: /change photo/i }),
-    ).toBeTruthy();
+    expect(screen.getByRole("button", { name: /change photo/i })).toBeTruthy();
   });
 
   it("calls onUploadComplete with the uploaded file URL on success", async () => {

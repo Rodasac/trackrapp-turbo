@@ -54,7 +54,9 @@ describe("ChangePasswordForm", () => {
     await user.click(screen.getByRole("button", { name: /change password/i }));
 
     await waitFor(() =>
-      expect(screen.getAllByText(/at least 8 characters/i).length).toBeGreaterThan(0),
+      expect(
+        screen.getAllByText(/at least 8 characters/i).length,
+      ).toBeGreaterThan(0),
     );
     expect(mockMutateAsync).not.toHaveBeenCalled();
   });
