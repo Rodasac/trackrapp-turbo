@@ -17,6 +17,7 @@ import {
 } from "@repo/shared/format";
 import { useSubscription } from "@/hooks/use-subscription";
 import type { SubscriptionFormValues } from "@repo/shared/validations";
+import { DynamicIcon } from "lucide-react/dynamic";
 
 interface SubscriptionDetailProps {
   id: number;
@@ -122,7 +123,14 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                   : undefined
               }
             >
-              {sub.category.icon ? `${sub.category.icon} ` : ""}
+              <DynamicIcon
+                name={
+                  sub.category.icon
+                    ? `${sub.category.icon}`
+                    : "circle-question-mark"
+                }
+                size={16}
+              />
               {sub.category.name}
             </Badge>
           )}
