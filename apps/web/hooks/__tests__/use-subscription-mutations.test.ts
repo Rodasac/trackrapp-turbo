@@ -7,6 +7,9 @@ import {
   useCreateCategory,
   useDeactivateSubscription,
   useDeleteSubscription,
+  useRenewSubscription,
+  useUndoRenewal,
+  useReactivateSubscription,
 } from "../use-subscription-mutations";
 import { queryKeys } from "@/lib/query-keys";
 
@@ -199,5 +202,88 @@ describe("useDeleteSubscription", () => {
 
     const [url] = vi.mocked(fetch).mock.calls[0]!;
     expect(url).toBe("/api/subscriptions/5?hard=true");
+  });
+});
+
+describe("useRenewSubscription", () => {
+  beforeEach(() => vi.stubGlobal("fetch", vi.fn()));
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("POSTs to /api/subscriptions/:id/renew", async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(JSON.stringify({ id: 1 }), { status: 200 }),
+    );
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const { result } = renderHook(() => useRenewSubscription(), {
+      wrapper: makeWrapper(qc),
+    });
+
+    await act(() => result.current.mutateAsync(1));
+
+    const [url, opts] = vi.mocked(fetch).mock.calls[0]!;
+    expect(url).toBe("/api/subscriptions/1/renew");
+    expect((opts as RequestInit).method).toBe("POST");
+  });
+
+  it("invalidates subscriptions.all on success", async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(JSON.stringify({ id: 1 }), { status: 200 }),
+    );
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const invalidate = vi.spyOn(qc, "invalidateQueries");
+    const { result } = renderHook(() => useRenewSubscription(), {
+      wrapper: makeWrapper(qc),
+    });
+
+    await act(() => result.current.mutateAsync(1));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(invalidate).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: queryKeys.subscriptions.all }),
+    );
+  });
+});
+
+describe("useUndoRenewal", () => {
+  beforeEach(() => vi.stubGlobal("fetch", vi.fn()));
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("DELETEs to /api/subscriptions/:id/renew", async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(JSON.stringify({ id: 1 }), { status: 200 }),
+    );
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const { result } = renderHook(() => useUndoRenewal(), {
+      wrapper: makeWrapper(qc),
+    });
+
+    await act(() => result.current.mutateAsync(1));
+
+    const [url, opts] = vi.mocked(fetch).mock.calls[0]!;
+    expect(url).toBe("/api/subscriptions/1/renew");
+    expect((opts as RequestInit).method).toBe("DELETE");
+  });
+});
+
+describe("useReactivateSubscription", () => {
+  beforeEach(() => vi.stubGlobal("fetch", vi.fn()));
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("PATCHes /api/subscriptions/:id with action=reactivate", async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(JSON.stringify({ id: 1, isActive: true }), { status: 200 }),
+    );
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const { result } = renderHook(() => useReactivateSubscription(), {
+      wrapper: makeWrapper(qc),
+    });
+
+    await act(() => result.current.mutateAsync(1));
+
+    const [url, opts] = vi.mocked(fetch).mock.calls[0]!;
+    expect(url).toBe("/api/subscriptions/1");
+    expect((opts as RequestInit).method).toBe("PATCH");
+    expect(JSON.parse((opts as RequestInit).body as string)).toEqual({
+      action: "reactivate",
+    });
   });
 });

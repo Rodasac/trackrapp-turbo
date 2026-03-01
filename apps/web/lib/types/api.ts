@@ -26,6 +26,8 @@ export interface SubscriptionListItem {
   logoUrl: string | null;
   websiteUrl: string | null;
   category: CategoryItem | null;
+  autoRenew: boolean | null;
+  previousRenewalDate: string | null;
 }
 
 export interface SubscriptionDetail extends SubscriptionListItem {
@@ -164,4 +166,8 @@ export interface AiTipItem {
   category: "savings" | "warning" | "info" | "comparison";
   generatedAt: string;
   expiresAt: string;
+}
+
+export interface UserPreferencesResponse {
+  autoRenewDefault: boolean;
 }

@@ -15,6 +15,7 @@ import {
 import { NotificationPreferencesForm } from "@/components/notification-preferences-form";
 import { BillingSettings } from "@/components/billing-settings";
 import { ProfileForm } from "@/components/profile-form";
+import { SubscriptionPreferencesForm } from "@/components/subscription-preferences-form";
 
 function SettingsContent() {
   const searchParams = useSearchParams();
@@ -41,6 +42,7 @@ function SettingsContent() {
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="billing">Billing</TabsTrigger>
+          <TabsTrigger value="preferences">Preferences</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="mt-4">
@@ -77,6 +79,20 @@ function SettingsContent() {
             </CardHeader>
             <CardContent>
               <BillingSettings />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="preferences" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Subscription preferences</CardTitle>
+              <CardDescription>
+                Configure default behaviors for your subscriptions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SubscriptionPreferencesForm />
             </CardContent>
           </Card>
         </TabsContent>

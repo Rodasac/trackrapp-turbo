@@ -6,6 +6,7 @@ const {
   mockRunSendReminders,
   mockRunCleanup,
   mockGenerateAiTips,
+  mockRunAutoRenew,
 } = vi.hoisted(() => ({
   mockValidateEnv: vi.fn().mockReturnValue({
     VAPID_PUBLIC_KEY: "pub",
@@ -16,6 +17,7 @@ const {
   mockRunSendReminders: vi.fn().mockResolvedValue(undefined),
   mockRunCleanup: vi.fn().mockResolvedValue(undefined),
   mockGenerateAiTips: vi.fn().mockResolvedValue(undefined),
+  mockRunAutoRenew: vi.fn().mockResolvedValue(0),
 }));
 
 vi.mock("../src/env.js", () => ({
@@ -38,6 +40,10 @@ vi.mock("../src/jobs/generate-ai-tips.js", () => ({
   generateAiTips: mockGenerateAiTips,
 }));
 
+vi.mock("../src/jobs/auto-renew.js", () => ({
+  runAutoRenew: mockRunAutoRenew,
+}));
+
 import { VALID_JOBS, parseJobName, runJob } from "../src/run-job.js";
 
 // ─── VALID_JOBS ───────────────────────────────────────────────────────────────
@@ -49,8 +55,12 @@ describe("VALID_JOBS", () => {
     expect(VALID_JOBS).toContain("generate-ai-tips");
   });
 
-  it("contains exactly 3 jobs", () => {
-    expect(VALID_JOBS).toHaveLength(3);
+  it("contains auto-renew", () => {
+    expect(VALID_JOBS).toContain("auto-renew");
+  });
+
+  it("contains exactly 4 jobs", () => {
+    expect(VALID_JOBS).toHaveLength(4);
   });
 });
 
@@ -78,6 +88,11 @@ describe("parseJobName", () => {
   it("accepts generate-ai-tips", () => {
     const result = parseJobName(["node", "run-job.ts", "generate-ai-tips"]);
     expect(result).toBe("generate-ai-tips");
+  });
+
+  it("accepts auto-renew", () => {
+    const result = parseJobName(["node", "run-job.ts", "auto-renew"]);
+    expect(result).toBe("auto-renew");
   });
 
   it("calls process.exit(1) when no job name provided", () => {
@@ -160,6 +175,23 @@ describe("runJob", () => {
     it("calls generateAiTips", async () => {
       await runJob("generate-ai-tips");
       expect(mockGenerateAiTips).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("auto-renew", () => {
+    it("calls validateEnv", async () => {
+      await runJob("auto-renew");
+      expect(mockValidateEnv).toHaveBeenCalledOnce();
+    });
+
+    it("does not call initVapid", async () => {
+      await runJob("auto-renew");
+      expect(mockInitVapid).not.toHaveBeenCalled();
+    });
+
+    it("calls runAutoRenew", async () => {
+      await runJob("auto-renew");
+      expect(mockRunAutoRenew).toHaveBeenCalledOnce();
     });
   });
 

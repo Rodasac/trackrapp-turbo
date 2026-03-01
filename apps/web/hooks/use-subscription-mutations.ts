@@ -105,3 +105,56 @@ export function useDeleteSubscription() {
     },
   });
 }
+
+/** Advance the renewal date by one billing cycle. */
+export function useRenewSubscription() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/subscriptions/${id}/renew`, {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Failed to renew");
+      return res.json();
+    },
+    onSuccess: (_data, id) => {
+      invalidateSubscriptionsAndStats(qc, id);
+    },
+  });
+}
+
+/** Revert the last renewal (restore previousRenewalDate). */
+export function useUndoRenewal() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/subscriptions/${id}/renew`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to undo renewal");
+      return res.json();
+    },
+    onSuccess: (_data, id) => {
+      invalidateSubscriptionsAndStats(qc, id);
+    },
+  });
+}
+
+/** Reactivate a previously deactivated subscription. */
+export function useReactivateSubscription() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/subscriptions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reactivate" }),
+      });
+      if (!res.ok) throw new Error("Failed to reactivate");
+      return res.json();
+    },
+    onSuccess: (_data, id) => {
+      invalidateSubscriptionsAndStats(qc, id);
+    },
+  });
+}

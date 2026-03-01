@@ -12,11 +12,13 @@ import { initVapid } from "./services/push.js";
 import { runSendReminders } from "./jobs/send-reminders.js";
 import { runCleanup } from "./jobs/cleanup.js";
 import { generateAiTips } from "./jobs/generate-ai-tips.js";
+import { runAutoRenew } from "./jobs/auto-renew.js";
 
 export const VALID_JOBS = [
   "send-reminders",
   "cleanup",
   "generate-ai-tips",
+  "auto-renew",
 ] as const;
 
 export type JobName = (typeof VALID_JOBS)[number];
@@ -63,6 +65,11 @@ export async function runJob(name: JobName): Promise<void> {
 
   if (name === "generate-ai-tips") {
     await generateAiTips();
+    return;
+  }
+
+  if (name === "auto-renew") {
+    await runAutoRenew();
     return;
   }
 }

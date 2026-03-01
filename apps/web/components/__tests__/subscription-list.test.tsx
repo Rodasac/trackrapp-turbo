@@ -59,21 +59,49 @@ vi.mock("@/hooks/use-subscription-mutations", () => ({
   useDeleteSubscription: vi.fn(),
   useSaveSubscription: vi.fn(),
   useCreateCategory: vi.fn(),
+  useRenewSubscription: vi.fn(),
+  useUndoRenewal: vi.fn(),
+  useReactivateSubscription: vi.fn(),
+}));
+
+// Radix DropdownMenu requires full mock in jsdom
+vi.mock("@repo/ui/dropdown-menu", () => ({
+  DropdownMenu: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  DropdownMenuContent: ({ children }: { children: React.ReactNode }) =>
+    React.createElement("div", null, children),
+  DropdownMenuItem: ({
+    children,
+    onClick,
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+  }) => React.createElement("div", { role: "menuitem", onClick }, children),
+  DropdownMenuSeparator: () => React.createElement("hr", null),
 }));
 
 import { useCategories } from "@/hooks/use-categories";
 import { useSubscriptions } from "@/hooks/use-subscriptions";
-import { useDeactivateSubscription } from "@/hooks/use-subscription-mutations";
+import {
+  useDeactivateSubscription,
+  useDeleteSubscription,
+  useRenewSubscription,
+  useUndoRenewal,
+  useReactivateSubscription,
+} from "@/hooks/use-subscription-mutations";
 
-const mockDeactivate = vi.fn();
+const pendingMock = () => ({ mutateAsync: vi.fn(), mutate: vi.fn(), isPending: false });
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useCategories).mockReturnValue({ data: [] } as never);
-  vi.mocked(useDeactivateSubscription).mockReturnValue({
-    mutateAsync: mockDeactivate,
-    isPending: false,
-  } as never);
+  vi.mocked(useDeactivateSubscription).mockReturnValue(pendingMock() as never);
+  vi.mocked(useDeleteSubscription).mockReturnValue(pendingMock() as never);
+  vi.mocked(useRenewSubscription).mockReturnValue(pendingMock() as never);
+  vi.mocked(useUndoRenewal).mockReturnValue(pendingMock() as never);
+  vi.mocked(useReactivateSubscription).mockReturnValue(pendingMock() as never);
 });
 
 describe("SubscriptionList", () => {
@@ -193,5 +221,86 @@ describe("SubscriptionList", () => {
 
     renderWithProviders(<SubscriptionList />);
     expect(screen.getByText("Inactive")).toBeInTheDocument();
+  });
+
+  it("shows Due badge when renewal date is in the past and subscription is active", () => {
+    vi.mocked(useSubscriptions).mockReturnValue({
+      data: [
+        mockSubscriptionListItem({
+          isActive: true,
+          nextRenewalDate: "2025-01-01", // past date → due
+        }),
+      ],
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionList />);
+    expect(screen.getByText("Due")).toBeInTheDocument();
+  });
+
+  it("does not show Due badge for future renewal dates", () => {
+    vi.mocked(useSubscriptions).mockReturnValue({
+      data: [
+        mockSubscriptionListItem({
+          isActive: true,
+          nextRenewalDate: "2099-01-01",
+        }),
+      ],
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionList />);
+    expect(screen.queryByText("Due")).not.toBeInTheDocument();
+  });
+
+  it("shows Renew option in dropdown for due active subscription", () => {
+    vi.mocked(useSubscriptions).mockReturnValue({
+      data: [
+        mockSubscriptionListItem({
+          isActive: true,
+          nextRenewalDate: "2025-01-01",
+          previousRenewalDate: null,
+        }),
+      ],
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionList />);
+    expect(screen.getByText("Renew")).toBeInTheDocument();
+  });
+
+  it("shows Undo renewal option when previousRenewalDate is set", () => {
+    vi.mocked(useSubscriptions).mockReturnValue({
+      data: [
+        mockSubscriptionListItem({
+          isActive: true,
+          nextRenewalDate: "2026-04-01",
+          previousRenewalDate: "2026-03-01",
+        }),
+      ],
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionList />);
+    expect(screen.getByText("Undo renewal")).toBeInTheDocument();
+  });
+
+  it("shows Cancel subscription for active subs and Reactivate for inactive subs", () => {
+    vi.mocked(useSubscriptions).mockReturnValue({
+      data: [
+        mockSubscriptionListItem({ id: 1, name: "Active Sub", isActive: true }),
+        mockSubscriptionListItem({ id: 2, name: "Inactive Sub", isActive: false }),
+      ],
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    renderWithProviders(<SubscriptionList />);
+    expect(screen.getByText("Cancel subscription")).toBeInTheDocument();
+    expect(screen.getByText("Reactivate")).toBeInTheDocument();
   });
 });

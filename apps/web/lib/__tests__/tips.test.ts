@@ -16,6 +16,8 @@ function makeSub(
     logoUrl: null,
     websiteUrl: null,
     category: null,
+    autoRenew: null,
+    previousRenewalDate: null,
     ...overrides,
   };
 }

@@ -1,11 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, X, ExternalLink } from "lucide-react";
+import {
+  Pencil,
+  X,
+  ExternalLink,
+  RefreshCw,
+  Undo2,
+  XCircle,
+  RotateCcw,
+} from "lucide-react";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Separator } from "@repo/ui/separator";
+import { Switch } from "@repo/ui/switch";
+import { Label } from "@repo/ui/label";
 import { SubscriptionForm } from "@/components/subscription-form";
 import { DeleteSubscriptionDialog } from "@/components/delete-subscription-dialog";
 import { PriceHistoryChart } from "@/components/charts/price-history-chart";
@@ -15,7 +25,16 @@ import {
   formatShortDate,
   formatRenewalDate,
 } from "@repo/shared/format";
+import { isDue } from "@repo/shared/billing";
 import { useSubscription } from "@/hooks/use-subscription";
+import {
+  useDeactivateSubscription,
+  useRenewSubscription,
+  useUndoRenewal,
+  useReactivateSubscription,
+  useSaveSubscription,
+} from "@/hooks/use-subscription-mutations";
+import { useUserPreferences } from "@/hooks/use-user-preferences";
 import type { SubscriptionFormValues } from "@repo/shared/validations";
 import { DynamicIcon } from "lucide-react/dynamic";
 
@@ -39,6 +58,12 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
   const [mode, setMode] = useState<"view" | "edit">("view");
   const { data: sub, isLoading, isError } = useSubscription(id);
+  const { data: prefs } = useUserPreferences();
+  const renewMutation = useRenewSubscription();
+  const undoMutation = useUndoRenewal();
+  const cancelMutation = useDeactivateSubscription();
+  const reactivateMutation = useReactivateSubscription();
+  const saveAutoRenew = useSaveSubscription("edit", id);
 
   if (isLoading) {
     return (
@@ -136,14 +161,66 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setMode("edit")}>
-            <Pencil className="mr-1 size-4" />
-            Edit
-          </Button>
-          <DeleteSubscriptionDialog
-            subscriptionId={id}
-            subscriptionName={sub.name}
-          />
+          {sub.isActive ? (
+            <>
+              {isDue(sub.nextRenewalDate) && !sub.previousRenewalDate && (
+                <Button
+                  variant="default"
+                  size="sm"
+                  disabled={renewMutation.isPending}
+                  onClick={() => renewMutation.mutate(id)}
+                >
+                  <RefreshCw className="mr-1 size-4" />
+                  Renew
+                </Button>
+              )}
+              {sub.previousRenewalDate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={undoMutation.isPending}
+                  onClick={() => undoMutation.mutate(id)}
+                >
+                  <Undo2 className="mr-1 size-4" />
+                  Undo Renewal
+                </Button>
+              )}
+              <Button variant="outline" size="sm" onClick={() => setMode("edit")}>
+                <Pencil className="mr-1 size-4" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-destructive border-destructive/40 hover:bg-destructive/10"
+                disabled={cancelMutation.isPending}
+                onClick={() => cancelMutation.mutate(id)}
+              >
+                <XCircle className="mr-1 size-4" />
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="default"
+                size="sm"
+                disabled={reactivateMutation.isPending}
+                onClick={() => reactivateMutation.mutate(id)}
+              >
+                <RotateCcw className="mr-1 size-4" />
+                Reactivate
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setMode("edit")}>
+                <Pencil className="mr-1 size-4" />
+                Edit
+              </Button>
+              <DeleteSubscriptionDialog
+                subscriptionId={id}
+                subscriptionName={sub.name}
+              />
+            </>
+          )}
         </div>
       </div>
 
@@ -181,11 +258,48 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
             <InfoRow
               label="Status"
               value={
-                <Badge variant={sub.isActive ? "default" : "secondary"}>
-                  {sub.isActive ? "Active" : "Inactive"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant={sub.isActive ? "default" : "secondary"}>
+                    {sub.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                  {sub.isActive && isDue(sub.nextRenewalDate) && (
+                    <Badge
+                      variant="outline"
+                      className="border-amber-500 text-amber-600 dark:text-amber-400"
+                    >
+                      Due
+                    </Badge>
+                  )}
+                </div>
               }
             />
+            <div className="flex flex-col gap-1.5">
+              <dt className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+                Auto-renew
+              </dt>
+              <dd className="flex items-center gap-2">
+                <Switch
+                  id={`auto-renew-${id}`}
+                  checked={
+                    sub.autoRenew !== null
+                      ? sub.autoRenew
+                      : (prefs?.autoRenewDefault ?? true)
+                  }
+                  onCheckedChange={(checked) => {
+                    // Send a partial PUT body — backend handles autoRenew outside form schema
+                    void saveAutoRenew.mutateAsync(
+                      { autoRenew: checked } as unknown as SubscriptionFormValues,
+                    );
+                  }}
+                />
+                <Label
+                  htmlFor={`auto-renew-${id}`}
+                  className="text-sm font-normal"
+                >
+                  {sub.autoRenew === null ? "(using default)" : ""}
+                </Label>
+              </dd>
+            </div>
             {sub.websiteUrl && (
               <InfoRow
                 label="Website"

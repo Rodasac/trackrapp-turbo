@@ -38,6 +38,8 @@ export function mockSubscriptionListItem(
     logoUrl: null,
     websiteUrl: "https://netflix.com",
     category: mockCategory(),
+    autoRenew: null,
+    previousRenewalDate: null,
     ...overrides,
   };
 }
