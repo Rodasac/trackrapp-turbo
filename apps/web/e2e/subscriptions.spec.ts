@@ -310,9 +310,9 @@ test("detail page shows subscription fields", async ({ page }) => {
   ).toBeVisible();
   // Price (use .first() because $12.99 also appears in price history after any edit)
   await expect(page.getByText("$12.99").first()).toBeVisible();
-  // Edit + Delete buttons
+  // Edit + Cancel (deactivate) buttons — active subs no longer show Delete
   await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Delete" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cancel" })).toBeVisible();
 });
 
 test("back button navigates to subscriptions list", async ({ page }) => {
@@ -379,23 +379,12 @@ test("price history section appears after price edit", async ({ page }) => {
 
 test("deactivate subscription via dialog", async ({ page }) => {
   await goToManualSubDetail(page);
-  await page.getByRole("button", { name: "Delete" }).click();
-
-  // Dialog should appear
-  await expect(
-    page.getByRole("heading", { name: "Remove subscription?" }),
-  ).toBeVisible();
-
-  await page.getByRole("button", { name: "Deactivate" }).click();
-
-  await expect(
-    page
-      .locator("[data-sonner-toast]")
-      .filter({ hasText: "Subscription deactivated" }),
-  ).toBeVisible();
-
-  // Inactive badge should now appear
-  await expect(page.getByText("Inactive").first()).toBeVisible();
+  // Cancel button directly deactivates the active subscription (no dialog)
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByText("Inactive").first()).toBeVisible({
+    timeout: 8_000,
+  });
+  await expect(page.getByRole("button", { name: "Reactivate" })).toBeVisible();
 });
 
 test("show inactive toggle reveals deactivated subscription", async ({
@@ -461,6 +450,12 @@ test("delete permanently removes subscription", async ({ page }) => {
   await row.getByRole("button", { name: "Actions" }).click();
   await page.getByRole("menuitem", { name: "View" }).click();
   await page.waitForURL(/\/subscriptions\/\d+$/);
+
+  // Deactivate first — Delete only appears for inactive subscriptions
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByRole("button", { name: "Reactivate" })).toBeVisible({
+    timeout: 8_000,
+  });
 
   // Delete permanently
   await page.getByRole("button", { name: "Delete" }).click();

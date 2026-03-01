@@ -26,7 +26,9 @@ test("settings profile tab shows avatar initials when no image", async ({
 
   await page.goto("/settings");
 
-  await expect(page.getByText(initials)).toBeVisible({ timeout: 10_000 });
+  await expect(
+    page.getByRole("main").getByText(initials),
+  ).toBeVisible({ timeout: 10_000 });
 });
 
 test("settings profile tab shows Change photo button", async ({ page }) => {
