@@ -200,17 +200,13 @@ describe("ProfileForm", () => {
   it("shows Change email button for credential users", () => {
     setupMocks({ provider: "credential" });
     renderWithProviders(<ProfileForm />);
-    expect(
-      screen.getByRole("button", { name: /change email/i }),
-    ).toBeTruthy();
+    expect(screen.getByRole("button", { name: /change email/i })).toBeTruthy();
   });
 
   it("does not show Change email button for Google users", () => {
     setupMocks({ provider: "google" });
     renderWithProviders(<ProfileForm />);
-    expect(
-      screen.queryByRole("button", { name: /change email/i }),
-    ).toBeNull();
+    expect(screen.queryByRole("button", { name: /change email/i })).toBeNull();
   });
 
   it("reveals ChangeEmailForm when Change email button is clicked", async () => {

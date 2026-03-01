@@ -213,7 +213,9 @@ describe("useRenewSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useRenewSubscription(), {
       wrapper: makeWrapper(qc),
     });
@@ -229,7 +231,9 @@ describe("useRenewSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
     const { result } = renderHook(() => useRenewSubscription(), {
       wrapper: makeWrapper(qc),
@@ -251,7 +255,9 @@ describe("useUndoRenewal", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1 }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useUndoRenewal(), {
       wrapper: makeWrapper(qc),
     });
@@ -272,7 +278,9 @@ describe("useReactivateSubscription", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ id: 1, isActive: true }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useReactivateSubscription(), {
       wrapper: makeWrapper(qc),
     });

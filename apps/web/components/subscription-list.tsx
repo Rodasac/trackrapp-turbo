@@ -61,6 +61,8 @@ import {
 } from "@/hooks/use-subscription-mutations";
 import type { SubscriptionListItem } from "@/lib/types/api";
 import { DynamicIcon } from "lucide-react/dynamic";
+import { useRouter } from "next/navigation";
+import { cn } from "@repo/ui/lib/utils";
 
 function computeImgSrc(
   logoUrl: string | null,
@@ -122,6 +124,7 @@ function SkeletonRow() {
 }
 
 export function SubscriptionList() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [sort, setSort] = useState("nextRenewalDate");
@@ -144,6 +147,10 @@ export function SubscriptionList() {
   const renew = useRenewSubscription();
   const undoRenewal = useUndoRenewal();
   const reactivate = useReactivateSubscription();
+
+  function handleRowClick(subscription: SubscriptionListItem) {
+    router.push(`/subscriptions/${subscription.id}`);
+  }
 
   async function handleDeactivate(id: number) {
     try {
@@ -274,7 +281,11 @@ export function SubscriptionList() {
               : subscriptions.map((sub: SubscriptionListItem) => (
                   <TableRow
                     key={sub.id}
-                    className={!sub.isActive ? "opacity-50" : undefined}
+                    className={cn(
+                      !sub.isActive ? "opacity-50" : undefined,
+                      "cursor-pointer",
+                    )}
+                    onClick={() => handleRowClick(sub)}
                   >
                     <TableCell>
                       <SubscriptionLogo
@@ -361,14 +372,20 @@ export function SubscriptionList() {
                               Edit
                             </Link>
                           </DropdownMenuItem>
-                          {sub.isActive && isDue(sub.nextRenewalDate) && !sub.previousRenewalDate && (
-                            <DropdownMenuItem onClick={() => handleRenew(sub.id)}>
-                              <RefreshCw className="mr-2 size-4" />
-                              Renew
-                            </DropdownMenuItem>
-                          )}
+                          {sub.isActive &&
+                            isDue(sub.nextRenewalDate) &&
+                            !sub.previousRenewalDate && (
+                              <DropdownMenuItem
+                                onClick={() => handleRenew(sub.id)}
+                              >
+                                <RefreshCw className="mr-2 size-4" />
+                                Renew
+                              </DropdownMenuItem>
+                            )}
                           {sub.previousRenewalDate && (
-                            <DropdownMenuItem onClick={() => handleUndoRenewal(sub.id)}>
+                            <DropdownMenuItem
+                              onClick={() => handleUndoRenewal(sub.id)}
+                            >
                               <Undo2 className="mr-2 size-4" />
                               Undo renewal
                             </DropdownMenuItem>

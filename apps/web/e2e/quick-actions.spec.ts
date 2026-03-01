@@ -140,18 +140,18 @@ test.describe("Quick actions — due subscription lifecycle", () => {
 
   test("reactivate restores subscription from detail", async ({ page }) => {
     await page.goto(`/subscriptions/${dueSubId}`);
-    await expect(
-      page.getByRole("button", { name: "Reactivate" }),
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("button", { name: "Reactivate" })).toBeVisible({
+      timeout: 10_000,
+    });
 
     await page.getByRole("button", { name: "Reactivate" }).click();
 
-    await expect(
-      page.getByRole("button", { name: "Cancel" }),
-    ).toBeVisible({ timeout: 8_000 });
-    await expect(
-      page.getByRole("button", { name: "Reactivate" }),
-    ).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Cancel" })).toBeVisible({
+      timeout: 8_000,
+    });
+    await expect(page.getByRole("button", { name: "Reactivate" })).toHaveCount(
+      0,
+    );
   });
 
   // ─── List dropdown quick actions ────────────────────────────────────────────

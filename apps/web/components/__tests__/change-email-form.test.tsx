@@ -49,9 +49,7 @@ describe("ChangeEmailForm", () => {
     );
 
     await waitFor(() =>
-      expect(
-        screen.getByText(/enter a valid email address/i),
-      ).toBeTruthy(),
+      expect(screen.getByText(/enter a valid email address/i)).toBeTruthy(),
     );
     expect(mockMutateAsync).not.toHaveBeenCalled();
   });
@@ -66,9 +64,7 @@ describe("ChangeEmailForm", () => {
     );
 
     await waitFor(() =>
-      expect(
-        screen.getByText(/enter a valid email address/i),
-      ).toBeTruthy(),
+      expect(screen.getByText(/enter a valid email address/i)).toBeTruthy(),
     );
     expect(mockMutateAsync).not.toHaveBeenCalled();
   });
@@ -105,9 +101,7 @@ describe("ChangeEmailForm", () => {
     );
 
     await waitFor(() =>
-      expect(
-        screen.getByText(/verification email sent to/i),
-      ).toBeTruthy(),
+      expect(screen.getByText(/verification email sent to/i)).toBeTruthy(),
     );
     expect(screen.getByText("new@example.com")).toBeTruthy();
   });

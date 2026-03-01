@@ -185,7 +185,11 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                   Undo Renewal
                 </Button>
               )}
-              <Button variant="outline" size="sm" onClick={() => setMode("edit")}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMode("edit")}
+              >
                 <Pencil className="mr-1 size-4" />
                 Edit
               </Button>
@@ -211,7 +215,11 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                 <RotateCcw className="mr-1 size-4" />
                 Reactivate
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setMode("edit")}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMode("edit")}
+              >
                 <Pencil className="mr-1 size-4" />
                 Edit
               </Button>
@@ -287,9 +295,9 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                   }
                   onCheckedChange={(checked) => {
                     // Send a partial PUT body — backend handles autoRenew outside form schema
-                    void saveAutoRenew.mutateAsync(
-                      { autoRenew: checked } as unknown as SubscriptionFormValues,
-                    );
+                    void saveAutoRenew.mutateAsync({
+                      autoRenew: checked,
+                    } as unknown as SubscriptionFormValues);
                   }}
                 />
                 <Label

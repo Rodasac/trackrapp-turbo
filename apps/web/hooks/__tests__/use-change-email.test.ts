@@ -42,7 +42,9 @@ describe("useChangeEmail", () => {
 
   it("calls authClient.changeEmail with newEmail and callbackURL", async () => {
     mockChangeEmail.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useChangeEmail(), {
       wrapper: makeWrapper(qc),
     });
@@ -58,7 +60,9 @@ describe("useChangeEmail", () => {
 
   it("uses custom callbackURL when provided", async () => {
     mockChangeEmail.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useChangeEmail(), {
       wrapper: makeWrapper(qc),
     });
@@ -77,7 +81,9 @@ describe("useChangeEmail", () => {
 
   it("invalidates session query on success", async () => {
     mockChangeEmail.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useChangeEmail(), {
       wrapper: makeWrapper(qc),
     });
@@ -107,9 +113,7 @@ describe("useChangeEmail", () => {
     });
 
     await expect(
-      act(() =>
-        result.current.mutateAsync({ newEmail: "taken@example.com" }),
-      ),
+      act(() => result.current.mutateAsync({ newEmail: "taken@example.com" })),
     ).rejects.toThrow("Email already in use");
   });
 });

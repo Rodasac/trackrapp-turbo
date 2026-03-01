@@ -6,7 +6,10 @@ vi.mock("@/lib/api/helpers", () => ({
   requireSession: (...args: unknown[]) => mockRequireSession(...args),
   parseIdParam: (...args: unknown[]) => mockParseIdParam(...args),
   validationErrorResponse: vi.fn((e) =>
-    Response.json({ error: "Validation failed", issues: e.issues }, { status: 400 }),
+    Response.json(
+      { error: "Validation failed", issues: e.issues },
+      { status: 400 },
+    ),
   ),
 }));
 
@@ -15,7 +18,9 @@ const mockUpdate = vi.fn();
 vi.mock("@repo/database", () => ({
   db: {
     query: {
-      trackedSubscriptions: { findFirst: (...args: unknown[]) => mockFindFirst(...args) },
+      trackedSubscriptions: {
+        findFirst: (...args: unknown[]) => mockFindFirst(...args),
+      },
     },
     update: () => ({
       set: () => ({ where: () => ({ returning: mockUpdate }) }),

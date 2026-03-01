@@ -209,7 +209,10 @@ test("search filter narrows and clears results", async ({ page }) => {
   await searchInput.fill("Manual Sub");
   await filterResponse;
   await expect(
-    page.locator("td").filter({ hasText: manualSubName ?? "Manual Sub" }).first(),
+    page
+      .locator("td")
+      .filter({ hasText: manualSubName ?? "Manual Sub" })
+      .first(),
   ).toBeVisible();
   await expect(
     page.locator("td").filter({ hasText: "Netflix" }),
@@ -243,7 +246,10 @@ test("category filter shows only matching subscriptions", async ({ page }) => {
       r.status() === 200,
     { timeout: 8_000 },
   );
-  await page.getByRole("option", { name: /entertainment/i }).first().click();
+  await page
+    .getByRole("option", { name: /entertainment/i })
+    .first()
+    .click();
   await categoryResponse;
 
   // "Full Sub" should appear (it was tagged as Entertainment)
@@ -263,7 +269,10 @@ test("category filter shows only matching subscriptions", async ({ page }) => {
   await categorySelect.click();
   await page.getByRole("option", { name: "All categories" }).click();
   await expect(
-    page.locator("td").filter({ hasText: manualSubName ?? "Manual Sub" }).first(),
+    page
+      .locator("td")
+      .filter({ hasText: manualSubName ?? "Manual Sub" })
+      .first(),
   ).toBeVisible({ timeout: 10_000 });
 });
 

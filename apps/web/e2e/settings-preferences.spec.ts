@@ -5,9 +5,9 @@ test.describe("Settings > Preferences tab", () => {
     await page.goto("/settings?tab=preferences");
 
     // CardTitle renders as a <div>, not an <h3>, so use getByText
-    await expect(
-      page.getByText("Subscription preferences"),
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Subscription preferences")).toBeVisible({
+      timeout: 10_000,
+    });
     await expect(page.getByText("Auto-renew subscriptions")).toBeVisible();
     await expect(page.getByRole("switch")).toBeVisible();
   });

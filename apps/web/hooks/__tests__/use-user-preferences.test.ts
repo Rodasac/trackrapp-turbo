@@ -26,7 +26,9 @@ describe("useUserPreferences", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response(JSON.stringify({ autoRenewDefault: true }), { status: 200 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useUserPreferences(), {
       wrapper: makeWrapper(qc),
     });
@@ -40,7 +42,9 @@ describe("useUserPreferences", () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response("Server error", { status: 500 }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useUserPreferences(), {
       wrapper: makeWrapper(qc),
     });
@@ -55,9 +59,13 @@ describe("useUpdateUserPreferences", () => {
 
   it("PUTs to /api/user-preferences", async () => {
     vi.mocked(fetch).mockResolvedValue(
-      new Response(JSON.stringify({ autoRenewDefault: false }), { status: 200 }),
+      new Response(JSON.stringify({ autoRenewDefault: false }), {
+        status: 200,
+      }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { result } = renderHook(() => useUpdateUserPreferences(), {
       wrapper: makeWrapper(qc),
     });
@@ -74,9 +82,13 @@ describe("useUpdateUserPreferences", () => {
 
   it("invalidates userPreferences.all on success", async () => {
     vi.mocked(fetch).mockResolvedValue(
-      new Response(JSON.stringify({ autoRenewDefault: false }), { status: 200 }),
+      new Response(JSON.stringify({ autoRenewDefault: false }), {
+        status: 200,
+      }),
     );
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
     const { result } = renderHook(() => useUpdateUserPreferences(), {
       wrapper: makeWrapper(qc),

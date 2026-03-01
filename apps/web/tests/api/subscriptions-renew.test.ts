@@ -12,7 +12,9 @@ const mockUpdate = vi.fn();
 vi.mock("@repo/database", () => ({
   db: {
     query: {
-      trackedSubscriptions: { findFirst: (...args: unknown[]) => mockFindFirst(...args) },
+      trackedSubscriptions: {
+        findFirst: (...args: unknown[]) => mockFindFirst(...args),
+      },
     },
     update: () => ({
       set: () => ({ where: () => ({ returning: mockUpdate }) }),
@@ -52,18 +54,24 @@ describe("POST /api/subscriptions/[id]/renew", () => {
     mockRequireSession.mockResolvedValue({
       error: Response.json({ error: "Unauthorized" }, { status: 401 }),
     });
-    const res = await POST(new Request("http://localhost/api/subscriptions/1/renew"), {
-      params: PARAMS,
-    });
+    const res = await POST(
+      new Request("http://localhost/api/subscriptions/1/renew"),
+      {
+        params: PARAMS,
+      },
+    );
     expect(res.status).toBe(401);
   });
 
   it("returns 404 when subscription not found", async () => {
     mockRequireSession.mockResolvedValue({ session: authedSession });
     mockFindFirst.mockResolvedValue(null);
-    const res = await POST(new Request("http://localhost/api/subscriptions/1/renew"), {
-      params: PARAMS,
-    });
+    const res = await POST(
+      new Request("http://localhost/api/subscriptions/1/renew"),
+      {
+        params: PARAMS,
+      },
+    );
     expect(res.status).toBe(404);
   });
 
@@ -81,9 +89,12 @@ describe("POST /api/subscriptions/[id]/renew", () => {
     };
     mockUpdate.mockResolvedValue([updatedSub]);
 
-    const res = await POST(new Request("http://localhost/api/subscriptions/1/renew"), {
-      params: PARAMS,
-    });
+    const res = await POST(
+      new Request("http://localhost/api/subscriptions/1/renew"),
+      {
+        params: PARAMS,
+      },
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.nextRenewalDate).toBe("2026-04-01");
@@ -101,18 +112,24 @@ describe("DELETE /api/subscriptions/[id]/renew (undo)", () => {
     mockRequireSession.mockResolvedValue({
       error: Response.json({ error: "Unauthorized" }, { status: 401 }),
     });
-    const res = await DELETE(new Request("http://localhost/api/subscriptions/1/renew"), {
-      params: PARAMS,
-    });
+    const res = await DELETE(
+      new Request("http://localhost/api/subscriptions/1/renew"),
+      {
+        params: PARAMS,
+      },
+    );
     expect(res.status).toBe(401);
   });
 
   it("returns 404 when subscription not found", async () => {
     mockRequireSession.mockResolvedValue({ session: authedSession });
     mockFindFirst.mockResolvedValue(null);
-    const res = await DELETE(new Request("http://localhost/api/subscriptions/1/renew"), {
-      params: PARAMS,
-    });
+    const res = await DELETE(
+      new Request("http://localhost/api/subscriptions/1/renew"),
+      {
+        params: PARAMS,
+      },
+    );
     expect(res.status).toBe(404);
   });
 
@@ -123,9 +140,12 @@ describe("DELETE /api/subscriptions/[id]/renew (undo)", () => {
       nextRenewalDate: "2026-04-01",
       previousRenewalDate: null,
     });
-    const res = await DELETE(new Request("http://localhost/api/subscriptions/1/renew"), {
-      params: PARAMS,
-    });
+    const res = await DELETE(
+      new Request("http://localhost/api/subscriptions/1/renew"),
+      {
+        params: PARAMS,
+      },
+    );
     expect(res.status).toBe(400);
   });
 
@@ -143,9 +163,12 @@ describe("DELETE /api/subscriptions/[id]/renew (undo)", () => {
     };
     mockUpdate.mockResolvedValue([undoneData]);
 
-    const res = await DELETE(new Request("http://localhost/api/subscriptions/1/renew"), {
-      params: PARAMS,
-    });
+    const res = await DELETE(
+      new Request("http://localhost/api/subscriptions/1/renew"),
+      {
+        params: PARAMS,
+      },
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.nextRenewalDate).toBe("2026-03-01");

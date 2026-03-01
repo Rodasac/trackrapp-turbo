@@ -15,7 +15,8 @@ export function useChangeEmail() {
         newEmail,
         callbackURL: callbackURL ?? "/settings",
       });
-      if (error) throw new Error(error.message ?? "Failed to send change email request");
+      if (error)
+        throw new Error(error.message ?? "Failed to send change email request");
       return data;
     },
     onSuccess: () => {

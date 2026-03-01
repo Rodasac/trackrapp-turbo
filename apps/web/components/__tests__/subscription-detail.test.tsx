@@ -116,18 +116,32 @@ import {
 } from "@/hooks/use-subscription-mutations";
 import { useUserPreferences } from "@/hooks/use-user-preferences";
 
-const pendingMutation = { mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false };
+const pendingMutation = {
+  mutate: vi.fn(),
+  mutateAsync: vi.fn(),
+  isPending: false,
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useCategories).mockReturnValue({ data: [] } as never);
-  vi.mocked(useSaveSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useSaveSubscription).mockReturnValue({
+    ...pendingMutation,
+  } as never);
   vi.mocked(useCreateCategory).mockReturnValue({ ...pendingMutation } as never);
-  vi.mocked(useDeactivateSubscription).mockReturnValue({ ...pendingMutation } as never);
-  vi.mocked(useDeleteSubscription).mockReturnValue({ ...pendingMutation } as never);
-  vi.mocked(useRenewSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useDeactivateSubscription).mockReturnValue({
+    ...pendingMutation,
+  } as never);
+  vi.mocked(useDeleteSubscription).mockReturnValue({
+    ...pendingMutation,
+  } as never);
+  vi.mocked(useRenewSubscription).mockReturnValue({
+    ...pendingMutation,
+  } as never);
   vi.mocked(useUndoRenewal).mockReturnValue({ ...pendingMutation } as never);
-  vi.mocked(useReactivateSubscription).mockReturnValue({ ...pendingMutation } as never);
+  vi.mocked(useReactivateSubscription).mockReturnValue({
+    ...pendingMutation,
+  } as never);
   vi.mocked(useUserPreferences).mockReturnValue({
     data: { autoRenewDefault: true },
     isLoading: false,
@@ -322,7 +336,9 @@ describe("SubscriptionDetail", () => {
 
     renderWithProviders(<SubscriptionDetail id={1} />);
     expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /delete/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows Renew button when subscription is due and active", () => {
@@ -352,8 +368,12 @@ describe("SubscriptionDetail", () => {
     } as never);
 
     renderWithProviders(<SubscriptionDetail id={1} />);
-    expect(screen.getByRole("button", { name: /undo renewal/i })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /^renew$/i })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /undo renewal/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^renew$/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows Reactivate button for inactive subscriptions", () => {
@@ -364,7 +384,9 @@ describe("SubscriptionDetail", () => {
     } as never);
 
     renderWithProviders(<SubscriptionDetail id={1} />);
-    expect(screen.getByRole("button", { name: /reactivate/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /reactivate/i }),
+    ).toBeInTheDocument();
   });
 
   it("shows Due badge when renewal date is past and subscription is active", () => {

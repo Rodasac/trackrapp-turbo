@@ -48,7 +48,10 @@ export async function runAutoRenew(): Promise<number> {
   let renewed = 0;
   for (const sub of toRenew) {
     try {
-      const newDate = computeNextRenewalDate(sub.nextRenewalDate, sub.billingCycle);
+      const newDate = computeNextRenewalDate(
+        sub.nextRenewalDate,
+        sub.billingCycle,
+      );
       await db
         .update(schema.trackedSubscriptions)
         .set({
@@ -59,7 +62,10 @@ export async function runAutoRenew(): Promise<number> {
         .execute();
       renewed++;
     } catch (err) {
-      console.error(`[auto-renew] Failed to renew subscription ${sub.id}:`, err);
+      console.error(
+        `[auto-renew] Failed to renew subscription ${sub.id}:`,
+        err,
+      );
     }
   }
 

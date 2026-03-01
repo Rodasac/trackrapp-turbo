@@ -12,10 +12,18 @@ const mockUpdate = vi.fn();
 vi.mock("@repo/database", () => ({
   db: {
     query: {
-      userPreferences: { findFirst: (...args: unknown[]) => mockFindFirst(...args) },
+      userPreferences: {
+        findFirst: (...args: unknown[]) => mockFindFirst(...args),
+      },
     },
-    insert: () => ({ values: () => ({ onConflictDoNothing: () => ({ returning: mockInsert }) }) }),
-    update: () => ({ set: () => ({ where: () => ({ returning: mockUpdate }) }) }),
+    insert: () => ({
+      values: () => ({
+        onConflictDoNothing: () => ({ returning: mockInsert }),
+      }),
+    }),
+    update: () => ({
+      set: () => ({ where: () => ({ returning: mockUpdate }) }),
+    }),
   },
   schema: {
     userPreferences: { userId: "userId" },
@@ -45,7 +53,10 @@ describe("GET /api/user-preferences", () => {
 
   it("returns existing preferences", async () => {
     mockRequireSession.mockResolvedValue({ session: authedSession });
-    mockFindFirst.mockResolvedValue({ userId: "user-1", autoRenewDefault: false });
+    mockFindFirst.mockResolvedValue({
+      userId: "user-1",
+      autoRenewDefault: false,
+    });
     // no insert call expected since prefs exist
     mockInsert.mockResolvedValue([]);
 

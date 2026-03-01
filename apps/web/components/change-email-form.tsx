@@ -36,7 +36,9 @@ export function ChangeEmailForm() {
       form.reset();
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to send change email request",
+        err instanceof Error
+          ? err.message
+          : "Failed to send change email request",
       );
     }
   }
@@ -52,7 +54,11 @@ export function ChangeEmailForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+        noValidate
+      >
         <FormField
           control={form.control}
           name="newEmail"

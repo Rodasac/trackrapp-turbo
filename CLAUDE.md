@@ -94,20 +94,20 @@ import { db, schema } from "@repo/database";
 
 ## Environment Variables
 
-| Package          | Variable                                      | Purpose                      |
-| ---------------- | --------------------------------------------- | ---------------------------- |
-| `@repo/database` | `DATABASE_URL`                                | PostgreSQL connection string |
-| `apps/web`       | `BETTER_AUTH_SECRET`                          | Auth signing secret          |
-| `apps/web`       | `BETTER_AUTH_URL`                             | Full URL of the web app      |
-| `apps/web`       | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`   | OAuth                        |
-| `apps/web`       | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Stripe                       |
-| `apps/worker`    | `RESEND_API_KEY`                              | Email delivery               |
-| `apps/worker`    | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`      | Web push notifications       |
-| `apps/web`       | `UPLOADTHING_TOKEN`                           | Uploadthing file uploads     |
+| Package          | Variable                                      | Purpose                               |
+| ---------------- | --------------------------------------------- | ------------------------------------- |
+| `@repo/database` | `DATABASE_URL`                                | PostgreSQL connection string          |
+| `apps/web`       | `BETTER_AUTH_SECRET`                          | Auth signing secret                   |
+| `apps/web`       | `BETTER_AUTH_URL`                             | Full URL of the web app               |
+| `apps/web`       | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`   | OAuth                                 |
+| `apps/web`       | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Stripe                                |
+| `apps/worker`    | `RESEND_API_KEY`                              | Email delivery                        |
+| `apps/worker`    | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`      | Web push notifications                |
+| `apps/web`       | `UPLOADTHING_TOKEN`                           | Uploadthing file uploads              |
 | `apps/web`       | `SMTP_HOST`                                   | SMTP server host (default: localhost) |
-| `apps/web`       | `SMTP_PORT`                                   | SMTP server port (default: 1025) |
-| `apps/web`       | `SMTP_USER`                                   | SMTP auth username           |
-| `apps/web`       | `SMTP_PASS`                                   | SMTP auth password           |
-| `apps/web`       | `EMAIL_FROM`                                  | From address for auth emails |
+| `apps/web`       | `SMTP_PORT`                                   | SMTP server port (default: 1025)      |
+| `apps/web`       | `SMTP_USER`                                   | SMTP auth username                    |
+| `apps/web`       | `SMTP_PASS`                                   | SMTP auth password                    |
+| `apps/web`       | `EMAIL_FROM`                                  | From address for auth emails          |
 
 Each app reads `DATABASE_URL` directly from the environment (not from `packages/database`).

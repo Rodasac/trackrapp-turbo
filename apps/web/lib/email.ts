@@ -37,8 +37,7 @@ function createTransport() {
   });
 }
 
-const from =
-  process.env.EMAIL_FROM ?? "TrackrApp <noreply@trackrapp.local>";
+const from = process.env.EMAIL_FROM ?? "TrackrApp <noreply@trackrapp.local>";
 
 export async function sendEmail(
   params: SendEmailParams,

@@ -7,7 +7,9 @@ const mockUpdateSet = vi.fn();
 vi.mock("@repo/database", () => ({
   db: {
     query: {
-      trackedSubscriptions: { findMany: (...args: unknown[]) => mockFindMany(...args) },
+      trackedSubscriptions: {
+        findMany: (...args: unknown[]) => mockFindMany(...args),
+      },
     },
     select: () => ({ from: () => ({ where: mockSelectFrom }) }),
     update: () => ({
@@ -74,7 +76,10 @@ describe("auto-renew job", () => {
     mockFindMany.mockResolvedValue([makeSub({ autoRenew: true })]);
     const count = await runAutoRenew();
     expect(count).toBe(1);
-    expect(computeNextRenewalDate).toHaveBeenCalledWith("2026-03-01", "monthly");
+    expect(computeNextRenewalDate).toHaveBeenCalledWith(
+      "2026-03-01",
+      "monthly",
+    );
   });
 
   it("skips when autoRenew is explicitly false", async () => {
@@ -92,7 +97,9 @@ describe("auto-renew job", () => {
 
   it("respects global default false when autoRenew is null", async () => {
     mockFindMany.mockResolvedValue([makeSub({ autoRenew: null })]);
-    mockSelectFrom.mockResolvedValue([{ userId: "user-1", autoRenewDefault: false }]);
+    mockSelectFrom.mockResolvedValue([
+      { userId: "user-1", autoRenewDefault: false },
+    ]);
     const count = await runAutoRenew();
     expect(count).toBe(0);
   });
@@ -109,7 +116,10 @@ describe("auto-renew job", () => {
   it("sets previousRenewalDate to old nextRenewalDate", async () => {
     mockFindMany.mockResolvedValue([makeSub({ autoRenew: true })]);
     await runAutoRenew();
-    expect(computeNextRenewalDate).toHaveBeenCalledWith("2026-03-01", "monthly");
+    expect(computeNextRenewalDate).toHaveBeenCalledWith(
+      "2026-03-01",
+      "monthly",
+    );
   });
 
   it("continues processing when one subscription update fails", async () => {

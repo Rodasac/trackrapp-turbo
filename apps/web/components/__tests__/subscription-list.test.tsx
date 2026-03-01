@@ -92,7 +92,11 @@ import {
   useReactivateSubscription,
 } from "@/hooks/use-subscription-mutations";
 
-const pendingMock = () => ({ mutateAsync: vi.fn(), mutate: vi.fn(), isPending: false });
+const pendingMock = () => ({
+  mutateAsync: vi.fn(),
+  mutate: vi.fn(),
+  isPending: false,
+});
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -293,7 +297,11 @@ describe("SubscriptionList", () => {
     vi.mocked(useSubscriptions).mockReturnValue({
       data: [
         mockSubscriptionListItem({ id: 1, name: "Active Sub", isActive: true }),
-        mockSubscriptionListItem({ id: 2, name: "Inactive Sub", isActive: false }),
+        mockSubscriptionListItem({
+          id: 2,
+          name: "Inactive Sub",
+          isActive: false,
+        }),
       ],
       isLoading: false,
       isError: false,

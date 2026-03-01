@@ -15,7 +15,9 @@ test("signup shows check-email page with correct email", async ({ page }) => {
   await page.getByRole("button", { name: "Create account" }).click();
 
   await page.waitForURL("**/check-email**");
-  await expect(page.getByText("Check your email", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Check your email", { exact: true }),
+  ).toBeVisible();
   await expect(page.getByText(email)).toBeVisible();
 });
 
@@ -56,9 +58,7 @@ test("signup flow: verify email via dev endpoint then login succeeds", async ({
   // signUpNewUser handles: signup → check-email → dev-verify → login → dashboard
   await signUpNewUser(page);
   await expect(page).toHaveURL(/\/dashboard/);
-  await expect(
-    page.getByRole("heading", { name: "Dashboard" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 });
 
 test("login without verifying shows unverified email message", async ({
@@ -83,9 +83,9 @@ test("login without verifying shows unverified email message", async ({
   await page.getByRole("button", { name: "Sign in" }).click();
 
   // Should show the unverified email banner
-  await expect(
-    page.getByText(/please verify your email first/i),
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByText(/please verify your email first/i)).toBeVisible({
+    timeout: 10_000,
+  });
   await expect(
     page.getByRole("button", { name: /resend verification email/i }),
   ).toBeVisible();

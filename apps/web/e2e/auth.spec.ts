@@ -34,7 +34,9 @@ test("signup redirects to check-email page (email verification required)", async
   // Email verification required: redirects to /check-email
   await page.waitForURL("**/check-email**");
   await expect(page).toHaveURL(/\/check-email/);
-  await expect(page.getByText("Check your email", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Check your email", { exact: true }),
+  ).toBeVisible();
   await expect(page.getByText(email)).toBeVisible();
 });
 
