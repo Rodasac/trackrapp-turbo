@@ -15,6 +15,7 @@ import {
   type TrackrField,
 } from "@repo/shared/column-detect";
 import { cn } from "@repo/ui/lib/utils";
+import { ImportDefaultsPanel } from "./import-defaults";
 
 const TRACKR_FIELDS: {
   value: TrackrField;
@@ -31,12 +32,19 @@ const TRACKR_FIELDS: {
   { value: "status", label: "Status", required: false },
 ];
 
-const REQUIRED_FIELDS: TrackrField[] = [
-  "name",
-  "price",
-  "billingCycle",
-  "nextRenewalDate",
-];
+// name + price must always come from a CSV column
+const ALWAYS_REQUIRED: TrackrField[] = ["name", "price"];
+
+// billingCycle + nextRenewalDate can be satisfied by CSV column OR a default value
+const DEFAULTABLE_REQUIRED: TrackrField[] = ["billingCycle", "nextRenewalDate"];
+
+export interface ImportDefaults {
+  billingCycle: string;
+  nextRenewalDate: string;
+  currency: string;
+  categoryName: string;
+  startDate: string;
+}
 
 export interface MappedRow {
   name: string;
@@ -61,10 +69,23 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
     () => autoDetected,
   );
 
-  const mappedCount = Object.values(mapping).filter((v) => v !== null).length;
-  const requiredMapped = REQUIRED_FIELDS.every((f) =>
-    Object.values(mapping).includes(f),
+  const [defaults, setDefaults] = useState<ImportDefaults>({
+    billingCycle: "monthly",
+    nextRenewalDate: new Date().toISOString().split("T")[0] ?? "",
+    currency: "USD",
+    categoryName: "",
+    startDate: "",
+  });
+
+  const mappedValues = Object.values(mapping).filter((v) => v !== null);
+  const mappedCount = mappedValues.length;
+
+  const alwaysMapped = ALWAYS_REQUIRED.every((f) => mappedValues.includes(f));
+  const defaultableOk = DEFAULTABLE_REQUIRED.every(
+    (f) =>
+      mappedValues.includes(f) || defaults[f as keyof ImportDefaults] !== "",
   );
+  const canContinue = alwaysMapped && defaultableOk;
 
   const previewRows = rows.slice(0, 3);
 
@@ -79,17 +100,27 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
     const mapped: MappedRow[] = rows.map((row) => ({
       name: row[fieldToIdx["name"] ?? -1] ?? "",
       price: row[fieldToIdx["price"] ?? -1] ?? "",
-      currency: row[fieldToIdx["currency"] ?? -1] ?? undefined,
-      billingCycle: row[fieldToIdx["billingCycle"] ?? -1] ?? "",
-      nextRenewalDate: row[fieldToIdx["nextRenewalDate"] ?? -1] ?? "",
+      // CSV value wins; fall back to default if cell is absent/empty
+      currency:
+        row[fieldToIdx["currency"] ?? -1] || defaults.currency || undefined,
+      billingCycle:
+        (row[fieldToIdx["billingCycle"] ?? -1] || defaults.billingCycle) ?? "",
+      nextRenewalDate:
+        (row[fieldToIdx["nextRenewalDate"] ?? -1] ||
+          defaults.nextRenewalDate) ??
+        "",
       startDate:
-        fieldToIdx["startDate"] !== undefined
+        (fieldToIdx["startDate"] !== undefined
           ? (row[fieldToIdx["startDate"]] ?? null)
-          : null,
+          : null) ||
+        defaults.startDate ||
+        undefined,
       categoryName:
-        fieldToIdx["categoryName"] !== undefined
+        (fieldToIdx["categoryName"] !== undefined
           ? (row[fieldToIdx["categoryName"]] ?? null)
-          : null,
+          : null) ||
+        defaults.categoryName ||
+        undefined,
     }));
 
     onContinue(mapped);
@@ -97,6 +128,22 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Info alert */}
+      <div className="rounded-md border bg-yellow-50 p-4">
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="size-4 shrink-0 text-yellow-500" />
+          <p className="text-sm text-yellow-700">
+            <strong>Tip:</strong> You can skip columns you don&apos;t need. Name
+            and price are mandatory. Billing cycle and next renewal date can be
+            inferred from the CSV, or you can provide a default value, but must
+            have a valid value.
+          </p>
+        </div>
+      </div>
+
+      {/* Defaults panel */}
+      <ImportDefaultsPanel defaults={defaults} onChange={setDefaults} />
+
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           Map your CSV columns to TrackrApp fields.
@@ -104,7 +151,7 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
         <span
           className={cn(
             "text-sm font-medium",
-            requiredMapped ? "text-green-600" : "text-amber-600",
+            canContinue ? "text-green-600" : "text-amber-600",
           )}
         >
           {mappedCount} of {headers.length} columns mapped
@@ -205,7 +252,7 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
       )}
 
       <div className="flex justify-end">
-        <Button onClick={handleContinue} disabled={!requiredMapped}>
+        <Button onClick={handleContinue} disabled={!canContinue}>
           Continue to Preview
         </Button>
       </div>

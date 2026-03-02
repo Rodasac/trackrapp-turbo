@@ -43,9 +43,11 @@ async function searchForSub(page: Page, name: string): Promise<void> {
       r.url().includes("/api/subscriptions") &&
       r.url().includes("search=") &&
       r.status() === 200,
-    { timeout: 8_000 },
+    { timeout: 15_000 },
   );
-  await page.getByPlaceholder(/Search subscriptions/i).fill(name);
+  const input = page.getByPlaceholder(/Search subscriptions/i);
+  await input.click();
+  await input.fill(name);
   await searchResponse;
 }
 

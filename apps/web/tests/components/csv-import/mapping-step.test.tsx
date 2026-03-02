@@ -1,7 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import { MappingStep } from "@/components/csv-import/mapping-step";
 import { TRACKR_EXPORT_HEADERS } from "@repo/shared/column-detect";
+import type { ImportDefaults } from "@/components/csv-import/mapping-step";
+
+// Capture the onChange callback so tests can simulate defaults being set
+const { capturedOnChange } = vi.hoisted(() => ({
+  capturedOnChange: {
+    current: null as ((d: ImportDefaults) => void) | null,
+  },
+}));
 
 vi.mock("@repo/ui/select", () => ({
   Select: ({ children }: { children: React.ReactNode }) => (
@@ -15,6 +23,20 @@ vi.mock("@repo/ui/select", () => ({
   ),
   SelectContent: () => null,
   SelectItem: () => null,
+}));
+
+vi.mock("@/components/csv-import/import-defaults", () => ({
+  ImportDefaultsPanel: ({
+    onChange,
+  }: {
+    defaults: ImportDefaults;
+    onChange: (d: ImportDefaults) => void;
+  }) => {
+    capturedOnChange.current = onChange;
+    return (
+      <div data-testid="import-defaults-panel">Default Values Panel</div>
+    );
+  },
 }));
 
 const mockOnContinue = vi.fn();
@@ -81,5 +103,78 @@ describe("MappingStep", () => {
       />,
     );
     expect(screen.getByText(/0 of/i)).toBeInTheDocument();
+  });
+
+  describe("defaults integration", () => {
+    it("renders the ImportDefaultsPanel", () => {
+      render(
+        <MappingStep
+          headers={trackrHeaders}
+          rows={sampleRows}
+          onContinue={mockOnContinue}
+        />,
+      );
+      expect(
+        screen.getByTestId("import-defaults-panel"),
+      ).toBeInTheDocument();
+    });
+
+    it("disables Continue when only name+price are in CSV and nextRenewalDate has no default", () => {
+      render(
+        <MappingStep
+          headers={["Name", "Price"]}
+          rows={[["Netflix", "9.99"]]}
+          onContinue={mockOnContinue}
+        />,
+      );
+      // billingCycle default is "monthly" (pre-set), nextRenewalDate default is "" → disabled
+      expect(
+        screen.getByRole("button", { name: /continue/i }),
+      ).toBeDisabled();
+    });
+
+    it("enables Continue when name+price are in CSV and defaults cover billingCycle+nextRenewalDate", async () => {
+      capturedOnChange.current = null;
+      render(
+        <MappingStep
+          headers={["Name", "Price"]}
+          rows={[["Netflix", "9.99"]]}
+          onContinue={mockOnContinue}
+        />,
+      );
+      // Initially disabled — nextRenewalDate default is ""
+      expect(
+        screen.getByRole("button", { name: /continue/i }),
+      ).toBeDisabled();
+
+      // Simulate user setting nextRenewalDate via the defaults panel
+      await act(async () => {
+        capturedOnChange.current?.({
+          billingCycle: "monthly",
+          nextRenewalDate: "2026-12-01",
+          currency: "USD",
+          categoryName: "",
+          startDate: "",
+        });
+      });
+
+      expect(
+        screen.getByRole("button", { name: /continue/i }),
+      ).toBeEnabled();
+    });
+
+    it("keeps Continue enabled when full TrackrApp CSV is used (no defaults needed)", () => {
+      render(
+        <MappingStep
+          headers={trackrHeaders}
+          rows={sampleRows}
+          onContinue={mockOnContinue}
+        />,
+      );
+      // All required fields are mapped from CSV — defaults not needed
+      expect(
+        screen.getByRole("button", { name: /continue/i }),
+      ).toBeEnabled();
+    });
   });
 });

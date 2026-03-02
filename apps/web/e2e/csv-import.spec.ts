@@ -14,6 +14,12 @@ function makeTrackrCsv(subName: string): Buffer {
   return Buffer.from(lines, "utf-8");
 }
 
+// Minimal CSV — only Name and Price columns
+function makeMinimalCsv(subName: string): Buffer {
+  const lines = ["Name,Price", `${subName},4.99`].join("\n");
+  return Buffer.from(lines, "utf-8");
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 test("Import CSV button is visible on subscriptions page", async ({ page }) => {
@@ -118,6 +124,80 @@ test("Step 3: Preview step shows rows with match badges", async ({ page }) => {
     .locator("span")
     .filter({ hasText: /^(Exact|Fuzzy|None)$/ });
   await expect(badges.first()).toBeVisible({ timeout: 5_000 });
+});
+
+test("Minimal CSV: import with defaults (name+price only)", async ({
+  page,
+}) => {
+  await page.goto("/subscriptions/import");
+
+  const subName = `E2E Minimal ${uniqueSuffix()}`;
+  const csvBuffer = makeMinimalCsv(subName);
+
+  // Step 1: Upload 2-column CSV
+  const fileInput = page.getByTestId("csv-file-input");
+  await fileInput.setInputFiles({
+    name: "minimal.csv",
+    mimeType: "text/csv",
+    buffer: csvBuffer,
+  });
+
+  // Step 2: Mapping step — only 2 columns detected
+  await expect(page.getByText(/map your csv columns/i)).toBeVisible({
+    timeout: 5_000,
+  });
+  await expect(page.getByText(/2 of/i)).toBeVisible();
+
+  // Open the Default Values panel and set nextRenewalDate
+  await page.getByText(/default values/i).click();
+  const renewalInput = page.locator("#default-next-renewal-date");
+  await renewalInput.fill("2026-12-01");
+
+  // Continue should now be enabled (billingCycle=monthly from default, nextRenewalDate set)
+  await expect(
+    page.getByRole("button", { name: /continue to preview/i }),
+  ).toBeEnabled();
+
+  // Step 3: Proceed to preview
+  const previewResponsePromise = page.waitForResponse(
+    (r) =>
+      r.url().includes("/api/subscriptions/import/preview") &&
+      r.status() === 200,
+    { timeout: 20_000 },
+  );
+  await page.getByRole("button", { name: /continue to preview/i }).click();
+  await previewResponsePromise;
+
+  // The subscription name should appear in the preview
+  await expect(page.getByText(subName)).toBeVisible({ timeout: 10_000 });
+
+  // Step 4: Select all and import
+  const selectAll = page.getByRole("checkbox", { name: /select all/i });
+  await selectAll.check();
+  await page.getByRole("button", { name: /import \d+ selected/i }).click();
+
+  // Wait for import to complete
+  await page.waitForResponse(
+    (r) =>
+      r.url().includes("/api/subscriptions/import") &&
+      !r.url().includes("preview") &&
+      r.status() === 200,
+    { timeout: 15_000 },
+  );
+
+  // Should redirect to subscriptions list
+  await page.waitForURL(/\/subscriptions$/, { timeout: 10_000 });
+
+  // New subscription should appear in the list
+  await page.waitForResponse(
+    (r) => r.url().includes("/api/subscriptions") && r.status() === 200,
+    { timeout: 10_000 },
+  );
+  const searchInput = page.getByPlaceholder(/search subscriptions/i);
+  await searchInput.fill(subName);
+  await expect(page.getByRole("row").filter({ hasText: subName })).toBeVisible({
+    timeout: 10_000,
+  });
 });
 
 test("Full flow: upload → map → preview → confirm → redirect", async ({
