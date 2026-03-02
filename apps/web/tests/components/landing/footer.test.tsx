@@ -14,7 +14,7 @@ describe("Footer", () => {
     expect(screen.getByText(new RegExp(String(year)))).toBeInTheDocument();
   });
 
-  it("renders navigation links", () => {
+  it("renders product navigation links", () => {
     render(<Footer />);
     expect(screen.getByRole("link", { name: /features/i })).toHaveAttribute(
       "href",
@@ -28,5 +28,26 @@ describe("Footer", () => {
       "href",
       "/login",
     );
+  });
+
+  it("renders Terms of Service link", () => {
+    render(<Footer />);
+    expect(
+      screen.getByRole("link", { name: /terms of service/i }),
+    ).toHaveAttribute("href", "/terms");
+  });
+
+  it("renders Privacy Policy link", () => {
+    render(<Footer />);
+    expect(
+      screen.getByRole("link", { name: /privacy policy/i }),
+    ).toHaveAttribute("href", "/privacy");
+  });
+
+  it("renders Cookie Policy link", () => {
+    render(<Footer />);
+    expect(
+      screen.getByRole("link", { name: /cookie policy/i }),
+    ).toHaveAttribute("href", "/cookies");
   });
 });

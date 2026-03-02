@@ -26,6 +26,22 @@ vi.mock("@repo/ui/dropdown-menu", () => ({
   ),
 }));
 
+// Mock Sheet to avoid Radix portal in jsdom
+vi.mock("@repo/ui/sheet", () => ({
+  Sheet: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  SheetTrigger: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+  SheetContent: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="sheet-content">{children}</div>
+  ),
+  SheetClose: ({ children }: { children: React.ReactNode }) => (
+    <button>{children}</button>
+  ),
+}));
+
 vi.mock("@/lib/auth-client", () => ({
   useSession: vi.fn(),
 }));
@@ -64,23 +80,36 @@ describe("Navbar", () => {
   it("renders ThemeToggle", () => {
     render(<Navbar />);
     // ThemeToggle renders a button (Sun/Moon icon)
-    expect(screen.getByRole("button")).toBeInTheDocument();
+    expect(screen.getAllByRole("button").length).toBeGreaterThan(0);
   });
 
   it("shows Sign in link and Get started button when unauthenticated", () => {
     setupLoggedOut();
     render(<Navbar />);
-    expect(screen.getByRole("link", { name: /sign in/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /get started/i }),
-    ).toBeInTheDocument();
+    // Links appear in both desktop nav and mobile sheet mock
+    const signInLinks = screen.getAllByRole("link", { name: /sign in/i });
+    expect(signInLinks.length).toBeGreaterThan(0);
+    const getStartedLinks = screen.getAllByRole("link", { name: /get started/i });
+    expect(getStartedLinks.length).toBeGreaterThan(0);
   });
 
   it("shows Dashboard link when authenticated", () => {
     setupLoggedIn();
     render(<Navbar />);
+    // Dashboard link appears in both desktop nav and mobile sheet mock
+    const dashboardLinks = screen.getAllByRole("link", { name: /dashboard/i });
+    expect(dashboardLinks.length).toBeGreaterThan(0);
+  });
+
+  it("renders mobile menu trigger button", () => {
+    render(<Navbar />);
+    expect(screen.getByRole("button", { name: /open menu/i })).toBeInTheDocument();
+  });
+
+  it("renders How it works nav link", () => {
+    render(<Navbar />);
     expect(
-      screen.getByRole("link", { name: /dashboard/i }),
+      screen.getAllByRole("link", { name: /how it works/i })[0],
     ).toBeInTheDocument();
   });
 });

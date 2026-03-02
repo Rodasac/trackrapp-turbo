@@ -1,6 +1,17 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { FeatureCards } from "@/components/landing/feature-cards";
+
+vi.mock("@/components/landing/motion/stagger-children", () => ({
+  StaggerChildren: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  itemVariants: {},
+}));
+
+vi.mock("@/components/landing/motion/fade-in", () => ({
+  FadeIn: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 describe("FeatureCards", () => {
   it("renders section heading", () => {

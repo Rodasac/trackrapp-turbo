@@ -30,6 +30,17 @@ Object.defineProperty(window, "matchMedia", {
 // Radix UI uses scrollIntoView in listboxes
 Element.prototype.scrollIntoView = vi.fn();
 
+// motion/react uses IntersectionObserver for whileInView
+class MockIntersectionObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(_callback: IntersectionObserverCallback) {}
+}
+global.IntersectionObserver =
+  MockIntersectionObserver as unknown as typeof IntersectionObserver;
+
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
   useRouter: () => ({

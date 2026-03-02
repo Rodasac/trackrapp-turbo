@@ -4,8 +4,13 @@
    Static brand tokens — compiled to fixed values (no CSS variable indirection)
    -------------------------------------------------------------------------- */
 @theme {
-  --color-brand: oklch(0.623 0.214 259.815);
-  --color-brand-foreground: oklch(0.985 0.002 247.858);
+  /* Emerald/teal brand palette */
+  --color-brand: oklch(0.696 0.17 162.48);
+  --color-brand-foreground: oklch(0.985 0.014 160);
+  --color-brand-glow: oklch(0.720 0.160 180);
+  --color-brand-muted: oklch(0.696 0.17 162.48 / 10%);
+  /* Display font */
+  --font-display: var(--font-dm-serif);
 }
 
 /* --------------------------------------------------------------------------
