@@ -26,11 +26,11 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Type check
-        run: pnpm check-types
-
       - name: Build required packages
         run: pnpm build --filter=@repo/vitest-config --filter=@repo/ui --filter=@repo/database --filter=@repo/logger --filter=@repo/shared --filter=@repo/tailwind-config
+
+      - name: Type check
+        run: pnpm check-types
 
       - name: Run tests
         run: pnpm test
