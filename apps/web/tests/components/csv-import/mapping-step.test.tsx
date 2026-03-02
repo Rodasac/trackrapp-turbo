@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MappingStep } from "@/components/csv-import/mapping-step";
 import { TRACKR_EXPORT_HEADERS } from "@repo/shared/column-detect";
 import type { ImportDefaults } from "@/components/csv-import/mapping-step";
