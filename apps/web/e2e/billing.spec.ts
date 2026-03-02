@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { signUpNewUser } from "./fixtures/auth";
+import { UNAUTHENTICATED_STORAGE_STATE } from "./fixtures/consent";
 
 // Each test creates a fresh user (no Stripe subscription)
-test.use({ storageState: { cookies: [], origins: [] } });
+// Consent cookie pre-set so the blocking banner doesn't interfere
+test.use({ storageState: UNAUTHENTICATED_STORAGE_STATE });
 
 test("settings billing tab shows Free plan for a new user", async ({
   page,
@@ -98,7 +100,7 @@ test("pricing page Start free trial links to /signup when logged out", async ({
 
   const link = page.getByRole("link", { name: /start free trial/i });
   await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute("href", "/signup");
+  await expect(link).toHaveAttribute("href", "/signup?plan=pro");
 });
 
 test("tips page shows upgrade prompt for free user", async ({ page }) => {

@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { UNAUTHENTICATED_STORAGE_STATE } from "./fixtures/consent";
 
-// Override storage state — landing page tests run as unauthenticated visitors
-test.use({ storageState: { cookies: [], origins: [] } });
+// Landing page tests run as unauthenticated visitors (consent cookie pre-set to unblock the UI)
+test.use({ storageState: UNAUTHENTICATED_STORAGE_STATE });
 
 test("landing page loads with hero visible", async ({ page }) => {
   await page.goto("/");
@@ -31,7 +32,7 @@ test("feature cards section has 6 cards", async ({ page }) => {
 
 test("pricing section shows Free and Pro plans", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText("Free", { exact: true })).toBeVisible();
+  await expect(page.locator("#pricing").getByText("Free", { exact: true })).toBeVisible();
   await expect(page.getByText("Pro", { exact: true }).first()).toBeVisible();
 });
 

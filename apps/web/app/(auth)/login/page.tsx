@@ -170,6 +170,16 @@ export default function LoginPage() {
               <li>demo@trackrapp.local: Demo1234!</li>
               <li>demo-free@trackrapp.local: Demo1234!</li>
             </ul>
+            <p>
+              Demo mail server:{" "}
+              <a
+                href="https://mail-staging.trackrapp.xyz"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                https://mail-staging.trackrapp.xyz
+              </a>
+            </p>
           </div>
         )}
       </CardContent>

@@ -1,21 +1,8 @@
 import { test as setup, expect } from "@playwright/test";
 import { signUpNewUser, saveTestUser } from "./fixtures/auth";
+import { CONSENT_COOKIE } from "./fixtures/consent";
 
 const AUTH_FILE = "e2e/.auth/user.json";
-
-const CONSENT_COOKIE = {
-  name: "trackr_cookie_consent",
-  value: encodeURIComponent(
-    JSON.stringify({
-      necessary: true,
-      functional: true,
-      analytics: true,
-      consentedAt: new Date().toISOString(),
-    }),
-  ),
-  domain: "localhost",
-  path: "/",
-};
 
 setup("authenticate", async ({ page }) => {
   // Pre-set consent cookie so the banner doesn't block any E2E flows

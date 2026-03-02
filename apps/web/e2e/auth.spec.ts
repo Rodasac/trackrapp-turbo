@@ -5,9 +5,10 @@ import {
   signOut,
   uniqueSuffix,
 } from "./fixtures/auth";
+import { UNAUTHENTICATED_STORAGE_STATE } from "./fixtures/consent";
 
-// All tests in this file run unauthenticated
-test.use({ storageState: { cookies: [], origins: [] } });
+// All tests in this file run unauthenticated (consent cookie pre-set to unblock the UI)
+test.use({ storageState: UNAUTHENTICATED_STORAGE_STATE });
 
 test("landing page shows CTA buttons", async ({ page }) => {
   await page.goto("/");

@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
+import { CONSENT_COOKIE } from "./consent";
 
 const AUTH_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -23,19 +24,6 @@ export function uniqueName(base: string): string {
  * 2. Calls the dev-only /api/test/verify-email to set emailVerified=true
  * 3. Logs in via the login form → lands on /dashboard
  */
-const CONSENT_COOKIE = {
-  name: "trackr_cookie_consent",
-  value: encodeURIComponent(
-    JSON.stringify({
-      necessary: true,
-      functional: true,
-      analytics: true,
-      consentedAt: new Date().toISOString(),
-    }),
-  ),
-  domain: "localhost",
-  path: "/",
-};
 
 export async function signUpNewUser(
   page: Page,

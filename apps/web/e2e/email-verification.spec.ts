@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { signUpNewUser, uniqueSuffix } from "./fixtures/auth";
+import { UNAUTHENTICATED_STORAGE_STATE } from "./fixtures/consent";
 
-// All tests in this file run unauthenticated
-test.use({ storageState: { cookies: [], origins: [] } });
+// All tests in this file run unauthenticated (consent cookie pre-set to unblock the UI)
+test.use({ storageState: UNAUTHENTICATED_STORAGE_STATE });
 
 test("signup shows check-email page with correct email", async ({ page }) => {
   const id = uniqueSuffix();
