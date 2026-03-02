@@ -2,16 +2,14 @@ name: CI/CD
 
 on:
   push:
-    branches: [main, staging]
   pull_request:
-    branches: [main, staging]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ghcr.io/${{ github.repository }}
 
 jobs:
-  # ─── Test ──────────────────────────────────────────────────────────────────
+  # ─── Test (runs on every branch and PR) ────────────────────────────────────
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -58,7 +56,7 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-  # ─── Build Docker images ───────────────────────────────────────────────────
+  # ─── Build Docker images (main + staging branches only) ────────────────────
   build:
     name: Build (${{ matrix.app }})
     runs-on: ubuntu-latest
@@ -104,7 +102,7 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
 
-  # ─── Deploy to Staging ─────────────────────────────────────────────────────
+  # ─── Deploy to Staging (staging branch only) ───────────────────────────────
   deploy-staging:
     name: Deploy (staging)
     runs-on: ubuntu-latest
@@ -112,6 +110,18 @@ jobs:
     if: github.ref == 'refs/heads/staging'
     environment: staging
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy compose files to staging VPS
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST_STAGING }}
+          username: ${{ secrets.VPS_USER_STAGING }}
+          key: ${{ secrets.VPS_SSH_KEY_STAGING }}
+          source: "deploy/docker-compose.staging.yml,deploy/scripts"
+          target: /opt/trackrapp/staging
+          strip_components: 1
+
       - name: Deploy to staging VPS
         uses: appleboy/ssh-action@v1
         env:
@@ -123,10 +133,11 @@ jobs:
           envs: IMAGE_TAG
           script: |
             cd /opt/trackrapp/staging
+            chmod +x scripts/backup.sh
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.staging.yml pull
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.staging.yml up -d
 
-  # ─── Deploy to Production ──────────────────────────────────────────────────
+  # ─── Deploy to Production (main branch only) ───────────────────────────────
   deploy-prod:
     name: Deploy (production)
     runs-on: ubuntu-latest
@@ -134,6 +145,18 @@ jobs:
     if: github.ref == 'refs/heads/main'
     environment: production
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy compose files to production VPS
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "deploy/docker-compose.prod.yml,deploy/scripts"
+          target: /opt/trackrapp/production
+          strip_components: 1
+
       - name: Pre-deploy backup
         uses: appleboy/ssh-action@v1
         with:
@@ -141,8 +164,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /opt/trackrapp/production
-            docker compose -f docker-compose.prod.yml exec -T backup /backup.sh || true
+            chmod +x /opt/trackrapp/production/scripts/backup.sh
+            docker compose -f /opt/trackrapp/production/docker-compose.prod.yml exec -T backup /backup.sh || true
 
       - name: Deploy to production VPS
         uses: appleboy/ssh-action@v1
