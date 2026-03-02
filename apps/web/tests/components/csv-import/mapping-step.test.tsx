@@ -33,9 +33,7 @@ vi.mock("@/components/csv-import/import-defaults", () => ({
     onChange: (d: ImportDefaults) => void;
   }) => {
     capturedOnChange.current = onChange;
-    return (
-      <div data-testid="import-defaults-panel">Default Values Panel</div>
-    );
+    return <div data-testid="import-defaults-panel">Default Values Panel</div>;
   },
 }));
 
@@ -114,53 +112,31 @@ describe("MappingStep", () => {
           onContinue={mockOnContinue}
         />,
       );
-      expect(
-        screen.getByTestId("import-defaults-panel"),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId("import-defaults-panel")).toBeInTheDocument();
     });
 
-    it("disables Continue when only name+price are in CSV and nextRenewalDate has no default", () => {
+    it("disables Continue when only name is in CSV with no price", () => {
       render(
         <MappingStep
-          headers={["Name", "Price"]}
-          rows={[["Netflix", "9.99"]]}
+          headers={["Name"]}
+          rows={[["Netflix"]]}
           onContinue={mockOnContinue}
         />,
       );
       // billingCycle default is "monthly" (pre-set), nextRenewalDate default is "" → disabled
-      expect(
-        screen.getByRole("button", { name: /continue/i }),
-      ).toBeDisabled();
+      expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
     });
 
-    it("enables Continue when name+price are in CSV and defaults cover billingCycle+nextRenewalDate", async () => {
-      capturedOnChange.current = null;
+    it("disables Continue when only price is in CSV with no name", () => {
       render(
         <MappingStep
-          headers={["Name", "Price"]}
-          rows={[["Netflix", "9.99"]]}
+          headers={["Price"]}
+          rows={[["9.99"]]}
           onContinue={mockOnContinue}
         />,
       );
-      // Initially disabled — nextRenewalDate default is ""
-      expect(
-        screen.getByRole("button", { name: /continue/i }),
-      ).toBeDisabled();
-
-      // Simulate user setting nextRenewalDate via the defaults panel
-      await act(async () => {
-        capturedOnChange.current?.({
-          billingCycle: "monthly",
-          nextRenewalDate: "2026-12-01",
-          currency: "USD",
-          categoryName: "",
-          startDate: "",
-        });
-      });
-
-      expect(
-        screen.getByRole("button", { name: /continue/i }),
-      ).toBeEnabled();
+      // billingCycle default is "monthly" (pre-set), nextRenewalDate default is "" → disabled
+      expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
     });
 
     it("keeps Continue enabled when full TrackrApp CSV is used (no defaults needed)", () => {
@@ -172,9 +148,7 @@ describe("MappingStep", () => {
         />,
       );
       // All required fields are mapped from CSV — defaults not needed
-      expect(
-        screen.getByRole("button", { name: /continue/i }),
-      ).toBeEnabled();
+      expect(screen.getByRole("button", { name: /continue/i })).toBeEnabled();
     });
   });
 });

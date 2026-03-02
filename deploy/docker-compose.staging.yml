@@ -9,7 +9,11 @@ services:
     volumes:
       - postgres-staging-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trackrapp} -d ${POSTGRES_DB:-trackrapp}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-trackrapp} -d ${POSTGRES_DB:-trackrapp}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -46,7 +50,8 @@ services:
       migrate:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3

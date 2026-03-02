@@ -62,14 +62,14 @@ sudo chown -R $USER:$USER /opt/trackrapp
 
 Create A records pointing to your VPS IP:
 
-| Record | Type | Value |
-|--------|------|-------|
-| `trackrapp.xyz` | A | `<VPS_IP>` |
-| `www.trackrapp.xyz` | A | `<VPS_IP>` |
-| `staging.trackrapp.xyz` | A | `<VPS_IP>` |
-| `mail-staging.trackrapp.xyz` | A | `<VPS_IP>` |
-| `logs.trackrapp.xyz` | A | `<VPS_IP>` |
-| `logs-staging.trackrapp.xyz` | A | `<VPS_IP>` |
+| Record                       | Type | Value      |
+| ---------------------------- | ---- | ---------- |
+| `trackrapp.xyz`              | A    | `<VPS_IP>` |
+| `www.trackrapp.xyz`          | A    | `<VPS_IP>` |
+| `staging.trackrapp.xyz`      | A    | `<VPS_IP>` |
+| `mail-staging.trackrapp.xyz` | A    | `<VPS_IP>` |
+| `logs.trackrapp.xyz`         | A    | `<VPS_IP>` |
+| `logs-staging.trackrapp.xyz` | A    | `<VPS_IP>` |
 
 Wait for DNS propagation before starting Traefik (Let's Encrypt will fail on cert issuance otherwise).
 
@@ -79,13 +79,14 @@ Wait for DNS propagation before starting Traefik (Let's Encrypt will fail on cer
 
 Add these secrets in **Settings → Secrets and variables → Actions**:
 
-| Secret | Value |
-|--------|-------|
-| `VPS_HOST` | VPS IP or hostname |
-| `VPS_USER` | SSH username (e.g. `ubuntu`) |
+| Secret        | Value                                             |
+| ------------- | ------------------------------------------------- |
+| `VPS_HOST`    | VPS IP or hostname                                |
+| `VPS_USER`    | SSH username (e.g. `ubuntu`)                      |
 | `VPS_SSH_KEY` | Private SSH key (contents of `~/.ssh/id_ed25519`) |
 
 Create GitHub Environments:
+
 - `staging` — no required reviewers (auto-deploys on push to `main`)
 - `production` — add required reviewers for manual approval gate
 
@@ -172,6 +173,7 @@ docker compose -f docker-compose.prod.yml ps
 ## 5. Ongoing Deployments (CI/CD)
 
 Push to `main` automatically:
+
 1. Runs all tests
 2. Builds and pushes Docker images to GHCR (`ghcr.io/<repo>/web:latest` + `:<sha>`)
 3. Deploys to staging automatically
@@ -257,6 +259,7 @@ VPS_SSH_KEY       — SSH private key (PEM format)
 The VPS should have the corresponding public key in `~/.ssh/authorized_keys`.
 
 Generate a dedicated deploy key:
+
 ```bash
 ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/trackrapp-deploy
 # Add ~/.ssh/trackrapp-deploy.pub to VPS authorized_keys

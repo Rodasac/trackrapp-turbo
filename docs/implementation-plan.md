@@ -19,11 +19,11 @@ Build a multi-user subscription tracker with automatic renewal reminders, expens
 
 ## Implementation Phases
 
-| Phase     | Description                          | Status      |
-| --------- | ------------------------------------ | ----------- |
-| MVP (1+2) | Auth + CRUD + Stripe + Notifications | ✅ Complete |
-| Phase 3   | Dashboard & Insights                 | ✅ Complete |
-| Phase 4   | AI Tips + Polish                     | ✅ Complete |
+| Phase     | Description                          | Status         |
+| --------- | ------------------------------------ | -------------- |
+| MVP (1+2) | Auth + CRUD + Stripe + Notifications | ✅ Complete    |
+| Phase 3   | Dashboard & Insights                 | ✅ Complete    |
+| Phase 4   | AI Tips + Polish                     | ✅ Complete    |
 | Phase 5   | Future Features (see below)          | 🔄 In progress |
 
 ---
@@ -31,7 +31,7 @@ Build a multi-user subscription tracker with automatic renewal reminders, expens
 ## Future Features (Prioritized)
 
 | Priority | Feature                      | Status      | Est. Time   | Difficulty  | Rationale                                                                                                                                                                                                           |
-|----------| ---------------------------- | ----------- | ----------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| -------- | ---------------------------- | ----------- | ----------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1        | Default values on import     | ✅ Complete | —           | —           | ImportDefaultsPanel in MappingStep; only name+price required from CSV; billingCycle/nextRenewalDate/currency/category/startDate defaultable. Shipped 2026-03-02.                                                    |
 | 2        | Shared/family splitting      | ⬜          | 5–8 days    | Medium-High | New `subscription_splits` table. UX design decisions needed. KPIs/charts need "your share" toggle.                                                                                                                  |
 | 3        | Bank/Open Banking connection | ⬜          | 10–15+ days | High        | External APIs, PSD2/Open Banking compliance. EU-first: Tink, Salt Edge, or GoCardless Bank Account Data (Nordigen) for Spain/Europe; Plaid as US fallback. Automatic subscription detection from bank transactions. |
