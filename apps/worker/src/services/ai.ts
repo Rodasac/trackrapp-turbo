@@ -1,4 +1,4 @@
-import { generateText, type LanguageModel } from "ai";
+import { generateText, type LanguageModel, Output } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
@@ -25,7 +25,7 @@ export function getAiModel(
   if (provider === "openai") {
     return openai("gpt-5-mini");
   } else if (provider === "groq") {
-    return groq("qwen/qwen3-32b");
+    return groq("moonshotai/kimi-k2-instruct-0905");
   }
   return anthropic("claude-sonnet-4-6");
 }
@@ -63,14 +63,22 @@ export function parseTipsResponse(text: string): {
 
   try {
     const parsed = JSON.parse(jsonStr.trim());
-    if (!Array.isArray(parsed)) return [];
+    if (
+      !Object.keys(parsed).includes("elements") ||
+      !Array.isArray(parsed.elements)
+    ) {
+      return [];
+    }
 
-    const validated = parsed
-      .map((item) => {
+    const validated = parsed.elements
+      .map((item: z.infer<typeof tipSchema>) => {
         const result = tipSchema.safeParse(item);
         return result.success ? result.data : null;
       })
-      .filter((t): t is z.infer<typeof tipSchema> => t !== null);
+      .filter(
+        (t: z.infer<typeof tipSchema>): t is z.infer<typeof tipSchema> =>
+          t !== null,
+      );
 
     return validated.slice(0, 5);
   } catch {
@@ -95,6 +103,9 @@ export async function generateTipsForUser(
       model,
       system,
       prompt: user,
+      output: Output.array({
+        element: tipSchema,
+      }),
     });
     return parseTipsResponse(result.text);
   } catch (error) {

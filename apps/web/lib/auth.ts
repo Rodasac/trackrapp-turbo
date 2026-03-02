@@ -4,6 +4,7 @@ import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 import { db } from "@repo/database";
 import { sendEmail } from "@/lib/email";
+import { PRICING } from "@/lib/pricing-config";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -50,7 +51,7 @@ export const auth = betterAuth({
                 name: "pro",
                 priceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID!,
                 annualDiscountPriceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
-                freeTrial: { days: 14 },
+                freeTrial: { days: PRICING.pro.trialDays },
               },
             ],
           },

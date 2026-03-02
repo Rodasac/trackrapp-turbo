@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "run-job": "tsx src/run-job.ts",
+    "dev": "tsx --env-file=.env --watch src/index.ts",
+    "run-job": "tsx --env-file=.env src/run-job.ts",
     "start": "node dist/index.js",
     "build": "tsup",
     "test": "vitest run",

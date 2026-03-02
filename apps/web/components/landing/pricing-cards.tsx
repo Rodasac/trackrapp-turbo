@@ -20,6 +20,11 @@ import { useSession } from "@/lib/auth-client";
 import { useSubscriptionPlan } from "@/hooks/use-subscription-plan";
 import { useUpgradeToPro } from "@/hooks/use-subscription-plan-mutations";
 import { FREE_FEATURES, PRO_FEATURES } from "@/lib/pricing-data";
+import {
+  PRICING,
+  PRO_EFFECTIVE_MONTHLY,
+  PRO_ANNUAL_DISCOUNT_PCT,
+} from "@/lib/pricing-config";
 
 /**
  * Shared pricing card grid + toggle — consumed by both PricingSection and PricingPage.
@@ -69,7 +74,7 @@ export function PricingCards() {
         </Button>
         {annual && (
           <Badge variant="outline" className="text-brand border-brand ml-1">
-            Save 17%
+            Save {PRO_ANNUAL_DISCOUNT_PCT}%
           </Badge>
         )}
       </div>
@@ -84,7 +89,7 @@ export function PricingCards() {
               Everything you need to get started
             </CardDescription>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-3xl font-bold">$0</span>
+              <span className="text-3xl font-bold">${PRICING.free.monthly}</span>
               <span className="text-muted-foreground text-sm">/ month</span>
             </div>
           </CardHeader>
@@ -119,22 +124,22 @@ export function PricingCards() {
             <div className="mt-2 flex items-baseline gap-1">
               {annual ? (
                 <>
-                  <span className="text-3xl font-bold">$40</span>
+                  <span className="text-3xl font-bold">${PRICING.pro.annual}</span>
                   <span className="text-muted-foreground text-sm">/ year</span>
                 </>
               ) : (
                 <>
-                  <span className="text-3xl font-bold">$4</span>
+                  <span className="text-3xl font-bold">${PRICING.pro.monthly}</span>
                   <span className="text-muted-foreground text-sm">/ month</span>
                 </>
               )}
             </div>
             {annual && (
               <p className="text-muted-foreground text-xs">
-                $3.33/month effective — save 17%
+                ${PRO_EFFECTIVE_MONTHLY}/month effective — save {PRO_ANNUAL_DISCOUNT_PCT}%
               </p>
             )}
-            <p className="text-muted-foreground text-xs">14-day free trial</p>
+            <p className="text-muted-foreground text-xs">{PRICING.pro.trialDays}-day free trial</p>
           </CardHeader>
           <Separator />
           <CardContent className="mt-4">
@@ -162,7 +167,7 @@ export function PricingCards() {
               </Button>
             ) : (
               <Button className="bg-brand hover:bg-brand/90 w-full" asChild>
-                <Link href="/signup">Start free trial</Link>
+                <Link href="/signup?plan=pro">Start free trial</Link>
               </Button>
             )}
           </CardFooter>

@@ -41,7 +41,7 @@ export function BillingSettings() {
       await upgrade.mutateAsync({
         annual: false,
         successUrl: `${window.location.origin}/settings?tab=billing&upgraded=true`,
-        cancelUrl: `${window.location.origin}/pricing`,
+        cancelUrl: `${window.location.origin}/settings?tab=billing&upgraded=false`,
       });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Upgrade failed");

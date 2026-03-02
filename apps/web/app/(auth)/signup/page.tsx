@@ -1,7 +1,8 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,8 +34,11 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const plan = searchParams.get("plan");
+
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", email: "", password: "" },
@@ -45,6 +49,9 @@ export default function SignupPage() {
     if (error) {
       toast.error(error.message ?? "Sign up failed");
     } else {
+      if (plan === "pro") {
+        localStorage.setItem("pending_trial", "pro");
+      }
       toast.success("Account created — check your email.");
       router.push(`/check-email?email=${encodeURIComponent(values.email)}`);
     }
@@ -139,5 +146,13 @@ export default function SignupPage() {
         </p>
       </CardContent>
     </Card>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   );
 }

@@ -80,7 +80,7 @@ export function ComparisonTable() {
                 <Link href="/signup">Get started free</Link>
               </Button>
               <Button size="sm" className="bg-brand hover:bg-brand/90" asChild>
-                <Link href="/signup">Start free trial</Link>
+                <Link href="/signup?plan=pro">Start free trial</Link>
               </Button>
             </div>
           </div>

@@ -123,11 +123,11 @@ describe("PricingPage", () => {
     expect(link).toHaveAttribute("href", "/signup");
   });
 
-  it("shows 'Start free trial' button linked to /signup when logged out", () => {
+  it("shows 'Start free trial' button linked to /signup?plan=pro when logged out", () => {
     setupLoggedOut();
     renderWithProviders(<PricingPage />);
     const link = screen.getByRole("link", { name: /start free trial/i });
-    expect(link).toHaveAttribute("href", "/signup");
+    expect(link).toHaveAttribute("href", "/signup?plan=pro");
   });
 
   it("triggers upgrade mutation when logged in + free and clicks Start free trial", async () => {

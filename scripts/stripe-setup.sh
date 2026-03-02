@@ -11,6 +11,8 @@ PRODUCT_ID=$(stripe products create \
   | jq -r '.id')
 echo "  Product: $PRODUCT_ID"
 
+# Prices are sourced from apps/web/lib/pricing-config.ts (STRIPE_PRO_MONTHLY_CENTS / STRIPE_PRO_ANNUAL_CENTS).
+# Update that file first if you change pricing, then re-run this script.
 echo "Creating monthly price (\$4/month)..."
 MONTHLY_PRICE_ID=$(stripe prices create \
   --product "$PRODUCT_ID" \

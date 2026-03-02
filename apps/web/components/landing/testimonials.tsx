@@ -5,14 +5,14 @@ import { motion } from "motion/react";
 import { cn } from "@repo/ui/lib/utils";
 import { FadeIn } from "@/components/landing/motion/fade-in";
 import { StaggerChildren, itemVariants } from "@/components/landing/motion/stagger-children";
+import { PRICING } from "@/lib/pricing-config";
 
 const TESTIMONIALS = [
   {
     name: "Sarah M.",
     role: "Freelance Designer",
     initials: "SM",
-    quote:
-      "I had no idea I was paying for 4 tools that basically did the same thing. TrackrApp's AI tips flagged it in the first week and saved me $40/month.",
+    quote: `I had no idea I was paying for 4 tools that basically did the same thing. TrackrApp's AI tips flagged it in the first week and saved me $${PRICING.pro.annual}/month.`,
     color: "from-emerald-500 to-teal-500",
   },
   {
@@ -27,8 +27,7 @@ const TESTIMONIALS = [
     name: "Priya K.",
     role: "Software Engineer",
     initials: "PK",
-    quote:
-      "Clean UI, dark mode, and it just works. The CSV import handled my messy spreadsheet perfectly. Honestly the best $4/month I spend.",
+    quote: `Clean UI, dark mode, and it just works. The CSV import handled my messy spreadsheet perfectly. Honestly the best $${PRICING.pro.monthly}/month I spend.`,
     color: "from-cyan-500 to-emerald-500",
   },
 ];
