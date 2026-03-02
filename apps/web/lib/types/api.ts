@@ -171,3 +171,11 @@ export interface AiTipItem {
 export interface UserPreferencesResponse {
   autoRenewDefault: boolean;
 }
+
+export interface PlatformStatsResponse {
+  totalSubscriptions: number;
+  totalUsers: number;
+  totalReminders: number;
+  totalSaved: string;
+  computedAt: string | null;
+}

@@ -18,3 +18,6 @@ export const runJobLog = createChildLogger(workerLog, { context: "run-job" });
 export const aiServiceLog = createChildLogger(workerLog, {
   context: "ai-service",
 });
+export const platformStatsLog = createChildLogger(workerLog, {
+  context: "compute-platform-stats",
+});

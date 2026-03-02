@@ -17,6 +17,7 @@ vi.mock("../src/logger.js", () => {
     aiTipsLog: noop(),
     runJobLog: noop(),
     aiServiceLog: noop(),
+    platformStatsLog: noop(),
   };
 });
 
@@ -27,6 +28,7 @@ const {
   mockRunCleanup,
   mockGenerateAiTips,
   mockRunAutoRenew,
+  mockComputePlatformStats,
 } = vi.hoisted(() => ({
   mockValidateEnv: vi.fn().mockReturnValue({
     VAPID_PUBLIC_KEY: "pub",
@@ -38,6 +40,7 @@ const {
   mockRunCleanup: vi.fn().mockResolvedValue(undefined),
   mockGenerateAiTips: vi.fn().mockResolvedValue(undefined),
   mockRunAutoRenew: vi.fn().mockResolvedValue(0),
+  mockComputePlatformStats: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock("../src/env.js", () => ({
@@ -64,6 +67,10 @@ vi.mock("../src/jobs/auto-renew.js", () => ({
   runAutoRenew: mockRunAutoRenew,
 }));
 
+vi.mock("../src/jobs/compute-platform-stats.js", () => ({
+  computePlatformStats: mockComputePlatformStats,
+}));
+
 import { VALID_JOBS, parseJobName, runJob } from "../src/run-job.js";
 
 // ─── VALID_JOBS ───────────────────────────────────────────────────────────────
@@ -79,8 +86,12 @@ describe("VALID_JOBS", () => {
     expect(VALID_JOBS).toContain("auto-renew");
   });
 
-  it("contains exactly 4 jobs", () => {
-    expect(VALID_JOBS).toHaveLength(4);
+  it("contains compute-platform-stats", () => {
+    expect(VALID_JOBS).toContain("compute-platform-stats");
+  });
+
+  it("contains exactly 5 jobs", () => {
+    expect(VALID_JOBS).toHaveLength(5);
   });
 });
 
@@ -113,6 +124,11 @@ describe("parseJobName", () => {
   it("accepts auto-renew", () => {
     const result = parseJobName(["node", "run-job.ts", "auto-renew"]);
     expect(result).toBe("auto-renew");
+  });
+
+  it("accepts compute-platform-stats", () => {
+    const result = parseJobName(["node", "run-job.ts", "compute-platform-stats"]);
+    expect(result).toBe("compute-platform-stats");
   });
 
   it("calls process.exit(1) when no job name provided", () => {
@@ -212,6 +228,23 @@ describe("runJob", () => {
     it("calls runAutoRenew", async () => {
       await runJob("auto-renew");
       expect(mockRunAutoRenew).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("compute-platform-stats", () => {
+    it("calls validateEnv", async () => {
+      await runJob("compute-platform-stats");
+      expect(mockValidateEnv).toHaveBeenCalledOnce();
+    });
+
+    it("does not call initVapid", async () => {
+      await runJob("compute-platform-stats");
+      expect(mockInitVapid).not.toHaveBeenCalled();
+    });
+
+    it("calls computePlatformStats", async () => {
+      await runJob("compute-platform-stats");
+      expect(mockComputePlatformStats).toHaveBeenCalledOnce();
     });
   });
 

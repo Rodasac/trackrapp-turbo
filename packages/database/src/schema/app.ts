@@ -215,6 +215,20 @@ export const userPreferences = pgTable("user_preferences", {
     .notNull(),
 });
 
+// ─── Platform Stats ─────────────────────────────────────────────────────────────
+// Computed twice daily by the worker. The API reads the latest row.
+
+export const platformStats = pgTable("platform_stats", {
+  id: serial("id").primaryKey(),
+  totalSubscriptions: integer("total_subscriptions").notNull().default(0),
+  totalUsers: integer("total_users").notNull().default(0),
+  totalReminders: integer("total_reminders").notNull().default(0),
+  totalSaved: numeric("total_saved", { precision: 12, scale: 2 })
+    .notNull()
+    .default("0"),
+  computedAt: timestamp("computed_at").defaultNow().notNull(),
+});
+
 // ─── Relations ──────────────────────────────────────────────────────────────────
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
@@ -339,3 +353,5 @@ export type AiTip = typeof aiTips.$inferSelect;
 export type NewAiTip = typeof aiTips.$inferInsert;
 export type UserPreferences = typeof userPreferences.$inferSelect;
 export type NewUserPreferences = typeof userPreferences.$inferInsert;
+export type PlatformStats = typeof platformStats.$inferSelect;
+export type NewPlatformStats = typeof platformStats.$inferInsert;

@@ -13,6 +13,7 @@ import { runSendReminders } from "./jobs/send-reminders.js";
 import { runCleanup } from "./jobs/cleanup.js";
 import { generateAiTips } from "./jobs/generate-ai-tips.js";
 import { runAutoRenew } from "./jobs/auto-renew.js";
+import { computePlatformStats } from "./jobs/compute-platform-stats.js";
 import { runJobLog } from "./logger.js";
 
 export const VALID_JOBS = [
@@ -20,6 +21,7 @@ export const VALID_JOBS = [
   "cleanup",
   "generate-ai-tips",
   "auto-renew",
+  "compute-platform-stats",
 ] as const;
 
 export type JobName = (typeof VALID_JOBS)[number];
@@ -67,6 +69,11 @@ export async function runJob(name: JobName): Promise<void> {
 
   if (name === "auto-renew") {
     await runAutoRenew();
+    return;
+  }
+
+  if (name === "compute-platform-stats") {
+    await computePlatformStats();
     return;
   }
 }

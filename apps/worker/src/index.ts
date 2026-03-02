@@ -7,12 +7,14 @@ import { runSendReminders } from "./jobs/send-reminders.js";
 import { runCleanup } from "./jobs/cleanup.js";
 import { generateAiTips } from "./jobs/generate-ai-tips.js";
 import { runAutoRenew } from "./jobs/auto-renew.js";
+import { computePlatformStats } from "./jobs/compute-platform-stats.js";
 import {
   workerLog,
   remindersLog,
   cleanupLog,
   aiTipsLog,
   autoRenewLog,
+  platformStatsLog,
 } from "./logger.js";
 
 const env = validateEnv();
@@ -25,10 +27,11 @@ initVapid({
 
 workerLog.info("Starting TrackrApp notification worker...");
 workerLog.info("Schedule:");
-workerLog.info("  send-reminders   → every hour  (0 * * * *)");
-workerLog.info("  cleanup          → daily 3am   (0 3 * * *)");
-workerLog.info("  generate-ai-tips → Sunday 2am  (0 2 * * 0)");
-workerLog.info("  auto-renew       → daily midnight (0 0 * * *)");
+workerLog.info("  send-reminders        → every hour       (0 * * * *)");
+workerLog.info("  cleanup               → daily 3am        (0 3 * * *)");
+workerLog.info("  generate-ai-tips      → Sunday 2am       (0 2 * * 0)");
+workerLog.info("  auto-renew            → daily midnight   (0 0 * * *)");
+workerLog.info("  compute-platform-stats → every 12h       (0 */12 * * *)");
 
 // Every hour: send renewal reminders
 cron.schedule("0 * * * *", async () => {
@@ -67,6 +70,16 @@ cron.schedule("0 0 * * *", async () => {
     await runAutoRenew();
   } catch (err) {
     autoRenewLog.error({ err }, "Error");
+  }
+});
+
+// Every 12 hours (00:00 and 12:00): compute platform stats for landing page
+cron.schedule("0 */12 * * *", async () => {
+  platformStatsLog.info("Running...");
+  try {
+    await computePlatformStats();
+  } catch (err) {
+    platformStatsLog.error({ err }, "Error");
   }
 });
 

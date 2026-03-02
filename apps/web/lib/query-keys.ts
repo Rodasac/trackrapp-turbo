@@ -58,4 +58,7 @@ export const queryKeys = {
   userPreferences: {
     all: ["userPreferences"] as const,
   },
+  platformStats: {
+    all: ["platform-stats"] as const,
+  },
 } as const;
