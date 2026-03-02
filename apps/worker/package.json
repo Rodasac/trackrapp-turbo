@@ -19,6 +19,7 @@
     "@ai-sdk/groq": "^3.0.26",
     "@ai-sdk/openai": "^3.0.37",
     "@repo/database": "workspace:*",
+    "@repo/logger": "workspace:*",
     "@repo/shared": "workspace:*",
     "ai": "^6.0.105",
     "dotenv": "^17.3.1",

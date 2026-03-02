@@ -2,6 +2,7 @@ import { db, schema } from "@repo/database";
 import { eq, and, lte, inArray } from "drizzle-orm";
 import { computeNextRenewalDate } from "@repo/shared/billing";
 import { toDateString } from "@repo/shared/dates";
+import { autoRenewLog } from "../logger.js";
 
 /**
  * Advance nextRenewalDate for all due subscriptions where auto-renew is enabled.
@@ -19,7 +20,7 @@ export async function runAutoRenew(): Promise<number> {
   });
 
   if (candidates.length === 0) {
-    console.log("[auto-renew] No subscriptions due for renewal");
+    autoRenewLog.info("No subscriptions due for renewal");
     return 0;
   }
 
@@ -41,7 +42,7 @@ export async function runAutoRenew(): Promise<number> {
   });
 
   if (toRenew.length === 0) {
-    console.log("[auto-renew] No subscriptions eligible for auto-renewal");
+    autoRenewLog.info("No subscriptions eligible for auto-renewal");
     return 0;
   }
 
@@ -62,16 +63,14 @@ export async function runAutoRenew(): Promise<number> {
         .execute();
       renewed++;
     } catch (err) {
-      console.error(
-        `[auto-renew] Failed to renew subscription ${sub.id}:`,
-        err,
+      autoRenewLog.error(
+        { err, subscriptionId: sub.id },
+        "Failed to renew subscription",
       );
     }
   }
 
   const uniqueUsers = new Set(toRenew.map((s) => s.userId)).size;
-  console.log(
-    `[auto-renew] Renewed ${renewed} subscriptions for ${uniqueUsers} users`,
-  );
+  autoRenewLog.info({ renewed, uniqueUsers }, "Renewal summary");
   return renewed;
 }

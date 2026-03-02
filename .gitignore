@@ -27,6 +27,9 @@ out/
 build
 dist
 
+# Log files (pino-roll daily rotation)
+logs/
+
 
 # Debug
 npm-debug.log*

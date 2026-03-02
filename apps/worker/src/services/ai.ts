@@ -3,6 +3,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import { groq } from "@ai-sdk/groq";
+import { aiServiceLog } from "../logger.js";
 
 export interface SubscriptionForPrompt {
   name: string;
@@ -97,7 +98,7 @@ export async function generateTipsForUser(
     });
     return parseTipsResponse(result.text);
   } catch (error) {
-    console.error("[ai-service] Failed to generate tips:", error);
+    aiServiceLog.error({ err: error }, "Failed to generate tips");
     return [];
   }
 }

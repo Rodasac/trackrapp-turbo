@@ -7,6 +7,7 @@ import {
 import { createTransporter, sendRenewalReminder } from "../services/email.js";
 import { sendPushNotification } from "../services/push.js";
 import { validateEnv } from "../env.js";
+import { remindersLog } from "../logger.js";
 
 const DEFAULT_REMINDER_DAYS = [7, 3, 1];
 
@@ -47,7 +48,7 @@ export async function runSendReminders(): Promise<void> {
   });
 
   if (subscriptions.length === 0) {
-    console.log("[send-reminders] No subscriptions to remind");
+    remindersLog.info("No subscriptions to remind");
     return;
   }
 
@@ -138,7 +139,5 @@ export async function runSendReminders(): Promise<void> {
     sent++;
   }
 
-  console.log(
-    `[send-reminders] Sent ${sent} reminders for ${subscriptions.length} subscriptions checked`,
-  );
+  remindersLog.info({ sent, checked: subscriptions.length }, "Reminders sent");
 }

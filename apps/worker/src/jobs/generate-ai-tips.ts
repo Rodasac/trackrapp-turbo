@@ -4,11 +4,12 @@ import { validateAiEnv } from "../env.js";
 import { getAiModel, generateTipsForUser } from "../services/ai.js";
 import { createNotification } from "../services/notification.js";
 import type { SubscriptionForPrompt } from "../services/ai.js";
+import { aiTipsLog } from "../logger.js";
 
 export async function generateAiTips(): Promise<void> {
   const aiEnv = validateAiEnv();
   if (!aiEnv) {
-    console.log("[generate-ai-tips] No AI API key configured — skipping");
+    aiTipsLog.info("No AI API key configured — skipping");
     return;
   }
 
@@ -21,11 +22,11 @@ export async function generateAiTips(): Promise<void> {
     .where(inArray(schema.subscriptions.status, ["active", "trialing"]));
 
   if (proUsers.length === 0) {
-    console.log("[generate-ai-tips] No Pro users found — skipping");
+    aiTipsLog.info("No Pro users found — skipping");
     return;
   }
 
-  console.log(`[generate-ai-tips] Processing ${proUsers.length} Pro user(s)`);
+  aiTipsLog.info({ count: proUsers.length }, "Processing Pro users");
   let generated = 0;
 
   for (const proUser of proUsers) {
@@ -42,9 +43,7 @@ export async function generateAiTips(): Promise<void> {
         );
 
       if (subs.length === 0) {
-        console.log(
-          `[generate-ai-tips] User ${proUser.referenceId}: 0 subs — skipping`,
-        );
+        aiTipsLog.info({ userId: proUser.referenceId }, "0 subs — skipping");
         continue;
       }
 
@@ -74,9 +73,7 @@ export async function generateAiTips(): Promise<void> {
       );
 
       if (tips.length === 0) {
-        console.log(
-          `[generate-ai-tips] User ${proUser.referenceId}: AI returned 0 tips`,
-        );
+        aiTipsLog.info({ userId: proUser.referenceId }, "AI returned 0 tips");
         continue;
       }
 
@@ -103,18 +100,20 @@ export async function generateAiTips(): Promise<void> {
       });
 
       generated++;
-      console.log(
-        `[generate-ai-tips] User ${proUser.referenceId}: ${tips.length} tips generated`,
+      aiTipsLog.info(
+        { userId: proUser.referenceId, tipsCount: tips.length },
+        "Tips generated",
       );
     } catch (error) {
-      console.error(
-        `[generate-ai-tips] Error for user ${proUser.referenceId}:`,
-        error,
+      aiTipsLog.error(
+        { err: error, userId: proUser.referenceId },
+        "Error processing user",
       );
     }
   }
 
-  console.log(
-    `[generate-ai-tips] Done — ${generated}/${proUsers.length} users processed`,
+  aiTipsLog.info(
+    { generated, total: proUsers.length },
+    "Done processing Pro users",
   );
 }

@@ -13,6 +13,7 @@ import { runSendReminders } from "./jobs/send-reminders.js";
 import { runCleanup } from "./jobs/cleanup.js";
 import { generateAiTips } from "./jobs/generate-ai-tips.js";
 import { runAutoRenew } from "./jobs/auto-renew.js";
+import { runJobLog } from "./logger.js";
 
 export const VALID_JOBS = [
   "send-reminders",
@@ -28,16 +29,12 @@ export function parseJobName(args: string[]): JobName {
   const name = args[2];
 
   if (!name) {
-    console.error(
-      `[run-job] Error: No job name provided.\nValid jobs: ${VALID_JOBS.join(", ")}`,
-    );
+    runJobLog.error({ validJobs: VALID_JOBS }, "No job name provided");
     process.exit(1);
   }
 
   if (!VALID_JOBS.includes(name as JobName)) {
-    console.error(
-      `[run-job] Error: Unknown job "${name}".\nValid jobs: ${VALID_JOBS.join(", ")}`,
-    );
+    runJobLog.error({ jobName: name, validJobs: VALID_JOBS }, "Unknown job");
     process.exit(1);
   }
 
@@ -78,14 +75,14 @@ export async function runJob(name: JobName): Promise<void> {
 
 if (process.argv[1]?.includes("run-job")) {
   const jobName = parseJobName(process.argv);
-  console.log(`[run-job] Running job: ${jobName}`);
+  runJobLog.info({ jobName }, "Running job");
   runJob(jobName)
     .then(() => {
-      console.log(`[run-job] Job "${jobName}" completed successfully.`);
+      runJobLog.info({ jobName }, "Job completed successfully");
       process.exit(0);
     })
     .catch((err: unknown) => {
-      console.error(`[run-job] Job "${jobName}" failed:`, err);
+      runJobLog.error({ err, jobName }, "Job failed");
       process.exit(1);
     });
 }

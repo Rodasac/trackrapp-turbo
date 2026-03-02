@@ -1,6 +1,7 @@
 import { db, schema } from "@repo/database";
 import { and, eq, isNotNull, lt } from "drizzle-orm";
 import { toDateString } from "@repo/shared/dates";
+import { cleanupLog } from "../logger.js";
 
 const RETENTION_DAYS = 30;
 
@@ -21,8 +22,9 @@ export async function runCleanup(): Promise<number> {
     .execute()) as { rowCount?: number };
 
   const deleted = result?.rowCount ?? 0;
-  console.log(
-    `[cleanup] Deleted ${deleted} read notifications older than ${RETENTION_DAYS} days`,
+  cleanupLog.info(
+    { deleted, retentionDays: RETENTION_DAYS },
+    "Deleted read notifications",
   );
 
   // Clear previousRenewalDate values older than 30 days (safety net for undo window)
@@ -42,8 +44,9 @@ export async function runCleanup(): Promise<number> {
     .execute()) as { rowCount?: number };
 
   const clearedRenewals = renewalResult?.rowCount ?? 0;
-  console.log(
-    `[cleanup] Cleared ${clearedRenewals} stale previousRenewalDate values older than ${RETENTION_DAYS} days`,
+  cleanupLog.info(
+    { clearedRenewals, retentionDays: RETENTION_DAYS },
+    "Cleared stale previousRenewalDate values",
   );
 
   return deleted;

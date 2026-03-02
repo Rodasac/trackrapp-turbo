@@ -1,5 +1,25 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
+vi.mock("../../src/logger.js", () => {
+  const noop = () => ({
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+    trace: vi.fn(),
+    fatal: vi.fn(),
+  });
+  return {
+    autoRenewLog: noop(),
+    workerLog: noop(),
+    remindersLog: noop(),
+    cleanupLog: noop(),
+    aiTipsLog: noop(),
+    runJobLog: noop(),
+    aiServiceLog: noop(),
+  };
+});
+
 vi.mock("ai", () => ({
   generateText: vi.fn(),
 }));
