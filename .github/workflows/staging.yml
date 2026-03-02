@@ -6,7 +6,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  NODE_ENV: development
 
 jobs:
   # ─── Build staging images ──────────────────────────────────────────────────
@@ -40,6 +39,8 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        env:
+          NODE_ENV: development
 
       - name: Extract metadata for ${{ matrix.image }}
         id: meta
