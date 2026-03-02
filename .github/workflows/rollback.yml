@@ -1,0 +1,63 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to roll back
+        required: true
+        type: choice
+        options: [staging, production]
+      image_tag:
+        description: "Image tag to roll back to (e.g. staging-abc1234 or production-abc1234)"
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  rollback:
+    name: Rollback [${{ inputs.environment }}] → ${{ inputs.image_tag }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Rollback staging
+        if: inputs.environment == 'staging'
+        uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          host: ${{ secrets.VPS_HOST_STAGING }}
+          username: ${{ secrets.VPS_USER_STAGING }}
+          key: ${{ secrets.VPS_SSH_KEY_STAGING }}
+          envs: IMAGE_TAG
+          script: |
+            cd /opt/trackrapp/staging
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.staging.yml pull
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.staging.yml up -d
+
+      - name: Pre-rollback backup (production only)
+        if: inputs.environment == 'production'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            docker compose -f /opt/trackrapp/production/docker-compose.prod.yml exec -T backup /backup.sh || true
+
+      - name: Rollback production
+        if: inputs.environment == 'production'
+        uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: IMAGE_TAG
+          script: |
+            cd /opt/trackrapp/production
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.prod.yml pull
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.prod.yml up -d
