@@ -1,10 +1,10 @@
-FROM node:22-alpine AS pruner
+FROM node:24-alpine AS pruner
 WORKDIR /app
 RUN npm install -g turbo@^2
 COPY . .
 RUN turbo prune worker --docker
 
-FROM node:22-alpine AS installer
+FROM node:24-alpine AS installer
 WORKDIR /app
 RUN npm install -g pnpm@10
 # Install dependencies using pruned package.json files (cache-friendly layer)
@@ -16,7 +16,7 @@ RUN pnpm turbo run build --filter=worker
 # Prune dev dependencies from node_modules
 RUN pnpm prune --prod
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 # tini as PID 1 for correct signal forwarding in cron worker
 RUN apk add --no-cache tini

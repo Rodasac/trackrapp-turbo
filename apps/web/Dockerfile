@@ -1,10 +1,10 @@
-FROM node:22-alpine AS pruner
+FROM node:24-alpine AS pruner
 WORKDIR /app
 RUN npm install -g turbo@^2
 COPY . .
 RUN turbo prune web --docker
 
-FROM node:22-alpine AS installer
+FROM node:24-alpine AS installer
 WORKDIR /app
 RUN npm install -g pnpm@10
 # Install dependencies using pruned package.json files (cache-friendly layer)
@@ -14,7 +14,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=pruner /app/out/full/ .
 RUN pnpm turbo run build --filter=web
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 # Create non-root user
