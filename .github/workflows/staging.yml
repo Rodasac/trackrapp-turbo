@@ -6,6 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  NODE_ENV: development
 
 jobs:
   # ─── Build staging images ──────────────────────────────────────────────────
@@ -107,5 +108,6 @@ jobs:
 
             cd /opt/trackrapp/staging
             chmod +x scripts/backup.sh
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.staging.yml down -v
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.staging.yml pull
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.staging.yml up -d

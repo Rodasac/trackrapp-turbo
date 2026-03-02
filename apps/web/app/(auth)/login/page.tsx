@@ -159,6 +159,19 @@ export default function LoginPage() {
             Sign up
           </Link>
         </p>
+        {process.env.NODE_ENV === "development" && (
+          <div className="bg-muted rounded-md p-3 text-sm">
+            <p className="font-medium">Development mode</p>
+            <p className="text-muted-foreground mt-1">
+              This is a development environment.
+            </p>
+            <p>users:</p>
+            <ul>
+              <li>demo@trackrapp.local: Demo1234!</li>
+              <li>demo-free@trackrapp.local: Demo1234!</li>
+            </ul>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
