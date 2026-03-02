@@ -285,16 +285,15 @@ export function SubscriptionList() {
                       !sub.isActive ? "opacity-50" : undefined,
                       "cursor-pointer",
                     )}
-                    onClick={() => handleRowClick(sub)}
                   >
-                    <TableCell>
+                    <TableCell onClick={() => handleRowClick(sub)}>
                       <SubscriptionLogo
                         name={sub.name}
                         logoUrl={sub.logoUrl}
                         websiteUrl={sub.websiteUrl}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={() => handleRowClick(sub)}>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{sub.name}</span>
                         {!sub.isActive && (
@@ -304,13 +303,16 @@ export function SubscriptionList() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm">
+                    <TableCell
+                      className="font-mono text-sm"
+                      onClick={() => handleRowClick(sub)}
+                    >
                       {formatPrice(sub.price, sub.currency)}
                       <span className="text-muted-foreground">
                         {billingCycleLabel(sub.billingCycle)}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={() => handleRowClick(sub)}>
                       {sub.category ? (
                         <Badge
                           variant="outline"
@@ -334,7 +336,10 @@ export function SubscriptionList() {
                         <span className="text-muted-foreground text-sm">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm">
+                    <TableCell
+                      className="text-sm"
+                      onClick={() => handleRowClick(sub)}
+                    >
                       <div className="flex items-center gap-2">
                         {formatRenewalDate(sub.nextRenewalDate)}
                         {sub.isActive && isDue(sub.nextRenewalDate) && (
