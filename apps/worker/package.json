@@ -7,7 +7,7 @@
     "dev": "tsx watch src/index.ts",
     "run-job": "tsx src/run-job.ts",
     "start": "node dist/index.js",
-    "build": "tsc",
+    "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
     "check-types": "tsc --noEmit",
@@ -39,6 +39,7 @@
     "@types/web-push": "^3.6.4",
     "@vitest/coverage-istanbul": "^4.0.18",
     "eslint": "^10.0.2",
+    "tsup": "^8.5.1",
     "tsx": "^4.20.3",
     "typescript": "5.9.3",
     "vitest": "^4.0.18"

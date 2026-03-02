@@ -1,0 +1,132 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-trackrapp}
+      POSTGRES_USER: ${POSTGRES_USER:-trackrapp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-staging-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trackrapp} -d ${POSTGRES_DB:-trackrapp}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - trackr-staging
+
+  migrate:
+    image: ghcr.io/${GITHUB_REPOSITORY:-trackrapp/trackrapp}/migrate:${IMAGE_TAG:-latest}
+    restart: "no"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - trackr-staging
+
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY:-trackrapp/trackrapp}/web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      UPLOADTHING_TOKEN: ${UPLOADTHING_TOKEN}
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@staging.trackrapp.xyz}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web-staging.rule=Host(`staging.trackrapp.xyz`)
+      - traefik.http.routers.web-staging.entrypoints=websecure
+      - traefik.http.routers.web-staging.tls=true
+      - traefik.http.routers.web-staging.tls.certresolver=letsencrypt
+      - traefik.http.services.web-staging.loadbalancer.server.port=3000
+    networks:
+      - trackr-staging
+      - traefik-public
+
+  worker:
+    image: ghcr.io/${GITHUB_REPOSITORY:-trackrapp/trackrapp}/worker:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@staging.trackrapp.xyz}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      VAPID_SUBJECT: ${VAPID_SUBJECT}
+      AI_PROVIDER: ${AI_PROVIDER:-anthropic}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - trackr-staging
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mailpit-staging.rule=Host(`mail-staging.trackrapp.xyz`)
+      - traefik.http.routers.mailpit-staging.entrypoints=websecure
+      - traefik.http.routers.mailpit-staging.tls=true
+      - traefik.http.routers.mailpit-staging.tls.certresolver=letsencrypt
+      - traefik.http.services.mailpit-staging.loadbalancer.server.port=8025
+    networks:
+      - trackr-staging
+      - traefik-public
+
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dozzle-staging.rule=Host(`logs-staging.trackrapp.xyz`)
+      - traefik.http.routers.dozzle-staging.entrypoints=websecure
+      - traefik.http.routers.dozzle-staging.tls=true
+      - traefik.http.routers.dozzle-staging.tls.certresolver=letsencrypt
+      - traefik.http.routers.dozzle-staging.middlewares=dozzle-auth
+      - traefik.http.middlewares.dozzle-auth.basicauth.users=${DOZZLE_BASIC_AUTH}
+      - traefik.http.services.dozzle-staging.loadbalancer.server.port=8080
+    networks:
+      - trackr-staging
+      - traefik-public
+
+volumes:
+  postgres-staging-data:
+
+networks:
+  trackr-staging:
+    driver: bridge
+  traefik-public:
+    external: true

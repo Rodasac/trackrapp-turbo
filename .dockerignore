@@ -1,0 +1,17 @@
+node_modules
+.next
+.turbo
+.git
+.github
+.claude
+*.md
+!README.md
+coverage
+logs
+apps/docs
+apps/web/e2e
+apps/web/tests
+apps/worker/tests
+packages/*/tests
+test-results
+playwright-report

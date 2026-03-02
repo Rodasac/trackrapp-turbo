@@ -1,4 +1,5 @@
 import "dotenv/config";
+import http from "node:http";
 import cron from "node-cron";
 import { validateEnv } from "./env.js";
 import { initVapid } from "./services/push.js";
@@ -70,6 +71,19 @@ cron.schedule("0 0 * * *", async () => {
 });
 
 workerLog.info("All cron jobs scheduled. Waiting...");
+
+// Minimal health check HTTP server
+const healthServer = http.createServer((req, res) => {
+  if (req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: "ok", uptime: process.uptime() }));
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+healthServer.listen(3001);
+workerLog.info("Health check server listening on :3001");
 
 // Graceful shutdown
 function shutdown(signal: string) {

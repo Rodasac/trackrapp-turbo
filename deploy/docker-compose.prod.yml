@@ -1,0 +1,144 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-trackrapp}
+      POSTGRES_USER: ${POSTGRES_USER:-trackrapp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-prod-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trackrapp} -d ${POSTGRES_DB:-trackrapp}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - trackr-prod
+
+  migrate:
+    image: ghcr.io/${GITHUB_REPOSITORY}/migrate:${IMAGE_TAG:-latest}
+    restart: "no"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - trackr-prod
+
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY}/web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      UPLOADTHING_TOKEN: ${UPLOADTHING_TOKEN}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      EMAIL_FROM: ${EMAIL_FROM}
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web-prod.rule=Host(`trackrapp.xyz`) || Host(`www.trackrapp.xyz`)
+      - traefik.http.routers.web-prod.entrypoints=websecure
+      - traefik.http.routers.web-prod.tls=true
+      - traefik.http.routers.web-prod.tls.certresolver=letsencrypt
+      - traefik.http.services.web-prod.loadbalancer.server.port=3000
+    networks:
+      - trackr-prod
+      - traefik-public
+
+  worker:
+    image: ghcr.io/${GITHUB_REPOSITORY}/worker:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      EMAIL_FROM: ${EMAIL_FROM}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      VAPID_SUBJECT: ${VAPID_SUBJECT}
+      AI_PROVIDER: ${AI_PROVIDER:-anthropic}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - trackr-prod
+
+  backup:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    volumes:
+      - /opt/trackrapp/backups:/backups
+      - ./scripts/backup.sh:/backup.sh:ro
+    # Run daily at 2am
+    entrypoint: ["/bin/sh", "-c", "echo '0 2 * * * /backup.sh' | crontab - && crond -f"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - trackr-prod
+
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dozzle-prod.rule=Host(`logs.trackrapp.xyz`)
+      - traefik.http.routers.dozzle-prod.entrypoints=websecure
+      - traefik.http.routers.dozzle-prod.tls=true
+      - traefik.http.routers.dozzle-prod.tls.certresolver=letsencrypt
+      - traefik.http.routers.dozzle-prod.middlewares=dozzle-prod-auth
+      - traefik.http.middlewares.dozzle-prod-auth.basicauth.users=${DOZZLE_BASIC_AUTH}
+      - traefik.http.services.dozzle-prod.loadbalancer.server.port=8080
+    networks:
+      - trackr-prod
+      - traefik-public
+
+volumes:
+  postgres-prod-data:
+
+networks:
+  trackr-prod:
+    driver: bridge
+  traefik-public:
+    external: true

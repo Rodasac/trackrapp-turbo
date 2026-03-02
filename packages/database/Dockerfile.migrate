@@ -1,0 +1,12 @@
+FROM node:22-alpine
+WORKDIR /app
+RUN npm install -g pnpm@10
+# Copy only database package files
+COPY packages/database/package.json ./packages/database/
+COPY pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+# Install dependencies
+RUN pnpm install --frozen-lockfile --filter=@repo/database
+# Copy database source and migrations
+COPY packages/database/ ./packages/database/
+CMD ["pnpm", "--filter=@repo/database", "db:migrate"]
