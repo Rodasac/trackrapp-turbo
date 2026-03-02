@@ -29,8 +29,8 @@ jobs:
       - name: Type check
         run: pnpm check-types
 
-      - name: Build vitest config (required before tests)
-        run: pnpm build --filter=@repo/vitest-config
+      - name: Build required packages
+        run: pnpm build --filter=@repo/vitest-config --filter=@repo/ui --filter=@repo/database --filter=@repo/logger --filter=@repo/shared --filter=@repo/tailwind-config
 
       - name: Run tests
         run: pnpm test
