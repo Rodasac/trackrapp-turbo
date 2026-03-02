@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@repo/ui/button";
 import { authClient } from "@/lib/auth-client";
 
-function CheckEmailContent() {
+function CheckEmailResetContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
   const [isSending, setIsSending] = useState(false);
@@ -16,14 +16,16 @@ function CheckEmailContent() {
     if (!email) return;
     setIsSending(true);
     try {
-      const { error } = await authClient.sendVerificationEmail({
+      const origin =
+        typeof window !== "undefined" ? window.location.origin : "";
+      const { error } = await authClient.requestPasswordReset({
         email,
-        callbackURL: "/dashboard",
+        redirectTo: `${origin}/reset-password`,
       });
       if (error) {
-        toast.error(error.message ?? "Failed to resend verification email");
+        toast.error(error.message ?? "Failed to resend reset email");
       } else {
-        toast.success("Verification email sent");
+        toast.success("Reset email sent — check your inbox");
       }
     } finally {
       setIsSending(false);
@@ -37,7 +39,7 @@ function CheckEmailContent() {
           Check your email
         </h1>
         <p className="text-muted-foreground text-sm">
-          We sent a verification link to
+          We sent a password reset link to
         </p>
       </div>
 
@@ -48,7 +50,8 @@ function CheckEmailContent() {
       )}
 
       <p className="text-muted-foreground text-sm">
-        Click the link in the email to verify your account and sign in.
+        Click the link in the email to reset your password. The link expires in
+        1 hour.
       </p>
 
       <Button
@@ -69,10 +72,10 @@ function CheckEmailContent() {
   );
 }
 
-export default function CheckEmailPage() {
+export default function CheckEmailResetPage() {
   return (
     <Suspense>
-      <CheckEmailContent />
+      <CheckEmailResetContent />
     </Suspense>
   );
 }

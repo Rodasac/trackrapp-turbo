@@ -81,7 +81,7 @@ test("login without verifying shows unverified email message", async ({
   await page.goto("/login");
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
   // Should show the unverified email banner
   await expect(page.getByText(/please verify your email first/i)).toBeVisible({

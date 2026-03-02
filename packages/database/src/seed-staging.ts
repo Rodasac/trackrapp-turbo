@@ -8,10 +8,10 @@
  * multiple times without duplicate-key errors.
  */
 
+import argon2 from "argon2";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { inArray, isNull } from "drizzle-orm";
-import { hashPassword } from "better-auth/crypto";
 import * as schema from "./schema/index.js";
 import {
   buildDemoUser,
@@ -287,7 +287,7 @@ async function seedStaging() {
 
   // ── 4. Hash password (shared) ─────────────────────────────────────────────────
 
-  const hashed = await hashPassword(DEMO_PASSWORD);
+  const hashed = await argon2.hash(DEMO_PASSWORD);
 
   // ── 5. Pro user ───────────────────────────────────────────────────────────────
 

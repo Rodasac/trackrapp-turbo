@@ -86,14 +86,14 @@ test("login with wrong password shows error toast", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill(creds.email);
   await page.getByLabel("Password").fill("WrongPassword!");
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page.locator("[data-sonner-toast]")).toBeVisible();
   await expect(page).toHaveURL(/\/login/);
 });
 
 test("login shows validation errors for empty fields", async ({ page }) => {
   await page.goto("/login");
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page.getByText("Enter a valid email address")).toBeVisible();
   await expect(page.getByText("Password is required")).toBeVisible();
 });
@@ -124,4 +124,28 @@ test("login and signup pages have cross-links", async ({ page }) => {
   // Signup page links to login
   await page.goto("/signup");
   await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
+});
+
+test("login page shows forgot password link", async ({ page }) => {
+  await page.goto("/login");
+  await expect(
+    page.getByRole("link", { name: /forgot password/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /forgot password/i }),
+  ).toHaveAttribute("href", "/forgot-password");
+});
+
+test("login page shows Google sign-in button", async ({ page }) => {
+  await page.goto("/login");
+  await expect(
+    page.getByRole("button", { name: /sign in with google/i }),
+  ).toBeVisible();
+});
+
+test("signup page shows Google sign-up button", async ({ page }) => {
+  await page.goto("/signup");
+  await expect(
+    page.getByRole("button", { name: /sign up with google/i }),
+  ).toBeVisible();
 });

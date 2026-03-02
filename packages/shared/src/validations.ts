@@ -103,7 +103,7 @@ export const profileFormSchema = z.object({
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-const strongPassword = z
+export const strongPasswordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .regex(/[A-Z]/, "Must contain at least one uppercase letter")
@@ -116,8 +116,8 @@ export const changePasswordSchema = z
     currentPassword: z
       .string()
       .min(8, "Password must be at least 8 characters"),
-    newPassword: strongPassword,
-    confirmPassword: strongPassword,
+    newPassword: strongPasswordSchema,
+    confirmPassword: strongPasswordSchema,
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords must match",

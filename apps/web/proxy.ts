@@ -9,7 +9,13 @@ const PROTECTED_PATHS = [
   "/settings",
 ];
 
-const AUTH_PATHS = ["/login", "/signup"];
+const AUTH_PATHS = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/check-email",
+  "/check-email-reset",
+];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

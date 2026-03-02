@@ -32,7 +32,9 @@ test("feature cards section has 6 cards", async ({ page }) => {
 
 test("pricing section shows Free and Pro plans", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("#pricing").getByText("Free", { exact: true })).toBeVisible();
+  await expect(
+    page.locator("#pricing").getByText("Free", { exact: true }),
+  ).toBeVisible();
   await expect(page.getByText("Pro", { exact: true }).first()).toBeVisible();
 });
 

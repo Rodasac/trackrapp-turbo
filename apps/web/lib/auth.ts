@@ -1,3 +1,4 @@
+import argon2 from "argon2";
 import { betterAuth, User } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { stripe } from "@better-auth/stripe";
@@ -19,6 +20,17 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    password: {
+      hash: async (password) => await argon2.hash(password),
+      verify: async ({ hash, password }) => await argon2.verify(hash, password),
+    },
+    sendResetPassword: async ({ user, url }) => {
+      void sendEmail({
+        to: user.email,
+        subject: "Reset your TrackrApp password",
+        html: getResetPasswordTemplate(user, url),
+      });
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
@@ -88,6 +100,18 @@ const getEmailVerificationTemplate = (user: User, url: string) => {
       <h2 style="margin:0 0 12px;font-family:${EMAIL_BRAND.fontStack};font-size:26px;color:#0f172a;font-weight:400;">Verify your ${EMAIL_BRAND.appName} email</h2>
       <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;">Click the button below to verify your email address.</p>
       ${emailButton("Verify email", url)}
+    `,
+  });
+};
+
+const getResetPasswordTemplate = (user: User, url: string) => {
+  return emailLayout({
+    previewText: "Reset your TrackrApp password.",
+    content: `
+      <h2 style="margin:0 0 12px;font-family:${EMAIL_BRAND.fontStack};font-size:26px;color:#0f172a;font-weight:400;">Reset your password</h2>
+      <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;">Hi ${user.name ?? user.email}, click the button below to reset your ${EMAIL_BRAND.appName} password. This link expires in 1 hour.</p>
+      ${emailButton("Reset password", url)}
+      <p style="margin:24px 0 0;font-size:13px;color:#94a3b8;line-height:1.6;">If you didn't request a password reset, you can safely ignore this email. Your password won't change.</p>
     `,
   });
 };

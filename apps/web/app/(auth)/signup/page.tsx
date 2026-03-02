@@ -9,13 +9,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/card";
-import {
   Form,
   FormControl,
   FormField,
@@ -25,11 +18,13 @@ import {
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
 import { signUp } from "@/lib/auth-client";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import { strongPasswordSchema } from "@repo/shared";
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z.email("Enter a valid email address"),
+  password: strongPasswordSchema,
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -58,94 +53,105 @@ function SignupForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Create account</CardTitle>
-        <CardDescription>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="font-display text-3xl tracking-tight">Create account</h1>
+        <p className="text-muted-foreground text-sm">
           Start tracking your subscriptions for free
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Jane Smith"
-                      autoComplete="name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Min. 8 characters"
-                      autoComplete="new-password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              disabled={form.formState.isSubmitting}
-              className="mt-1"
-            >
-              {form.formState.isSubmitting
-                ? "Creating account…"
-                : "Create account"}
-            </Button>
-          </form>
-        </Form>
-        <p className="text-muted-foreground mt-4 text-center text-sm">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-foreground font-medium hover:underline"
-          >
-            Sign in
-          </Link>
         </p>
-      </CardContent>
-    </Card>
+      </div>
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Jane Smith"
+                    autoComplete="name"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Min. 8 characters"
+                    autoComplete="new-password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            className="mt-1"
+          >
+            {form.formState.isSubmitting
+              ? "Creating account…"
+              : "Create account"}
+          </Button>
+        </form>
+      </Form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">or</span>
+        </div>
+      </div>
+
+      <GoogleSignInButton label="Sign up with Google" />
+
+      <p className="text-muted-foreground text-center text-sm">
+        Already have an account?{" "}
+        <Link
+          href="/login"
+          className="text-foreground font-medium hover:underline"
+        >
+          Sign in
+        </Link>
+      </p>
+    </div>
   );
 }
 
