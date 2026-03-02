@@ -80,6 +80,7 @@
     "LOG_LEVEL",
     "LOG_DIR",
     "LOG_FILE_ENABLED",
-    "LOG_PRETTY"
+    "LOG_PRETTY",
+    "APP_URL"
   ]
 }

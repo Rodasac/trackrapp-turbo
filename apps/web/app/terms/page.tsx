@@ -22,10 +22,11 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold">1. Acceptance of Terms</h2>
             <p className="text-muted-foreground mt-2">
-              By accessing or using TrackrApp (&quot;the Service&quot;), you agree to be
-              bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to
-              these Terms, please do not use the Service. These Terms apply to all
-              visitors, users, and others who access or use the Service.
+              By accessing or using TrackrApp (&quot;the Service&quot;), you
+              agree to be bound by these Terms of Service (&quot;Terms&quot;).
+              If you do not agree to these Terms, please do not use the Service.
+              These Terms apply to all visitors, users, and others who access or
+              use the Service.
             </p>
           </section>
 
@@ -33,9 +34,9 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold">2. Description of Service</h2>
             <p className="text-muted-foreground mt-2">
               TrackrApp is a subscription tracking service that allows users to
-              monitor, manage, and analyse their recurring subscriptions. Features
-              include renewal reminders, spending analytics, and (for Pro users)
-              AI-powered spending tips.
+              monitor, manage, and analyse their recurring subscriptions.
+              Features include renewal reminders, spending analytics, and (for
+              Pro users) AI-powered spending tips.
             </p>
           </section>
 
@@ -62,7 +63,9 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold">5. Subscription Plans & Payments</h2>
+            <h2 className="text-xl font-semibold">
+              5. Subscription Plans & Payments
+            </h2>
             <p className="text-muted-foreground mt-2">
               TrackrApp offers both free and paid subscription plans. Paid plans
               are billed on a monthly or annual basis via Stripe. All fees are
@@ -75,15 +78,17 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold">6. Intellectual Property</h2>
             <p className="text-muted-foreground mt-2">
               The Service and its original content, features, and functionality
-              are owned by TrackrApp and are protected by international copyright,
-              trademark, patent, trade secret, and other intellectual property
-              laws. You may not copy, modify, or distribute any part of the
-              Service without our written permission.
+              are owned by TrackrApp and are protected by international
+              copyright, trademark, patent, trade secret, and other intellectual
+              property laws. You may not copy, modify, or distribute any part of
+              the Service without our written permission.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold">7. Limitation of Liability</h2>
+            <h2 className="text-xl font-semibold">
+              7. Limitation of Liability
+            </h2>
             <p className="text-muted-foreground mt-2">
               To the fullest extent permitted by law, TrackrApp shall not be
               liable for any indirect, incidental, special, consequential, or
@@ -95,12 +100,14 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold">8. Disclaimer of Warranties</h2>
+            <h2 className="text-xl font-semibold">
+              8. Disclaimer of Warranties
+            </h2>
             <p className="text-muted-foreground mt-2">
-              The Service is provided &quot;as is&quot; and &quot;as available&quot; without
-              warranties of any kind, either express or implied. We do not warrant
-              that the Service will be uninterrupted, error-free, or free of
-              viruses or other harmful components.
+              The Service is provided &quot;as is&quot; and &quot;as
+              available&quot; without warranties of any kind, either express or
+              implied. We do not warrant that the Service will be uninterrupted,
+              error-free, or free of viruses or other harmful components.
             </p>
           </section>
 
@@ -108,9 +115,10 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold">9. Termination</h2>
             <p className="text-muted-foreground mt-2">
               We reserve the right to suspend or terminate your access to the
-              Service at any time, with or without cause, with or without notice.
-              Upon termination, your right to use the Service will immediately
-              cease. You may delete your account at any time from your settings.
+              Service at any time, with or without cause, with or without
+              notice. Upon termination, your right to use the Service will
+              immediately cease. You may delete your account at any time from
+              your settings.
             </p>
           </section>
 
@@ -128,8 +136,11 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold">11. Contact</h2>
             <p className="text-muted-foreground mt-2">
               If you have questions about these Terms, please contact us at{" "}
-              <a href="mailto:legal@trackrapp.com" className="text-brand hover:underline">
-                legal@trackrapp.com
+              <a
+                href="mailto:legal@trackrapp.xyz"
+                className="text-brand hover:underline"
+              >
+                legal@trackrapp.xyz
               </a>
               .
             </p>

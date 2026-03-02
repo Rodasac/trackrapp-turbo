@@ -89,7 +89,9 @@ export function PricingCards() {
               Everything you need to get started
             </CardDescription>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-3xl font-bold">${PRICING.free.monthly}</span>
+              <span className="text-3xl font-bold">
+                ${PRICING.free.monthly}
+              </span>
               <span className="text-muted-foreground text-sm">/ month</span>
             </div>
           </CardHeader>
@@ -124,22 +126,29 @@ export function PricingCards() {
             <div className="mt-2 flex items-baseline gap-1">
               {annual ? (
                 <>
-                  <span className="text-3xl font-bold">${PRICING.pro.annual}</span>
+                  <span className="text-3xl font-bold">
+                    ${PRICING.pro.annual}
+                  </span>
                   <span className="text-muted-foreground text-sm">/ year</span>
                 </>
               ) : (
                 <>
-                  <span className="text-3xl font-bold">${PRICING.pro.monthly}</span>
+                  <span className="text-3xl font-bold">
+                    ${PRICING.pro.monthly}
+                  </span>
                   <span className="text-muted-foreground text-sm">/ month</span>
                 </>
               )}
             </div>
             {annual && (
               <p className="text-muted-foreground text-xs">
-                ${PRO_EFFECTIVE_MONTHLY}/month effective — save {PRO_ANNUAL_DISCOUNT_PCT}%
+                ${PRO_EFFECTIVE_MONTHLY}/month effective — save{" "}
+                {PRO_ANNUAL_DISCOUNT_PCT}%
               </p>
             )}
-            <p className="text-muted-foreground text-xs">{PRICING.pro.trialDays}-day free trial</p>
+            <p className="text-muted-foreground text-xs">
+              {PRICING.pro.trialDays}-day free trial
+            </p>
           </CardHeader>
           <Separator />
           <CardContent className="mt-4">

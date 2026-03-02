@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { DM_Serif_Display } from "next/font/google";
 import { Toaster } from "@repo/ui/sonner";
 import { Providers } from "@/components/providers";
+import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -38,6 +39,7 @@ export default function RootLayout({
         <Providers>
           {children}
           <Toaster richColors />
+          <CookieConsentBanner />
         </Providers>
       </body>
     </html>

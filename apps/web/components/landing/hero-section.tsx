@@ -11,12 +11,18 @@ export function HeroSection() {
       {/* Gradient orbs */}
       <div
         className="pointer-events-none absolute -top-40 -left-40 size-[600px] rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(circle, oklch(0.696 0.17 162.48), transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, oklch(0.696 0.17 162.48), transparent 70%)",
+        }}
         aria-hidden
       />
       <div
         className="pointer-events-none absolute -right-40 -bottom-40 size-[500px] rounded-full opacity-15 blur-3xl"
-        style={{ background: "radial-gradient(circle, oklch(0.720 0.160 180), transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, oklch(0.720 0.160 180), transparent 70%)",
+        }}
         aria-hidden
       />
 
@@ -29,12 +35,11 @@ export function HeroSection() {
               Subscription intelligence, simplified
             </div>
             <h1 className="font-display text-5xl font-normal leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Track Every{" "}
-              <span className="text-emerald-400">Subscription</span>
+              Track Every <span className="text-emerald-400">Subscription</span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-lg text-white/60 lg:mx-0">
-              Never miss a renewal. Get insights on your spending, AI-powered tips,
-              and reminders before you&apos;re charged.
+              Never miss a renewal. Get insights on your spending, AI-powered
+              tips, and reminders before you&apos;re charged.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
               <Button

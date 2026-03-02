@@ -63,22 +63,22 @@ export function parseTipsResponse(text: string): {
 
   try {
     const parsed = JSON.parse(jsonStr.trim());
-    if (
-      !Object.keys(parsed).includes("elements") ||
-      !Array.isArray(parsed.elements)
-    ) {
+    const items: unknown = Array.isArray(parsed)
+      ? parsed
+      : Array.isArray((parsed as { elements?: unknown }).elements)
+        ? (parsed as { elements: unknown[] }).elements
+        : null;
+
+    if (!items) {
       return [];
     }
 
-    const validated = parsed.elements
-      .map((item: z.infer<typeof tipSchema>) => {
+    const validated = (items as unknown[])
+      .map((item: unknown) => {
         const result = tipSchema.safeParse(item);
         return result.success ? result.data : null;
       })
-      .filter(
-        (t: z.infer<typeof tipSchema>): t is z.infer<typeof tipSchema> =>
-          t !== null,
-      );
+      .filter((t): t is z.infer<typeof tipSchema> => t !== null);
 
     return validated.slice(0, 5);
   } catch {

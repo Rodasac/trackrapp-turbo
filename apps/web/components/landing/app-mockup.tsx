@@ -21,7 +21,9 @@ function KpiCard({
 }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 p-3">
-      <p className="text-[10px] text-white/50 uppercase tracking-wide">{label}</p>
+      <p className="text-[10px] text-white/50 uppercase tracking-wide">
+        {label}
+      </p>
       <p className="mt-1 text-lg font-semibold text-white">{value}</p>
       {sub && <p className="text-[10px] text-emerald-400">{sub}</p>}
     </div>

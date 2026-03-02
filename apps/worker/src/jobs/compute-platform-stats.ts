@@ -18,9 +18,7 @@ export async function computePlatformStats(): Promise<void> {
   const totalSubscriptions = subsRows[0]?.count ?? 0;
 
   // 2. Total users
-  const usersRows = await db
-    .select({ count: count() })
-    .from(schema.users);
+  const usersRows = await db.select({ count: count() }).from(schema.users);
   const totalUsers = usersRows[0]?.count ?? 0;
 
   // 3. Total reminders sent

@@ -37,7 +37,9 @@ test("pricing section shows Free and Pro plans", async ({ page }) => {
 
 test("'See pricing' CTA links to #pricing anchor", async ({ page }) => {
   await page.goto("/");
-  const seePricingLink = page.getByRole("link", { name: /see pricing/i }).first();
+  const seePricingLink = page
+    .getByRole("link", { name: /see pricing/i })
+    .first();
   await expect(seePricingLink).toBeVisible();
   await expect(seePricingLink).toHaveAttribute("href", "#pricing");
 });
@@ -63,7 +65,9 @@ test("'Sign in' link navigates to /login", async ({ page }) => {
 test("How it works section shows 3 steps", async ({ page }) => {
   await page.goto("/");
   const section = page.locator("#how-it-works");
-  await expect(section.getByRole("heading", { name: /how it works/i })).toBeVisible();
+  await expect(
+    section.getByRole("heading", { name: /how it works/i }),
+  ).toBeVisible();
   await expect(section.getByText("Add your subscriptions")).toBeVisible();
   await expect(section.getByText("Get smart reminders")).toBeVisible();
   await expect(section.getByText("Save money")).toBeVisible();

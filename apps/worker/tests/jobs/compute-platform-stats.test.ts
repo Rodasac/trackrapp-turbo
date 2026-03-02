@@ -113,11 +113,13 @@ describe("computePlatformStats", () => {
     mockFrom
       .mockResolvedValueOnce([{ count: 5 }])
       .mockResolvedValueOnce([{ count: 3 }])
-      .mockReturnValueOnce({ where: vi.fn().mockResolvedValue([{ count: 10 }]) })
       .mockReturnValueOnce({
-        where: vi.fn().mockResolvedValue([
-          { price: "7.5", billingCycle: "monthly" },
-        ]),
+        where: vi.fn().mockResolvedValue([{ count: 10 }]),
+      })
+      .mockReturnValueOnce({
+        where: vi
+          .fn()
+          .mockResolvedValue([{ price: "7.5", billingCycle: "monthly" }]),
       });
 
     await computePlatformStats();

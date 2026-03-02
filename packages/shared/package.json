@@ -11,7 +11,8 @@
     "./validations": "./src/validations.ts",
     "./csv": "./src/csv.ts",
     "./fuzzy-match": "./src/fuzzy-match.ts",
-    "./column-detect": "./src/column-detect.ts"
+    "./column-detect": "./src/column-detect.ts",
+    "./email-templates": "./src/email-templates.ts"
   },
   "scripts": {
     "test": "vitest run",

@@ -4,7 +4,10 @@ import { Star } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@repo/ui/lib/utils";
 import { FadeIn } from "@/components/landing/motion/fade-in";
-import { StaggerChildren, itemVariants } from "@/components/landing/motion/stagger-children";
+import {
+  StaggerChildren,
+  itemVariants,
+} from "@/components/landing/motion/stagger-children";
 import { PRICING } from "@/lib/pricing-config";
 
 const TESTIMONIALS = [
@@ -41,7 +44,8 @@ export function Testimonials() {
             What our users say
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-lg">
-            Join thousands of people who&apos;ve taken control of their subscriptions.
+            Join thousands of people who&apos;ve taken control of their
+            subscriptions.
           </p>
         </FadeIn>
 

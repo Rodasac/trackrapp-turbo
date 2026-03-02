@@ -28,9 +28,7 @@ vi.mock("@repo/ui/dropdown-menu", () => ({
 
 // Mock Sheet to avoid Radix portal in jsdom
 vi.mock("@repo/ui/sheet", () => ({
-  Sheet: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  Sheet: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SheetTrigger: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   ),
@@ -89,7 +87,9 @@ describe("Navbar", () => {
     // Links appear in both desktop nav and mobile sheet mock
     const signInLinks = screen.getAllByRole("link", { name: /sign in/i });
     expect(signInLinks.length).toBeGreaterThan(0);
-    const getStartedLinks = screen.getAllByRole("link", { name: /get started/i });
+    const getStartedLinks = screen.getAllByRole("link", {
+      name: /get started/i,
+    });
     expect(getStartedLinks.length).toBeGreaterThan(0);
   });
 
@@ -103,7 +103,9 @@ describe("Navbar", () => {
 
   it("renders mobile menu trigger button", () => {
     render(<Navbar />);
-    expect(screen.getByRole("button", { name: /open menu/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /open menu/i }),
+    ).toBeInTheDocument();
   });
 
   it("renders How it works nav link", () => {

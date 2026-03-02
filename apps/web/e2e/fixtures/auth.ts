@@ -23,6 +23,20 @@ export function uniqueName(base: string): string {
  * 2. Calls the dev-only /api/test/verify-email to set emailVerified=true
  * 3. Logs in via the login form → lands on /dashboard
  */
+const CONSENT_COOKIE = {
+  name: "trackr_cookie_consent",
+  value: encodeURIComponent(
+    JSON.stringify({
+      necessary: true,
+      functional: true,
+      analytics: true,
+      consentedAt: new Date().toISOString(),
+    }),
+  ),
+  domain: "localhost",
+  path: "/",
+};
+
 export async function signUpNewUser(
   page: Page,
   suffix?: string,
@@ -31,6 +45,9 @@ export async function signUpNewUser(
   const name = `Test User ${id}`;
   const email = `e2e-${id}@test.local`;
   const password = "Password123!";
+
+  // Pre-set consent cookie so the banner doesn't block E2E flows
+  await page.context().addCookies([CONSENT_COOKIE]);
 
   await page.goto("/signup");
   await page.getByLabel("Name").fill(name);

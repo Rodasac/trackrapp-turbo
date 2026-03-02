@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useInView, useMotionValue, useTransform, animate } from "motion/react";
+import {
+  motion,
+  useInView,
+  useMotionValue,
+  useTransform,
+  animate,
+} from "motion/react";
 import { cn } from "@repo/ui/lib/utils";
 
 interface AnimatedCounterProps {

@@ -3,7 +3,10 @@
 import { Upload, Bell, TrendingDown } from "lucide-react";
 import { motion } from "motion/react";
 import { FadeIn } from "@/components/landing/motion/fade-in";
-import { StaggerChildren, itemVariants } from "@/components/landing/motion/stagger-children";
+import {
+  StaggerChildren,
+  itemVariants,
+} from "@/components/landing/motion/stagger-children";
 
 const STEPS = [
   {

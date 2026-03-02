@@ -29,8 +29,8 @@ export function CtaBanner() {
             <span className="text-emerald-400">your subscriptions?</span>
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-lg text-white/60">
-            Join thousands of users who&apos;ve stopped paying for services they don&apos;t use.
-            Start free, no credit card required.
+            Join thousands of users who&apos;ve stopped paying for services they
+            don&apos;t use. Start free, no credit card required.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Button

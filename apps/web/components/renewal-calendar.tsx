@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { Calendar } from "@repo/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/card";
 import { Badge } from "@repo/ui/badge";
 import { useRenewalCalendar } from "@/hooks/use-renewal-calendar";
 import {
@@ -39,6 +45,10 @@ export function RenewalCalendar() {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Upcoming renewals</CardTitle>
+        <CardDescription>
+          View upcoming renewals for the next 30 days. Click on a date to see
+          details.
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <Calendar

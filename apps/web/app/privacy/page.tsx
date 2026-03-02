@@ -22,10 +22,10 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold">1. Introduction</h2>
             <p className="text-muted-foreground mt-2">
-              TrackrApp (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting
-              your personal information. This Privacy Policy explains how we
-              collect, use, disclose, and safeguard your information when you use
-              our service.
+              TrackrApp (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is
+              committed to protecting your personal information. This Privacy
+              Policy explains how we collect, use, disclose, and safeguard your
+              information when you use our service.
             </p>
           </section>
 
@@ -36,8 +36,14 @@ export default function PrivacyPage() {
             </p>
             <ul className="text-muted-foreground mt-2 ml-4 list-disc space-y-1">
               <li>Account information (name, email, password hash)</li>
-              <li>Subscription data you enter (service names, prices, renewal dates)</li>
-              <li>Payment information processed via Stripe (we never store raw card data)</li>
+              <li>
+                Subscription data you enter (service names, prices, renewal
+                dates)
+              </li>
+              <li>
+                Payment information processed via Stripe (we never store raw
+                card data)
+              </li>
               <li>Profile information such as an avatar image</li>
               <li>Communications you send us</li>
             </ul>
@@ -49,7 +55,9 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold">3. How We Use Your Information</h2>
+            <h2 className="text-xl font-semibold">
+              3. How We Use Your Information
+            </h2>
             <p className="text-muted-foreground mt-2">
               We use your information to: provide and improve the Service; send
               renewal reminder notifications; generate AI-powered insights (Pro
@@ -66,10 +74,19 @@ export default function PrivacyPage() {
               operate the Service, including:
             </p>
             <ul className="text-muted-foreground mt-2 ml-4 list-disc space-y-1">
-              <li><strong>Stripe</strong> — payment processing</li>
-              <li><strong>UploadThing</strong> — avatar file storage</li>
-              <li><strong>Resend / SMTP providers</strong> — email delivery</li>
-              <li><strong>AI providers (Anthropic/OpenAI)</strong> — Pro plan AI tips (anonymised subscription data only)</li>
+              <li>
+                <strong>Stripe</strong> — payment processing
+              </li>
+              <li>
+                <strong>UploadThing</strong> — avatar file storage
+              </li>
+              <li>
+                <strong>Resend / SMTP providers</strong> — email delivery
+              </li>
+              <li>
+                <strong>AI providers (Anthropic/OpenAI)</strong> — Pro plan AI
+                tips (anonymised subscription data only)
+              </li>
             </ul>
           </section>
 
@@ -78,30 +95,46 @@ export default function PrivacyPage() {
             <p className="text-muted-foreground mt-2">
               We retain your data for as long as your account is active or as
               needed to provide the Service. When you delete your account, we
-              delete or anonymise your personal data within 30 days, except where
-              required by law to retain it longer (e.g., payment records for
-              financial compliance).
+              delete or anonymise your personal data within 30 days, except
+              where required by law to retain it longer (e.g., payment records
+              for financial compliance).
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold">6. Your Rights</h2>
             <p className="text-muted-foreground mt-2">
-              Depending on your location, you may have the following rights under
-              GDPR, CCPA, or other applicable law:
+              Depending on your location, you may have the following rights
+              under GDPR, CCPA, or other applicable law:
             </p>
             <ul className="text-muted-foreground mt-2 ml-4 list-disc space-y-1">
-              <li><strong>Access:</strong> request a copy of your personal data</li>
-              <li><strong>Rectification:</strong> correct inaccurate data</li>
-              <li><strong>Erasure:</strong> request deletion of your data</li>
-              <li><strong>Portability:</strong> receive your data in a machine-readable format</li>
-              <li><strong>Objection:</strong> opt out of certain processing</li>
-              <li><strong>Restriction:</strong> limit how we process your data</li>
+              <li>
+                <strong>Access:</strong> request a copy of your personal data
+              </li>
+              <li>
+                <strong>Rectification:</strong> correct inaccurate data
+              </li>
+              <li>
+                <strong>Erasure:</strong> request deletion of your data
+              </li>
+              <li>
+                <strong>Portability:</strong> receive your data in a
+                machine-readable format
+              </li>
+              <li>
+                <strong>Objection:</strong> opt out of certain processing
+              </li>
+              <li>
+                <strong>Restriction:</strong> limit how we process your data
+              </li>
             </ul>
             <p className="text-muted-foreground mt-2">
               To exercise any of these rights, contact us at{" "}
-              <a href="mailto:privacy@trackrapp.com" className="text-brand hover:underline">
-                privacy@trackrapp.com
+              <a
+                href="mailto:privacy@trackrapp.xyz"
+                className="text-brand hover:underline"
+              >
+                privacy@trackrapp.xyz
               </a>
               . We will respond within 30 days.
             </p>
@@ -132,8 +165,11 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold">9. Contact</h2>
             <p className="text-muted-foreground mt-2">
               For privacy-related enquiries, contact us at{" "}
-              <a href="mailto:privacy@trackrapp.com" className="text-brand hover:underline">
-                privacy@trackrapp.com
+              <a
+                href="mailto:privacy@trackrapp.xyz"
+                className="text-brand hover:underline"
+              >
+                privacy@trackrapp.xyz
               </a>
               .
             </p>

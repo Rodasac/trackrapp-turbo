@@ -59,7 +59,11 @@ export function Navbar() {
               >
                 <Link href="/login">Sign in</Link>
               </Button>
-              <Button asChild size="sm" className="hidden bg-brand hover:bg-brand/90 sm:inline-flex">
+              <Button
+                asChild
+                size="sm"
+                className="hidden bg-brand hover:bg-brand/90 sm:inline-flex"
+              >
                 <Link href="/signup">Get started</Link>
               </Button>
             </>
@@ -68,7 +72,12 @@ export function Navbar() {
           {/* Mobile menu */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="sm:hidden" aria-label="Open menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="sm:hidden"
+                aria-label="Open menu"
+              >
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
@@ -94,12 +103,21 @@ export function Navbar() {
                   ) : (
                     <>
                       <SheetClose asChild>
-                        <Button asChild variant="outline" size="sm" className="w-full">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
                           <Link href="/login">Sign in</Link>
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Button asChild size="sm" className="bg-brand hover:bg-brand/90 w-full">
+                        <Button
+                          asChild
+                          size="sm"
+                          className="bg-brand hover:bg-brand/90 w-full"
+                        >
                           <Link href="/signup">Get started</Link>
                         </Button>
                       </SheetClose>

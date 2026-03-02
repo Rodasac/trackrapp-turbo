@@ -5,6 +5,11 @@ import Stripe from "stripe";
 import { db } from "@repo/database";
 import { sendEmail } from "@/lib/email";
 import { PRICING } from "@/lib/pricing-config";
+import {
+  emailLayout,
+  emailButton,
+  EMAIL_BRAND,
+} from "@repo/shared/email-templates";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -66,27 +71,25 @@ const checkIfNewUser = (user: User) => {
 
 const getEmailVerificationTemplate = (user: User, url: string) => {
   if (checkIfNewUser(user)) {
-    return `
-    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #111;">Welcome to TrackrApp!</h2>
-      <p>Click the button below to verify your email address and start tracking your subscriptions.</p>
-      <a href="${url}" style="display: inline-block; background: #111; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; margin: 16px 0;">
-        Verify email
-      </a>
-      <p style="color: #666; font-size: 14px;">If you didn't create a TrackrApp account, you can safely ignore this email.</p>
-    </div>
-  `;
+    return emailLayout({
+      previewText: "Verify your email to start tracking your subscriptions.",
+      content: `
+        <h2 style="margin:0 0 12px;font-family:${EMAIL_BRAND.fontStack};font-size:26px;color:#0f172a;font-weight:400;">Welcome to ${EMAIL_BRAND.appName}!</h2>
+        <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;">Click the button below to verify your email address and start tracking your subscriptions.</p>
+        ${emailButton("Verify email", url)}
+        <p style="margin:24px 0 0;font-size:13px;color:#94a3b8;line-height:1.6;">If you didn't create a ${EMAIL_BRAND.appName} account, you can safely ignore this email.</p>
+      `,
+    });
   }
 
-  return `
-    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #111;">Verify your TrackrApp email</h2>
-      <p>Click the button below to verify your email address.</p>
-      <a href="${url}" style="display: inline-block; background: #111; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; margin: 16px 0;">
-        Verify email
-      </a>
-    </div>
-  `;
+  return emailLayout({
+    previewText: "Verify your new email address.",
+    content: `
+      <h2 style="margin:0 0 12px;font-family:${EMAIL_BRAND.fontStack};font-size:26px;color:#0f172a;font-weight:400;">Verify your ${EMAIL_BRAND.appName} email</h2>
+      <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;">Click the button below to verify your email address.</p>
+      ${emailButton("Verify email", url)}
+    `,
+  });
 };
 
 export type Auth = typeof auth;

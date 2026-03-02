@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/card";
 import { Badge } from "@repo/ui/badge";
 import { Lightbulb, AlertTriangle, TrendingDown, Info } from "lucide-react";
 import { useStaticTips } from "@/hooks/use-static-tips";
@@ -73,6 +79,10 @@ export function StaticTipsList() {
           <Lightbulb className="size-4" />
           Spending insights
         </CardTitle>
+        <CardDescription>
+          These info and tips are generated based on common financial advice and
+          are not personalized.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {tips && tips.length > 0 ? (

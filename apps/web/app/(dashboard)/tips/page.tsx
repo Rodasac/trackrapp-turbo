@@ -7,6 +7,7 @@ import { Badge } from "@repo/ui/badge";
 import { useSubscriptionPlan } from "@/hooks/use-subscription-plan";
 import { useAiTips } from "@/hooks/use-ai-tips";
 import { AiTipCard } from "@/components/ai-tip-card";
+import { StaticTipsList } from "@/components/static-tips-list";
 
 function TipCardSkeleton() {
   return (
@@ -94,6 +95,10 @@ export default function TipsPage() {
           </Button>
         </div>
       )}
+
+      <section className="mt-8">
+        <StaticTipsList />
+      </section>
     </div>
   );
 }

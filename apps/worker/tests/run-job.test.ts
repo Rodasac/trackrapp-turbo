@@ -127,7 +127,11 @@ describe("parseJobName", () => {
   });
 
   it("accepts compute-platform-stats", () => {
-    const result = parseJobName(["node", "run-job.ts", "compute-platform-stats"]);
+    const result = parseJobName([
+      "node",
+      "run-job.ts",
+      "compute-platform-stats",
+    ]);
     expect(result).toBe("compute-platform-stats");
   });
 

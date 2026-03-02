@@ -11,7 +11,10 @@ import {
 import { motion } from "motion/react";
 import { cn } from "@repo/ui/lib/utils";
 import { FadeIn } from "@/components/landing/motion/fade-in";
-import { StaggerChildren, itemVariants } from "@/components/landing/motion/stagger-children";
+import {
+  StaggerChildren,
+  itemVariants,
+} from "@/components/landing/motion/stagger-children";
 
 const FEATURES = [
   {
@@ -79,28 +82,32 @@ export function FeatureCards() {
         </FadeIn>
 
         <StaggerChildren className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, description, color, iconColor }) => (
-            <motion.div
-              key={title}
-              variants={itemVariants}
-              className={cn(
-                "group relative rounded-2xl border bg-card p-6",
-                "hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5",
-                "transition-all duration-300",
-              )}
-            >
-              <div
+          {FEATURES.map(
+            ({ icon: Icon, title, description, color, iconColor }) => (
+              <motion.div
+                key={title}
+                variants={itemVariants}
                 className={cn(
-                  "mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br",
-                  color,
+                  "group relative rounded-2xl border bg-card p-6",
+                  "hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5",
+                  "transition-all duration-300",
                 )}
               >
-                <Icon className={cn("size-6", iconColor)} />
-              </div>
-              <h3 className="mb-2 font-semibold">{title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
-            </motion.div>
-          ))}
+                <div
+                  className={cn(
+                    "mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br",
+                    color,
+                  )}
+                >
+                  <Icon className={cn("size-6", iconColor)} />
+                </div>
+                <h3 className="mb-2 font-semibold">{title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {description}
+                </p>
+              </motion.div>
+            ),
+          )}
         </StaggerChildren>
       </div>
     </section>

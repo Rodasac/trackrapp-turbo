@@ -61,7 +61,8 @@ export function Footer() {
               <span className="font-semibold">TrackrApp</span>
             </Link>
             <p className="text-muted-foreground mt-3 text-sm">
-              Subscription tracking made simple. Know what you pay, cancel what you don&apos;t need.
+              Subscription tracking made simple. Know what you pay, cancel what
+              you don&apos;t need.
             </p>
           </div>
 

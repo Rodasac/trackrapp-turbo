@@ -22,8 +22,8 @@ export default function CookiesPage() {
           <section>
             <h2 className="text-xl font-semibold">1. What Are Cookies</h2>
             <p className="text-muted-foreground mt-2">
-              Cookies are small text files stored on your device when you visit a
-              website. They help websites remember your preferences, keep you
+              Cookies are small text files stored on your device when you visit
+              a website. They help websites remember your preferences, keep you
               signed in, and understand how you use the service. Cookies are not
               malware — they cannot execute code or transmit viruses.
             </p>
@@ -36,8 +36,8 @@ export default function CookiesPage() {
             </p>
             <ul className="text-muted-foreground mt-2 ml-4 list-disc space-y-1">
               <li>
-                <strong>Strictly necessary:</strong> Session cookies required for
-                authentication and security. These cannot be disabled.
+                <strong>Strictly necessary:</strong> Session cookies required
+                for authentication and security. These cannot be disabled.
               </li>
               <li>
                 <strong>Functional:</strong> Cookies that remember your
@@ -59,8 +59,14 @@ export default function CookiesPage() {
               their own cookies:
             </p>
             <ul className="text-muted-foreground mt-2 ml-4 list-disc space-y-1">
-              <li><strong>Stripe:</strong> Payment processing — sets cookies to detect fraud and manage checkout sessions</li>
-              <li><strong>Google OAuth:</strong> If you sign in with Google, Google may set authentication cookies</li>
+              <li>
+                <strong>Stripe:</strong> Payment processing — sets cookies to
+                detect fraud and manage checkout sessions
+              </li>
+              <li>
+                <strong>Google OAuth:</strong> If you sign in with Google,
+                Google may set authentication cookies
+              </li>
             </ul>
             <p className="text-muted-foreground mt-2">
               We do not use advertising or tracking cookies from ad networks.
@@ -80,7 +86,9 @@ export default function CookiesPage() {
             </p>
             <ul className="text-muted-foreground mt-2 ml-4 list-disc space-y-1">
               <li>Chrome: Settings → Privacy and security → Cookies</li>
-              <li>Firefox: Settings → Privacy & Security → Cookies and Site Data</li>
+              <li>
+                Firefox: Settings → Privacy & Security → Cookies and Site Data
+              </li>
               <li>Safari: Settings → Privacy → Manage Website Data</li>
             </ul>
           </section>
@@ -118,8 +126,11 @@ export default function CookiesPage() {
             <p className="text-muted-foreground mt-2">
               For questions about our use of cookies or this policy, contact us
               at{" "}
-              <a href="mailto:privacy@trackrapp.com" className="text-brand hover:underline">
-                privacy@trackrapp.com
+              <a
+                href="mailto:privacy@trackrapp.xyz"
+                className="text-brand hover:underline"
+              >
+                privacy@trackrapp.xyz
               </a>
               .
             </p>

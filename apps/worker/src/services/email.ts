@@ -1,5 +1,10 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
+import {
+  emailLayout,
+  emailButton,
+  EMAIL_BRAND,
+} from "@repo/shared/email-templates";
 
 export interface TransporterConfig {
   host: string;
@@ -56,5 +61,23 @@ export async function sendRenewalReminder(
     `— TrackrApp`,
   ].join("\n");
 
-  await transporter.sendMail({ from, to, subject, text });
+  const appUrl = process.env.APP_URL ?? EMAIL_BRAND.appUrl;
+
+  const html = emailLayout({
+    previewText: `Your ${subscriptionName} subscription renews ${dayLabel}.`,
+    appUrl,
+    content: `
+      <h2 style="margin:0 0 8px;font-family:${EMAIL_BRAND.fontStack};font-size:24px;color:#0f172a;font-weight:400;">Renewal Reminder</h2>
+      <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;">
+        Your <strong>${subscriptionName}</strong> subscription renews ${dayLabel}.
+      </p>
+      <p style="margin:0 0 28px;font-size:20px;font-weight:700;color:#0f172a;">${currency} ${price}</p>
+      ${emailButton("View in TrackrApp", `${appUrl}/subscriptions`)}
+      <p style="margin:24px 0 0;font-size:13px;color:#94a3b8;line-height:1.6;">
+        Log in to TrackrApp to manage your subscriptions.
+      </p>
+    `,
+  });
+
+  await transporter.sendMail({ from, to, subject, text, html });
 }

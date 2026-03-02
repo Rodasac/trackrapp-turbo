@@ -22,6 +22,9 @@ vi.mock("../../src/logger.js", () => {
 
 vi.mock("ai", () => ({
   generateText: vi.fn(),
+  Output: {
+    array: vi.fn(() => null),
+  },
 }));
 
 vi.mock("@ai-sdk/anthropic", () => ({

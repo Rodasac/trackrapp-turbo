@@ -42,14 +42,12 @@ export function StatsSection() {
           {stats.map(({ to, prefix, suffix, label, description }) => (
             <div key={label} className="text-center">
               <p className="text-4xl font-bold text-brand">
-                <AnimatedCounter
-                  to={to}
-                  prefix={prefix}
-                  suffix={suffix}
-                />
+                <AnimatedCounter to={to} prefix={prefix} suffix={suffix} />
               </p>
               <p className="mt-1 font-semibold">{label}</p>
-              <p className="text-muted-foreground mt-0.5 text-sm">{description}</p>
+              <p className="text-muted-foreground mt-0.5 text-sm">
+                {description}
+              </p>
             </div>
           ))}
         </FadeIn>
