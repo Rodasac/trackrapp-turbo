@@ -66,7 +66,7 @@ jobs:
           build-args: |
             NODE_ENV=production
           secrets: |
-            ENVS_FILE=${{ secrets.PROD_ENV }}
+            ENVS_FILE="${{ secrets.PROD_ENV }}"
 
   # ─── Deploy to production VPS ──────────────────────────────────────────────
   deploy:
