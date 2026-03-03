@@ -13,9 +13,10 @@ RUN pnpm install --frozen-lockfile
 # Copy full pruned source and build (tsup bundles @repo/* workspace packages inline)
 COPY --from=pruner /app/out/full/ .
 RUN --mount=type=secret,id=ENV_FILE \
-    cp /run/secrets/ENV_FILE apps/worker/.env && \
-    pnpm turbo run build --filter=worker && \
-    rm -f apps/worker/.env
+    set -a && \
+    . /run/secrets/ENV_FILE && \
+    set +a && \
+    pnpm turbo run build --filter=worker
 # Prune dev dependencies from node_modules
 RUN CI=true pnpm prune --prod
 
