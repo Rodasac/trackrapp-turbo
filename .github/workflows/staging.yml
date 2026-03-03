@@ -67,8 +67,6 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
           build-args: |
             NODE_ENV=development
-            BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET_STAGING }}
-            BETTER_AUTH_URL=https://staging.trackrappp.xyz
           secrets: |
             ENV_FILE=${{ secrets.STAGING_ENV }}
 
