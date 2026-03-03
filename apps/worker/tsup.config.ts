@@ -6,7 +6,7 @@ export default defineConfig({
   target: "node22",
   outDir: "dist",
   clean: true,
-  noExternal: [/.*/], // Bundle all npm deps for a fully standalone build (no node_modules in runner)
+  noExternal: [/@repo\/.*/], // Bundle workspace packages; npm deps stay external (avoid CJS/ESM issues)
   sourcemap: true,
   splitting: true,
 });
