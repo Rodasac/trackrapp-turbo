@@ -11,8 +11,6 @@ COPY --from=pruner /app/out/json/ .
 RUN pnpm install --frozen-lockfile
 COPY --from=pruner /app/out/full/ .
 RUN pnpm turbo run build --filter=worker
-# Create flat node_modules with production deps only (no pnpm symlinks)
-RUN pnpm --filter=worker deploy /app/deployed --prod --legacy
 
 FROM node:24-alpine AS runner
 WORKDIR /app
@@ -24,8 +22,10 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=installer --chown=worker:nodejs /app/apps/worker/dist ./dist
 # package.json with "type": "module" so node treats .js as ESM
 COPY --from=installer --chown=worker:nodejs /app/apps/worker/package.json ./package.json
-# Flat production node_modules (external npm deps resolved here at runtime)
-COPY --from=installer --chown=worker:nodejs /app/deployed/node_modules ./node_modules
+# Full workspace node_modules — turbo prune already scopes this to the worker's dep tree.
+# pnpm's relative symlinks (.pnpm store + top-level links) are preserved together, so
+# transitive deps of bundled workspace packages (e.g. pino from @repo/logger) resolve correctly.
+COPY --from=installer --chown=worker:nodejs /app/node_modules ./node_modules
 USER worker
 EXPOSE 3001
 ENTRYPOINT ["/sbin/tini", "--"]
