@@ -55,6 +55,12 @@ jobs:
             environment=staging
             org.opencontainers.image.title=${{ matrix.image }}-staging
 
+      - name: Write env secret to temp file
+        if: matrix.app == 'web'
+        env:
+          STAGING_ENV: ${{ secrets.STAGING_ENV }}
+        run: printf '%s' "$STAGING_ENV" > /tmp/staging.env
+
       - name: Build and push ${{ matrix.image }}
         uses: docker/build-push-action@v6
         with:
@@ -67,8 +73,8 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
           build-args: |
             NEXT_PUBLIC_APP_ENV=development
-          secrets: |
-            ENV_FILE=${{ secrets.STAGING_ENV }}
+          secret-files: |
+            ENV_FILE=/tmp/staging.env
 
   # ─── Deploy to staging VPS ─────────────────────────────────────────────────
   deploy:
