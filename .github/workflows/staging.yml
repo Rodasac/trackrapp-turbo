@@ -119,7 +119,7 @@ jobs:
 
             docker network create traefik-public 2>/dev/null || true
             
-            docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml down -v
+            docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml down
             ACME_EMAIL="$ACME_EMAIL" docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml up -d
 
             cd /opt/trackrapp/staging
