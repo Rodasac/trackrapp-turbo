@@ -14,7 +14,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=pruner /app/out/full/ .
 RUN pnpm turbo run build --filter=worker
 # Prune dev dependencies from node_modules
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod
 
 FROM node:24-alpine AS runner
 WORKDIR /app
