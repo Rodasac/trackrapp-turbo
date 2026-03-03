@@ -118,7 +118,7 @@ jobs:
           envs: IMAGE_TAG
           script: |
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-            
+
             docker network create traefik-public 2>/dev/null || true
             docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml pull
             docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml down

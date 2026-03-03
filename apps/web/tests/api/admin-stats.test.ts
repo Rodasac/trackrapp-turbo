@@ -28,6 +28,7 @@ vi.mock("drizzle-orm", () => ({
     {
       get:
         () =>
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         (..._args: unknown[]) => ({ as: vi.fn(() => "sql_value") }),
     },
   ),
@@ -44,20 +45,6 @@ const fakeAdminSession = {
   user: { id: "admin-1", role: "admin" },
   session: {},
 };
-
-function makeSelectFrom(returnValue: Record<string, number>[]) {
-  const chain = {
-    from: vi.fn().mockReturnThis(),
-    leftJoin: vi.fn().mockReturnThis(),
-    where: vi.fn().mockResolvedValue(returnValue),
-  };
-  // also support direct .from() await (no .where())
-  (chain as unknown as { then: unknown }).then = (
-    resolve: (v: unknown) => unknown,
-  ) => Promise.resolve(returnValue).then(resolve);
-  mockSelect.mockReturnValue(chain);
-  return chain;
-}
 
 describe("GET /api/admin/stats", () => {
   beforeEach(() => {

@@ -24,19 +24,22 @@ const fullStats = {
 
 describe("AdminStats", () => {
   beforeEach(() => {
-    mockUseAdminStats.mockReturnValue({ data: fullStats, isLoading: false } as never);
+    mockUseAdminStats.mockReturnValue({
+      data: fullStats,
+      isLoading: false,
+    } as never);
   });
 
   it("renders all 8 KPI stat values", () => {
     renderWithProviders(<AdminStats />);
     expect(screen.getByText("100")).toBeInTheDocument(); // totalUsers
-    expect(screen.getByText("42")).toBeInTheDocument();  // activeUsers30d
-    expect(screen.getByText("15")).toBeInTheDocument();  // proUsers
-    expect(screen.getByText("85")).toBeInTheDocument();  // freeUsers
+    expect(screen.getByText("42")).toBeInTheDocument(); // activeUsers30d
+    expect(screen.getByText("15")).toBeInTheDocument(); // proUsers
+    expect(screen.getByText("85")).toBeInTheDocument(); // freeUsers
     expect(screen.getByText("300")).toBeInTheDocument(); // totalSubscriptions
-    expect(screen.getByText("7")).toBeInTheDocument();   // signups7d
-    expect(screen.getByText("25")).toBeInTheDocument();  // signups30d
-    expect(screen.getByText("2")).toBeInTheDocument();   // bannedUsers
+    expect(screen.getByText("7")).toBeInTheDocument(); // signups7d
+    expect(screen.getByText("25")).toBeInTheDocument(); // signups30d
+    expect(screen.getByText("2")).toBeInTheDocument(); // bannedUsers
   });
 
   it("renders KPI card labels", () => {
@@ -52,7 +55,10 @@ describe("AdminStats", () => {
   });
 
   it("shows placeholder dashes while loading", () => {
-    mockUseAdminStats.mockReturnValue({ data: undefined, isLoading: true } as never);
+    mockUseAdminStats.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    } as never);
     renderWithProviders(<AdminStats />);
     const dashes = screen.getAllByText("—");
     expect(dashes.length).toBe(8);

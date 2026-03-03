@@ -30,9 +30,7 @@ test("/subscriptions/import shows Pro upgrade gate for free users", async ({
   await page.goto("/subscriptions/import");
   // Should show the ProFeatureGate, not the import flow
   await expect(page.getByText(/view plans/i)).toBeVisible({ timeout: 10_000 });
-  await expect(
-    page.getByRole("link", { name: /view plans/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: /view plans/i })).toBeVisible();
 });
 
 test("dashboard charts section shows upgrade prompt for free users", async ({
@@ -44,9 +42,7 @@ test("dashboard charts section shows upgrade prompt for free users", async ({
   await expect(page.getByText(/spending analytics/i)).toBeVisible({
     timeout: 10_000,
   });
-  await expect(
-    page.getByRole("link", { name: /view plans/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: /view plans/i })).toBeVisible();
 });
 
 test("push notification toggle in settings shows Pro badge for free users", async ({

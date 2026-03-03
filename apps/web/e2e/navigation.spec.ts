@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { loadTestUser } from "./fixtures/auth";
+import { loadTestUser, signUpNewUser } from "./fixtures/auth";
 
 // Most tests use the default authenticated storageState.
 
@@ -45,17 +45,23 @@ test("Notifications page shows 'All caught up' placeholder", async ({
   await expect(page.getByText("All caught up")).toBeVisible();
 });
 
-test("Tips page shows Pro badge and Upgrade button", async ({ page }) => {
+test("Tips page shows Pro badge and Upgrade button for free user", async ({
+  browser,
+}) => {
+  const ctx = await browser.newContext({
+    storageState: { cookies: [], origins: [] },
+  });
+  const page = await ctx.newPage();
+  await signUpNewUser(page);
   await page.goto("/tips");
   await expect(
     page.getByRole("heading", { name: "AI Insights" }),
   ).toBeVisible();
-  // Pro badge next to heading
   await expect(page.getByText("Pro").first()).toBeVisible();
-  // Upgrade CTA
   await expect(
     page.getByRole("link", { name: "Upgrade to Pro" }),
   ).toBeVisible();
+  await ctx.close();
 });
 
 test("Settings page shows 3 tabs and Billing tab content", async ({ page }) => {

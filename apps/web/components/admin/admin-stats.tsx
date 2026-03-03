@@ -1,6 +1,14 @@
 "use client";
 
-import { Users, Activity, Crown, UserX, CreditCard, UserPlus, CalendarPlus, ShieldBan } from "lucide-react";
+import {
+  Users,
+  Activity,
+  Crown,
+  CreditCard,
+  UserPlus,
+  CalendarPlus,
+  ShieldBan,
+} from "lucide-react";
 import { KpiCard } from "@repo/ui/kpi-card";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 

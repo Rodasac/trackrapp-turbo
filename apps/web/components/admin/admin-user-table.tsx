@@ -20,7 +20,11 @@ import {
 import { Button } from "@repo/ui/button";
 import { Badge } from "@repo/ui/badge";
 import { Input } from "@repo/ui/input";
-import { useBanUser, useUnbanUser, useSetUserRole } from "@/hooks/use-admin-mutations";
+import {
+  useBanUser,
+  useUnbanUser,
+  useSetUserRole,
+} from "@/hooks/use-admin-mutations";
 import type { AdminUser } from "@/lib/types/api";
 
 interface AdminUserTableProps {
@@ -29,7 +33,11 @@ interface AdminUserTableProps {
   onSearch: (search: string) => void;
 }
 
-export function AdminUserTable({ users, total, onSearch }: AdminUserTableProps) {
+export function AdminUserTable({
+  users,
+  total,
+  onSearch,
+}: AdminUserTableProps) {
   const [search, setSearch] = useState("");
   const { mutate: banUser } = useBanUser();
   const { mutate: unbanUser } = useUnbanUser();
@@ -75,14 +83,14 @@ export function AdminUserTable({ users, total, onSearch }: AdminUserTableProps) 
                   <TableCell className="font-medium">{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <Badge variant={user.role === "admin" ? "default" : "secondary"}>
+                    <Badge
+                      variant={user.role === "admin" ? "default" : "secondary"}
+                    >
                       {user.role ?? "user"}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {user.banned && (
-                      <Badge variant="destructive">Banned</Badge>
-                    )}
+                    {user.banned && <Badge variant="destructive">Banned</Badge>}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {new Date(user.createdAt).toLocaleDateString()}

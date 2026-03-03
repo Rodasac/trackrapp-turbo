@@ -42,8 +42,11 @@ export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
-  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-  const navItems = isAdmin ? [...BASE_NAV_ITEMS, ADMIN_NAV_ITEM] : BASE_NAV_ITEMS;
+  const isAdmin =
+    (session?.user as { role?: string } | undefined)?.role === "admin";
+  const navItems = isAdmin
+    ? [...BASE_NAV_ITEMS, ADMIN_NAV_ITEM]
+    : BASE_NAV_ITEMS;
 
   async function handleSignOut() {
     await signOut();

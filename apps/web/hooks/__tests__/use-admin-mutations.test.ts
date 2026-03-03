@@ -3,8 +3,11 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { QueryClient } from "@tanstack/react-query";
 import React from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { useBanUser, useUnbanUser, useSetUserRole } from "../use-admin-mutations";
-import { queryKeys } from "@/lib/query-keys";
+import {
+  useBanUser,
+  useUnbanUser,
+  useSetUserRole,
+} from "../use-admin-mutations";
 
 const { mockBanUser, mockUnbanUser, mockSetRole } = vi.hoisted(() => ({
   mockBanUser: vi.fn(),
@@ -24,7 +27,11 @@ vi.mock("@/lib/auth-client", () => ({
 
 function makeWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
+    return React.createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children,
+    );
   };
 }
 
@@ -35,8 +42,15 @@ describe("useBanUser", () => {
 
   it("calls authClient.admin.banUser with userId", async () => {
     mockBanUser.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-    const { result } = renderHook(() => useBanUser(), { wrapper: makeWrapper(qc) });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    const { result } = renderHook(() => useBanUser(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await act(() => result.current.mutateAsync({ userId: "user-123" }));
 
@@ -47,8 +61,15 @@ describe("useBanUser", () => {
 
   it("calls authClient.admin.banUser with banReason when provided", async () => {
     mockBanUser.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-    const { result } = renderHook(() => useBanUser(), { wrapper: makeWrapper(qc) });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    const { result } = renderHook(() => useBanUser(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await act(() =>
       result.current.mutateAsync({ userId: "user-123", banReason: "Spam" }),
@@ -61,9 +82,16 @@ describe("useBanUser", () => {
 
   it("invalidates admin.users on success", async () => {
     mockBanUser.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
-    const { result } = renderHook(() => useBanUser(), { wrapper: makeWrapper(qc) });
+    const { result } = renderHook(() => useBanUser(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await act(() => result.current.mutateAsync({ userId: "user-123" }));
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -74,9 +102,19 @@ describe("useBanUser", () => {
   });
 
   it("throws when banUser returns an error", async () => {
-    mockBanUser.mockResolvedValue({ data: null, error: { message: "Forbidden" } });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-    const { result } = renderHook(() => useBanUser(), { wrapper: makeWrapper(qc) });
+    mockBanUser.mockResolvedValue({
+      data: null,
+      error: { message: "Forbidden" },
+    });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    const { result } = renderHook(() => useBanUser(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await expect(
       act(() => result.current.mutateAsync({ userId: "user-123" })),
@@ -91,8 +129,15 @@ describe("useUnbanUser", () => {
 
   it("calls authClient.admin.unbanUser with userId", async () => {
     mockUnbanUser.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-    const { result } = renderHook(() => useUnbanUser(), { wrapper: makeWrapper(qc) });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    const { result } = renderHook(() => useUnbanUser(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await act(() => result.current.mutateAsync({ userId: "user-123" }));
 
@@ -101,9 +146,16 @@ describe("useUnbanUser", () => {
 
   it("invalidates admin.users on success", async () => {
     mockUnbanUser.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
-    const { result } = renderHook(() => useUnbanUser(), { wrapper: makeWrapper(qc) });
+    const { result } = renderHook(() => useUnbanUser(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await act(() => result.current.mutateAsync({ userId: "user-123" }));
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -121,8 +173,15 @@ describe("useSetUserRole", () => {
 
   it("calls authClient.admin.setRole with userId and role", async () => {
     mockSetRole.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-    const { result } = renderHook(() => useSetUserRole(), { wrapper: makeWrapper(qc) });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    const { result } = renderHook(() => useSetUserRole(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await act(() =>
       result.current.mutateAsync({ userId: "user-123", role: "admin" }),
@@ -135,9 +194,16 @@ describe("useSetUserRole", () => {
 
   it("invalidates admin.users on success", async () => {
     mockSetRole.mockResolvedValue({ data: {}, error: null });
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     const invalidate = vi.spyOn(qc, "invalidateQueries");
-    const { result } = renderHook(() => useSetUserRole(), { wrapper: makeWrapper(qc) });
+    const { result } = renderHook(() => useSetUserRole(), {
+      wrapper: makeWrapper(qc),
+    });
 
     await act(() =>
       result.current.mutateAsync({ userId: "user-123", role: "user" }),

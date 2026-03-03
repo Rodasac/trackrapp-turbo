@@ -43,7 +43,9 @@ describe("DashboardCharts", () => {
     } as never);
     renderWithProviders(<DashboardCharts />);
     expect(screen.getByText(/spending analytics/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /view plans/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /view plans/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId("dashboard-charts")).toBeNull();
   });
 

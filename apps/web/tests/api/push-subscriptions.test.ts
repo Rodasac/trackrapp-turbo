@@ -10,7 +10,10 @@ vi.mock("@/lib/api/helpers", () => ({
   requireProSubscription: (...args: unknown[]) =>
     mockRequireProSubscription(...args),
   validationErrorResponse: (err: { issues: unknown[] }) =>
-    Response.json({ error: "Validation failed", issues: err.issues }, { status: 400 }),
+    Response.json(
+      { error: "Validation failed", issues: err.issues },
+      { status: 400 },
+    ),
 }));
 
 const { mockFindFirst, mockInsert, mockDelete } = vi.hoisted(() => ({
@@ -38,7 +41,10 @@ vi.mock("drizzle-orm", () => ({
 vi.mock("@repo/shared/validations", () => ({
   pushSubscriptionSchema: {
     safeParse: (body: unknown) => {
-      const b = body as { endpoint?: string; keys?: { p256dh?: string; auth?: string } };
+      const b = body as {
+        endpoint?: string;
+        keys?: { p256dh?: string; auth?: string };
+      };
       if (!b?.endpoint || !b?.keys?.p256dh || !b?.keys?.auth) {
         return { success: false, error: { issues: [{ message: "invalid" }] } };
       }
@@ -61,7 +67,10 @@ describe("POST /api/push-subscriptions", () => {
     mockRequireSession.mockResolvedValue({ session: fakeSession });
     mockRequireProSubscription.mockResolvedValue({ isPro: true });
     mockFindFirst.mockResolvedValue(null);
-    const chain = { values: vi.fn().mockReturnThis(), returning: vi.fn().mockResolvedValue([validBody]) };
+    const chain = {
+      values: vi.fn().mockReturnThis(),
+      returning: vi.fn().mockResolvedValue([validBody]),
+    };
     mockInsert.mockReturnValue(chain);
   });
 

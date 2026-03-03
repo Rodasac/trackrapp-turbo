@@ -45,8 +45,12 @@ describe("SidebarNav", () => {
   it("renders base nav items for regular users", () => {
     mockUseSession.mockReturnValue({ data: mockSession() });
     renderWithProviders(<SidebarNav />);
-    expect(screen.getByRole("link", { name: /dashboard/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /subscriptions/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /dashboard/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /subscriptions/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /tips/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /settings/i })).toBeInTheDocument();
   });

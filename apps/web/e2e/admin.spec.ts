@@ -14,9 +14,7 @@ test("Admin link NOT visible in sidebar for regular users", async ({
 }) => {
   await signUpNewUser(page);
   await page.goto("/dashboard");
-  await expect(
-    page.getByRole("link", { name: /^admin$/i }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("link", { name: /^admin$/i })).not.toBeVisible();
 });
 
 test("Admin link IS visible in sidebar for admin users", async ({ page }) => {
@@ -25,9 +23,9 @@ test("Admin link IS visible in sidebar for admin users", async ({ page }) => {
 
   // Reload to pick up new role from session
   await page.goto("/dashboard");
-  await expect(
-    page.getByRole("link", { name: /^admin$/i }),
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("link", { name: /^admin$/i })).toBeVisible({
+    timeout: 10_000,
+  });
 });
 
 test("/admin shows 'Access Denied' for regular users", async ({ page }) => {
@@ -48,9 +46,7 @@ test("/admin renders stats and user table for admin users", async ({
   // Admin stats KPI cards
   await expect(page.getByText(/total users/i)).toBeVisible({ timeout: 10_000 });
   // User table
-  await expect(
-    page.getByPlaceholder(/search users by email/i),
-  ).toBeVisible();
+  await expect(page.getByPlaceholder(/search users by email/i)).toBeVisible();
 });
 
 test("Admin page user table shows current user's email", async ({ page }) => {

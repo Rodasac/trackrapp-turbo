@@ -18,9 +18,9 @@ test("CSV import button is visible for Pro users on subscriptions page", async (
   // Reload to pick up the new Pro subscription
   await page.reload();
   await page.goto("/subscriptions");
-  await expect(
-    page.getByRole("link", { name: /import csv/i }),
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("link", { name: /import csv/i })).toBeVisible({
+    timeout: 10_000,
+  });
 });
 
 test("/subscriptions/import shows import UI for Pro users", async ({
@@ -90,7 +90,7 @@ test("Full CSV import flow works for Pro users", async ({ page }) => {
     { timeout: 10_000 },
   );
   await page.getByPlaceholder(/search subscriptions/i).fill(subName);
-  await expect(
-    page.getByRole("row").filter({ hasText: subName }),
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("row").filter({ hasText: subName })).toBeVisible({
+    timeout: 10_000,
+  });
 });

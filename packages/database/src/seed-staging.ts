@@ -279,7 +279,13 @@ async function seedStaging() {
   const existingUsers = await db
     .select({ id: schema.users.id })
     .from(schema.users)
-    .where(inArray(schema.users.email, [DEMO_PRO_EMAIL, DEMO_FREE_EMAIL, DEMO_ADMIN_EMAIL]));
+    .where(
+      inArray(schema.users.email, [
+        DEMO_PRO_EMAIL,
+        DEMO_FREE_EMAIL,
+        DEMO_ADMIN_EMAIL,
+      ]),
+    );
 
   if (existingUsers.length > 0) {
     const ids = existingUsers.map((u) => u.id);

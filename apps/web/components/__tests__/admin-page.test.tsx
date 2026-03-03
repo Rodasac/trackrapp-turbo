@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "@/tests/test-utils";
-import { mockAdminSession, mockSession } from "@/tests/fixtures";
 
 vi.mock("@/hooks/use-is-admin", () => ({
   useIsAdmin: vi.fn(),
@@ -16,7 +15,10 @@ vi.mock("@/components/admin/admin-user-table", () => ({
 }));
 
 vi.mock("@/hooks/use-admin-users", () => ({
-  useAdminUsers: vi.fn(() => ({ data: { users: [], total: 0 }, isLoading: false })),
+  useAdminUsers: vi.fn(() => ({
+    data: { users: [], total: 0 },
+    isLoading: false,
+  })),
 }));
 
 import React from "react";
