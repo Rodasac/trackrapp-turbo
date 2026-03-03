@@ -67,6 +67,7 @@ services:
       - traefik.http.routers.web-prod.rule=Host(`trackrapp.xyz`) || Host(`www.trackrapp.xyz`)
       - traefik.http.routers.web-prod.entrypoints=websecure
       - traefik.http.routers.web-prod.tls=true
+      - traefik.http.routers.web-prod.tls.certresolver=letsencrypt
       - traefik.http.services.web-prod.loadbalancer.server.port=3000
     networks:
       - trackr-prod
@@ -131,6 +132,7 @@ services:
       - traefik.http.routers.dozzle-prod.rule=Host(`logs.trackrapp.xyz`)
       - traefik.http.routers.dozzle-prod.entrypoints=websecure
       - traefik.http.routers.dozzle-prod.tls=true
+      - traefik.http.routers.dozzle-prod.tls.certresolver=letsencrypt
       - traefik.http.routers.dozzle-prod.middlewares=dozzle-prod-auth
       - traefik.http.middlewares.dozzle-prod-auth.basicauth.users=${DOZZLE_BASIC_AUTH}
       - traefik.http.services.dozzle-prod.loadbalancer.server.port=8080

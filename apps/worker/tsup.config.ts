@@ -6,7 +6,8 @@ export default defineConfig({
   target: "node22",
   outDir: "dist",
   clean: true,
-  noExternal: [/@repo\/.*/], // Bundle workspace packages; npm deps stay external (avoid CJS/ESM issues)
+  noExternal: [/.*/], // Bundle all deps for a fully standalone build
+  shims: true, // Inject createRequire shim so bundled CJS packages (e.g. web-push) can call require('crypto')
   sourcemap: true,
   splitting: true,
 });
