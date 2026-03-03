@@ -18,3 +18,4 @@ playwright-report
 
 .env
 .env.local
+test.env

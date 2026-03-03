@@ -6,7 +6,10 @@ RUN turbo prune web --docker
 
 FROM node:24-alpine AS installer
 ARG NODE_ENV
+ARG NEXT_PUBLIC_APP_ENV
+
 ENV NODE_ENV=${NODE_ENV}
+ENV NEXT_PUBLIC_APP_ENV=${NEXT_PUBLIC_APP_ENV}
 
 WORKDIR /app
 RUN npm install -g pnpm@10

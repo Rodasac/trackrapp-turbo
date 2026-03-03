@@ -50,6 +50,8 @@
     }
   },
   "globalEnv": [
+    "BETTER_AUTH_SECRET",
+    "BETTER_AUTH_URL",
     "NEXT_PUBLIC_APP_ENV",
     "AI_PROVIDER",
     "OPENAI_API_KEY",
