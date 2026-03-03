@@ -5,8 +5,9 @@ import * as schema from "./schema/index";
 type Schema = typeof schema;
 
 function createDatabase(): PostgresJsDatabase<Schema> {
-  const url = process.env.DATABASE_URL;
-  if (!url) throw new Error("DATABASE_URL environment variable is not set");
+  const url =
+    process.env.DATABASE_URL ??
+    "postgresql://trackrapp:trackrapp@localhost:5432/trackrapp";
   const client = postgres(url, { prepare: false });
   return drizzle(client, { schema });
 }

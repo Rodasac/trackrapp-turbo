@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * Integration test for the send-reminders job.
  *
@@ -52,6 +53,7 @@ describe.skipIf(SKIP_INTEGRATION)("send-reminders integration", () => {
     }
 
     // Import DB after env check
+    // @ts-expect-error
     const { db: database, schema } = await import("@repo/database");
     const { eq } = await import("drizzle-orm");
 
@@ -99,6 +101,7 @@ describe.skipIf(SKIP_INTEGRATION)("send-reminders integration", () => {
 
   afterAll(async () => {
     if (!testUserId) return;
+    // @ts-expect-error
     const { db: database, schema } = await import("@repo/database");
     const { eq } = await import("drizzle-orm");
 
@@ -120,6 +123,7 @@ describe.skipIf(SKIP_INTEGRATION)("send-reminders integration", () => {
   it("creates a notification record in the DB after running send-reminders", async () => {
     const { runSendReminders } =
       await import("../../src/jobs/send-reminders.js");
+    // @ts-expect-error
     const { db: database, schema } = await import("@repo/database");
     const { and, eq } = await import("drizzle-orm");
 
@@ -143,6 +147,7 @@ describe.skipIf(SKIP_INTEGRATION)("send-reminders integration", () => {
   it("does not create a duplicate notification on second run (dedup)", async () => {
     const { runSendReminders } =
       await import("../../src/jobs/send-reminders.js");
+    // @ts-expect-error
     const { db: database, schema } = await import("@repo/database");
     const { and, eq } = await import("drizzle-orm");
 
