@@ -23,7 +23,7 @@ export function useAdminUsers(params: AdminUsersParams = {}) {
       });
       if (error) throw new Error(error.message ?? "Failed to list users");
       return {
-        users: (data?.users ?? []) as AdminUserListResponse["users"],
+        users: (data?.users ?? []) as unknown as AdminUserListResponse["users"],
         total: data?.total ?? 0,
       };
     },

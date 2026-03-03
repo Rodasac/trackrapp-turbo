@@ -186,7 +186,7 @@ export interface AdminUser {
   email: string;
   emailVerified: boolean;
   image: string | null;
-  role: string | null;
+  role: "user" | "admin" | null;
   banned: boolean | null;
   banReason: string | null;
   banExpires: string | null;

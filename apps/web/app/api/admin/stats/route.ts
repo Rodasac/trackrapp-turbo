@@ -12,44 +12,49 @@ export async function GET(request: Request) {
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
   // Total users
-  const [{ count: totalUsers }] = await db
-    .select({ count: count() })
-    .from(schema.users);
+  const resultUsers = await db.select({ count: count() }).from(schema.users);
+  const totalUsers = resultUsers[0]?.count ?? 0;
 
   // Active users in last 30 days (distinct users with a session)
-  const [{ count: activeUsers30d }] = await db
+  const resultActiveUsers30d = await db
     .select({ count: countDistinct(schema.sessions.userId) })
     .from(schema.sessions)
     .where(gte(schema.sessions.createdAt, thirtyDaysAgo));
+  const activeUsers30d = resultActiveUsers30d[0]?.count ?? 0;
 
   // Pro users (active or trialing subscription)
-  const [{ count: proUsers }] = await db
+  const resultProUsers = await db
     .select({ count: count() })
     .from(schema.subscriptions)
     .where(inArray(schema.subscriptions.status, ["active", "trialing"]));
+  const proUsers = resultProUsers[0]?.count ?? 0;
 
   // Total tracked subscriptions
-  const [{ count: totalSubscriptions }] = await db
+  const resultTotalSubscriptions = await db
     .select({ count: count() })
     .from(schema.trackedSubscriptions);
+  const totalSubscriptions = resultTotalSubscriptions[0]?.count ?? 0;
 
   // Signups in last 7 days
-  const [{ count: signups7d }] = await db
+  const resultSignups7d = await db
     .select({ count: count() })
     .from(schema.users)
     .where(gte(schema.users.createdAt, sevenDaysAgo));
+  const signups7d = resultSignups7d[0]?.count ?? 0;
 
   // Signups in last 30 days
-  const [{ count: signups30d }] = await db
+  const resultSignups30d = await db
     .select({ count: count() })
     .from(schema.users)
     .where(gte(schema.users.createdAt, thirtyDaysAgo));
+  const signups30d = resultSignups30d[0]?.count ?? 0;
 
   // Banned users
-  const [{ count: bannedUsers }] = await db
+  const resultBannedUsers = await db
     .select({ count: count() })
     .from(schema.users)
     .where(eq(schema.users.banned, true));
+  const bannedUsers = resultBannedUsers[0]?.count ?? 0;
 
   const freeUsers = Number(totalUsers) - Number(proUsers);
 

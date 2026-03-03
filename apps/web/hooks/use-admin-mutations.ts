@@ -14,7 +14,7 @@ interface UnbanUserParams {
 
 interface SetRoleParams {
   userId: string;
-  role: string;
+  role: "user" | "admin";
 }
 
 export function useBanUser() {
