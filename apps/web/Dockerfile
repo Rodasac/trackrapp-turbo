@@ -16,8 +16,8 @@ RUN pnpm install --frozen-lockfile
 # Copy full pruned source and build
 COPY --from=pruner /app/out/full/ .
 RUN --mount=type=secret,id=ENV_FILE \
-    cp /run/secrets/ENV_FILE apps/web/.env.local && \
-    pnpm turbo run build --filter=web
+    cp /run/secrets/ENV_FILE apps/web/.env.local
+RUN pnpm turbo run build --filter=web
 
 FROM node:24-alpine AS runner
 WORKDIR /app
