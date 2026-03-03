@@ -110,6 +110,8 @@ jobs:
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
             docker network create traefik-public 2>/dev/null || true
+            
+            docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml down -v
             ACME_EMAIL="$ACME_EMAIL" docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml up -d
 
             cd /opt/trackrapp/staging
