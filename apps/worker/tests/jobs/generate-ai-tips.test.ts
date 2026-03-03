@@ -73,6 +73,7 @@ vi.mock("@repo/database", () => ({
     trackedSubscriptions: { userId: "userId", isActive: "isActive" },
     categories: {},
     aiTips: { userId: "userId" },
+    users: { id: "id", role: "role" },
   },
 }));
 
@@ -116,9 +117,9 @@ describe("generate-ai-tips job", () => {
   });
 
   it("queries Pro users and generates tips", async () => {
-    // First select: Pro users
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER]) // Pro users
+      .mockResolvedValueOnce([]) // admin users (none)
       .mockResolvedValueOnce(SUB_DATA); // user's subscriptions
 
     await generateAiTips();
@@ -129,6 +130,7 @@ describe("generate-ai-tips job", () => {
   it("skips users with 0 active subscriptions", async () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER]) // Pro users
+      .mockResolvedValueOnce([]) // admin users (none)
       .mockResolvedValueOnce([]); // no subscriptions
 
     await generateAiTips();
@@ -139,6 +141,7 @@ describe("generate-ai-tips job", () => {
     const { db } = await import("@repo/database");
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER])
+      .mockResolvedValueOnce([]) // admin users (none)
       .mockResolvedValueOnce(SUB_DATA);
 
     await generateAiTips();
@@ -149,6 +152,7 @@ describe("generate-ai-tips job", () => {
   it("creates a notification after generating tips", async () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER])
+      .mockResolvedValueOnce([]) // admin users (none)
       .mockResolvedValueOnce(SUB_DATA);
 
     await generateAiTips();
@@ -164,6 +168,7 @@ describe("generate-ai-tips job", () => {
     const users = [{ referenceId: "user-1" }, { referenceId: "user-2" }];
     mockSelectResult
       .mockResolvedValueOnce(users)
+      .mockResolvedValueOnce([]) // admin users (none)
       // user-1 subs → error during generation
       .mockResolvedValueOnce(SUB_DATA)
       // user-2 subs
@@ -180,8 +185,10 @@ describe("generate-ai-tips job", () => {
     expect(mockGenerateTipsForUser).toHaveBeenCalledTimes(2);
   });
 
-  it("returns early when no Pro users exist", async () => {
-    mockSelectResult.mockResolvedValueOnce([]); // no Pro users
+  it("returns early when no eligible users exist", async () => {
+    mockSelectResult
+      .mockResolvedValueOnce([]) // no Pro users
+      .mockResolvedValueOnce([]); // no admin users
 
     await generateAiTips();
     expect(mockGenerateTipsForUser).not.toHaveBeenCalled();
@@ -190,10 +197,36 @@ describe("generate-ai-tips job", () => {
   it("does not create notification when AI returns empty tips", async () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER])
+      .mockResolvedValueOnce([]) // admin users (none)
       .mockResolvedValueOnce(SUB_DATA);
     mockGenerateTipsForUser.mockResolvedValue([]);
 
     await generateAiTips();
     expect(mockCreateNotification).not.toHaveBeenCalled();
+  });
+
+  it("includes admin users in eligible users", async () => {
+    const ADMIN_USER = { id: "admin-1" };
+    mockSelectResult
+      .mockResolvedValueOnce([]) // no Pro users
+      .mockResolvedValueOnce([ADMIN_USER]) // admin users
+      .mockResolvedValueOnce(SUB_DATA); // admin user's subscriptions
+
+    await generateAiTips();
+    expect(mockGenerateTipsForUser).toHaveBeenCalledOnce();
+  });
+
+  it("deduplicates admin + Pro users", async () => {
+    // user-1 appears in both Pro subscriptions and admin users
+    const SHARED_USER_PRO = { referenceId: "user-1" };
+    const SHARED_USER_ADMIN = { id: "user-1" };
+    mockSelectResult
+      .mockResolvedValueOnce([SHARED_USER_PRO]) // Pro users
+      .mockResolvedValueOnce([SHARED_USER_ADMIN]) // admin users (same person)
+      .mockResolvedValueOnce(SUB_DATA); // subscriptions (called only once)
+
+    await generateAiTips();
+    // Should only process user-1 once despite appearing in both lists
+    expect(mockGenerateTipsForUser).toHaveBeenCalledOnce();
   });
 });

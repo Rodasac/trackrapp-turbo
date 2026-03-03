@@ -176,6 +176,22 @@ describe("requireProSubscription", () => {
     expect("error" in result).toBe(true);
     if ("error" in result) expect(result.error.status).toBe(403);
   });
+
+  it("returns { isPro: true } for admin role without subscription", async () => {
+    const result = await requireProSubscription("user-1", "admin");
+    expect("isPro" in result).toBe(true);
+    if ("isPro" in result) expect(result.isPro).toBe(true);
+    // DB query should NOT have been called for admin users
+    expect(mockSelect).not.toHaveBeenCalled();
+  });
+
+  it("falls through to subscription check when role is 'user'", async () => {
+    makeProSelectChain([{ id: "sub-1", status: "active" }]);
+    const result = await requireProSubscription("user-1", "user");
+    expect("isPro" in result).toBe(true);
+    // DB query should have been called for non-admin users
+    expect(mockSelect).toHaveBeenCalled();
+  });
 });
 
 // ─── requireAdmin ──────────────────────────────────────────────────────────────

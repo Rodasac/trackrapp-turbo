@@ -9,7 +9,10 @@ export async function GET(request: Request) {
 
   const userId = session.user.id;
 
-  const proResult = await requireProSubscription(userId);
+  const proResult = await requireProSubscription(
+    userId,
+    (session.user as { role?: string }).role,
+  );
   if ("error" in proResult) return proResult.error;
 
   // Fetch non-expired tips

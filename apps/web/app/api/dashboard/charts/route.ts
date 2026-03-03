@@ -14,7 +14,10 @@ export async function GET(request: Request) {
   if ("error" in result) return result.error;
   const { session } = result;
 
-  const proResult = await requireProSubscription(session.user.id);
+  const proResult = await requireProSubscription(
+    session.user.id,
+    (session.user as { role?: string }).role,
+  );
   if ("error" in proResult) return proResult.error;
 
   // Fetch all subs (active + recently deactivated) for the user

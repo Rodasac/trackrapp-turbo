@@ -36,11 +36,16 @@ export function validationErrorResponse(zodError: ZodError): Response {
 
 /**
  * Check that a user has an active or trialing Pro subscription.
+ * Admin users are treated as Pro regardless of subscription status.
  * Returns { isPro: true } or { error: Response } (403).
  */
 export async function requireProSubscription(
   userId: string,
+  userRole?: string,
 ): Promise<{ isPro: true } | { error: Response }> {
+  if (userRole === "admin") {
+    return { isPro: true };
+  }
   const [proRecord] = await db
     .select()
     .from(schema.subscriptions)

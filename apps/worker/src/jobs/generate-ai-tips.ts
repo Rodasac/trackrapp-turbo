@@ -21,15 +21,27 @@ export async function generateAiTips(): Promise<void> {
     .from(schema.subscriptions)
     .where(inArray(schema.subscriptions.status, ["active", "trialing"]));
 
-  if (proUsers.length === 0) {
-    aiTipsLog.info("No Pro users found — skipping");
+  // Find admin users (treated as Pro regardless of subscription)
+  const adminUsers = await db
+    .select({ id: schema.users.id })
+    .from(schema.users)
+    .where(eq(schema.users.role, "admin"));
+
+  // Deduplicate: admin may also have a Pro subscription
+  const eligibleUserIds = new Set<string>(proUsers.map((u) => u.referenceId));
+  for (const admin of adminUsers) {
+    eligibleUserIds.add(admin.id);
+  }
+
+  if (eligibleUserIds.size === 0) {
+    aiTipsLog.info("No eligible users found — skipping");
     return;
   }
 
-  aiTipsLog.info({ count: proUsers.length }, "Processing Pro users");
+  aiTipsLog.info({ count: eligibleUserIds.size }, "Processing eligible users");
   let generated = 0;
 
-  for (const proUser of proUsers) {
+  for (const userId of eligibleUserIds) {
     try {
       // Fetch active subscriptions
       const subs = await db
@@ -37,13 +49,13 @@ export async function generateAiTips(): Promise<void> {
         .from(schema.trackedSubscriptions)
         .where(
           and(
-            eq(schema.trackedSubscriptions.userId, proUser.referenceId),
+            eq(schema.trackedSubscriptions.userId, userId),
             eq(schema.trackedSubscriptions.isActive, true),
           ),
         );
 
       if (subs.length === 0) {
-        aiTipsLog.info({ userId: proUser.referenceId }, "0 subs — skipping");
+        aiTipsLog.info({ userId }, "0 subs — skipping");
         continue;
       }
 
@@ -61,9 +73,7 @@ export async function generateAiTips(): Promise<void> {
       );
 
       // Delete old tips before generating new ones
-      await db
-        .delete(schema.aiTips)
-        .where(eq(schema.aiTips.userId, proUser.referenceId));
+      await db.delete(schema.aiTips).where(eq(schema.aiTips.userId, userId));
 
       // Generate new tips
       const tips = await generateTipsForUser(
@@ -73,7 +83,7 @@ export async function generateAiTips(): Promise<void> {
       );
 
       if (tips.length === 0) {
-        aiTipsLog.info({ userId: proUser.referenceId }, "AI returned 0 tips");
+        aiTipsLog.info({ userId }, "AI returned 0 tips");
         continue;
       }
 
@@ -83,7 +93,7 @@ export async function generateAiTips(): Promise<void> {
 
       await db.insert(schema.aiTips).values(
         tips.map((tip) => ({
-          userId: proUser.referenceId,
+          userId,
           title: tip.title,
           message: tip.message,
           category: tip.category,
@@ -93,27 +103,21 @@ export async function generateAiTips(): Promise<void> {
 
       // Notify user
       await createNotification({
-        userId: proUser.referenceId,
+        userId,
         type: "tip",
         title: "New AI Tips Available",
         message: `${tips.length} new personalized spending tip${tips.length > 1 ? "s" : ""} generated for you.`,
       });
 
       generated++;
-      aiTipsLog.info(
-        { userId: proUser.referenceId, tipsCount: tips.length },
-        "Tips generated",
-      );
+      aiTipsLog.info({ userId, tipsCount: tips.length }, "Tips generated");
     } catch (error) {
-      aiTipsLog.error(
-        { err: error, userId: proUser.referenceId },
-        "Error processing user",
-      );
+      aiTipsLog.error({ err: error, userId }, "Error processing user");
     }
   }
 
   aiTipsLog.info(
-    { generated, total: proUsers.length },
-    "Done processing Pro users",
+    { generated, total: eligibleUserIds.size },
+    "Done processing eligible users",
   );
 }

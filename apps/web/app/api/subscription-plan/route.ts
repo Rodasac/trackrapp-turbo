@@ -10,6 +10,20 @@ export async function GET(request: Request) {
 
   const userId = session.user.id;
 
+  // Admin users are treated as Pro regardless of Stripe subscription status
+  if ((session.user as { role?: string }).role === "admin") {
+    const adminPlan: SubscriptionPlanResponse = {
+      plan: "pro",
+      status: "active",
+      isTrialing: false,
+      trialEnd: null,
+      cancelAtPeriodEnd: false,
+      periodEnd: null,
+      stripeSubscriptionId: null,
+    };
+    return Response.json(adminPlan);
+  }
+
   // Find the most recent active/trialing subscription record for this user.
   // A user with no record (or only canceled records) is on the Free plan.
   const [record] = await db
