@@ -5,6 +5,14 @@ COPY . .
 RUN turbo prune web --docker
 
 FROM node:24-alpine AS installer
+ARG NODE_ENV
+ARG BETTER_AUTH_SECRET
+ARG BETTER_AUTH_URL
+
+ENV NODE_ENV=${NODE_ENV}
+ENV BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+ENV BETTER_AUTH_URL=${BETTER_AUTH_URL}
+
 WORKDIR /app
 RUN npm install -g pnpm@10
 # Install dependencies using pruned package.json files (cache-friendly layer)
@@ -13,14 +21,12 @@ RUN pnpm install --frozen-lockfile
 # Copy full pruned source and build
 COPY --from=pruner /app/out/full/ .
 RUN --mount=type=secret,id=ENV_FILE \
-    set -a && \
-    . /run/secrets/ENV_FILE && \
-    set +a && \
+    export $(cat /run/secrets/ENV_FILE | xargs) && \
     pnpm turbo run build --filter=web
 
 FROM node:24-alpine AS runner
 WORKDIR /app
-ENV NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
