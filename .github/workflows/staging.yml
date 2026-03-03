@@ -66,7 +66,7 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
           build-args: |
-            NODE_ENV=development
+            NEXT_PUBLIC_APP_ENV=development
           secrets: |
             ENV_FILE=${{ secrets.STAGING_ENV }}
 

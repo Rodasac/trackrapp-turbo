@@ -50,6 +50,7 @@
     }
   },
   "globalEnv": [
+    "NEXT_PUBLIC_APP_ENV",
     "AI_PROVIDER",
     "OPENAI_API_KEY",
     "ANTHROPIC_API_KEY",

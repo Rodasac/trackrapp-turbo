@@ -174,7 +174,7 @@ export default function LoginPage() {
         </Link>
       </p>
 
-      {process.env.NODE_ENV === "development" && (
+      {process.env.NEXT_PUBLIC_APP_ENV === "development" && (
         <div className="bg-muted rounded-md p-3 text-sm">
           <p className="font-medium">Development mode</p>
           <p className="text-muted-foreground mt-1">
