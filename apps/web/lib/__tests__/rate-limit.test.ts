@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { RateLimiterMemory, RateLimiterRes } from "rate-limiter-flexible";
 import {
   TIERS,

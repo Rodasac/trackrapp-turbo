@@ -33,6 +33,7 @@ export default defineConfig({
     command: "pnpm --filter=web dev",
     cwd: "../../",
     port: 3000,
+    env: { PLAYWRIGHT: "true" },
     // eslint-disable-next-line turbo/no-undeclared-env-vars
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

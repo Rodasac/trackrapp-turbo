@@ -7,4 +7,6 @@ export const webLog = createLogger({ name: "web" });
 export const apiLog = createChildLogger(webLog, { context: "api" });
 
 /** Child logger for rate limiting */
-export const rateLimitLog = createChildLogger(webLog, { context: "rate-limit" });
+export const rateLimitLog = createChildLogger(webLog, {
+  context: "rate-limit",
+});

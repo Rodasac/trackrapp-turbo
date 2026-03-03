@@ -65,11 +65,17 @@ function mockExempt() {
 
 function mockAllowed(tier: "MODERATE" | "RELAXED" = "RELAXED") {
   const mockLimiter = {
-    consume: vi.fn().mockResolvedValue(
-      new RateLimiterRes(tier === "RELAXED" ? 119 : 29, 60000, 1, false),
-    ),
+    consume: vi
+      .fn()
+      .mockResolvedValue(
+        new RateLimiterRes(tier === "RELAXED" ? 119 : 29, 60000, 1, false),
+      ),
   };
-  mockResolveTier.mockReturnValue({ exempt: false, tier, limiter: mockLimiter });
+  mockResolveTier.mockReturnValue({
+    exempt: false,
+    tier,
+    limiter: mockLimiter,
+  });
   mockGetRateLimitKey.mockReturnValue("ip:1.2.3.4");
   mockRateLimitHeaders.mockReturnValue({
     "X-RateLimit-Limit": tier === "RELAXED" ? "120" : "30",
@@ -84,7 +90,11 @@ function mockExceeded(tier: "MODERATE" | "RELAXED" = "RELAXED") {
   const mockLimiter = {
     consume: vi.fn().mockRejectedValue(rateLimiterRes),
   };
-  mockResolveTier.mockReturnValue({ exempt: false, tier, limiter: mockLimiter });
+  mockResolveTier.mockReturnValue({
+    exempt: false,
+    tier,
+    limiter: mockLimiter,
+  });
   mockGetRateLimitKey.mockReturnValue("ip:1.2.3.4");
   const mock429 = new Response(
     JSON.stringify({ error: "Too many requests", retryAfter: 30 }),
