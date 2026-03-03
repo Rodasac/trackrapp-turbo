@@ -81,6 +81,7 @@ vi.mock("../../src/env.js", () => ({
   })),
 }));
 
+// @ts-expect-error: mocking drizzle-orm types
 import { db } from "@repo/database";
 import {
   createNotification,
