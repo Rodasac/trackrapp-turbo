@@ -40,12 +40,15 @@ test("dashboard shows KPIs with zero values for fresh user", async ({
   ).toBeVisible();
 });
 
-// B1 fix: old test expected removed placeholder text; now assert charts section renders
-test("dashboard shows charts section", async ({ page }) => {
+// B1 fix: free users see the Pro upgrade card for charts
+test("dashboard shows charts upgrade prompt for free users", async ({
+  page,
+}) => {
   await signUpNewUser(page);
 
   await page.goto("/dashboard");
-  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+  // Free users see the Spending Analytics upgrade card, not the charts
+  await expect(page.getByText(/spending analytics/i)).toBeVisible({
     timeout: 10_000,
   });
 });
@@ -106,25 +109,15 @@ test("dashboard shows 6 KPI cards", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("dashboard shows charts section with empty states", async ({ page }) => {
+test("dashboard shows charts upgrade card for free users", async ({ page }) => {
   await signUpNewUser(page);
 
   await page.goto("/dashboard");
-  // Wait for charts to finish loading
-  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+  // Free users see the upgrade card, not the charts
+  await expect(page.getByText(/spending analytics/i)).toBeVisible({
     timeout: 10_000,
   });
-
-  // All three chart card headings are present
-  await expect(page.getByText("Spending trend", { exact: true })).toBeVisible();
-  await expect(page.getByText("By category", { exact: true })).toBeVisible();
-  await expect(
-    page.getByText("Top subscriptions", { exact: true }),
-  ).toBeVisible();
-
-  // Fresh user has no data — charts show empty-state messages
-  await expect(page.getByText("No spending data yet")).toBeVisible();
-  await expect(page.getByText("No subscriptions yet")).toBeVisible();
+  await expect(page.getByRole("link", { name: /view plans/i })).toBeVisible();
 });
 
 test("dashboard shows renewal calendar", async ({ page }) => {
@@ -160,18 +153,16 @@ test("dashboard shows spending insights", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("dashboard charts populate after adding subscription", async ({
+test("dashboard shows upgrade prompt (charts locked) after adding subscription as free user", async ({
   page,
 }) => {
   await signUpNewUser(page);
 
-  // Confirm empty-state charts first
+  // Free user: charts section shows upgrade prompt regardless of subscription count
   await page.goto("/dashboard");
-  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+  await expect(page.getByText(/spending analytics/i)).toBeVisible({
     timeout: 10_000,
   });
-  await expect(page.getByText("No spending data yet")).toBeVisible();
-  await expect(page.getByText("No subscriptions yet")).toBeVisible();
 
   // Add a subscription
   await gotoNewSubscription(page);
@@ -184,11 +175,9 @@ test("dashboard charts populate after adding subscription", async ({
   await page.getByRole("button", { name: "Add subscription" }).click();
   await page.waitForURL(/\/subscriptions$/);
 
-  // Return to dashboard — charts should no longer show empty states
+  // Return to dashboard — charts upgrade prompt still shown for free user
   await page.goto("/dashboard");
-  await expect(page.getByTestId("dashboard-charts")).toBeVisible({
+  await expect(page.getByText(/spending analytics/i)).toBeVisible({
     timeout: 10_000,
   });
-  await expect(page.getByText("No spending data yet")).not.toBeVisible();
-  await expect(page.getByText("No subscriptions yet")).not.toBeVisible();
 });

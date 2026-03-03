@@ -12,6 +12,7 @@ import type {
 
 export const DEMO_PRO_EMAIL = "demo@trackrapp.local";
 export const DEMO_FREE_EMAIL = "demo-free@trackrapp.local";
+export const DEMO_ADMIN_EMAIL = "admin@trackrapp.local";
 export const DEMO_PASSWORD = "Demo1234!";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -85,6 +86,39 @@ export function buildDemoUser(
     name,
     email,
     emailVerified: true,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const account: AccountInsert = {
+    id: accountId,
+    accountId: userId,
+    providerId: "credential",
+    userId,
+    password: hashedPassword,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  return { user, account };
+}
+
+// ─── buildAdminUser ─────────────────────────────────────────────────────────────
+
+export function buildAdminUser(hashedPassword: string = "hashed"): {
+  user: UserInsert & { role: string };
+  account: AccountInsert;
+} {
+  const userId = randomUUID();
+  const accountId = randomUUID();
+  const now = new Date();
+
+  const user = {
+    id: userId,
+    name: "Admin",
+    email: DEMO_ADMIN_EMAIL,
+    emailVerified: true,
+    role: "admin",
     createdAt: now,
     updatedAt: now,
   };

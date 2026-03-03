@@ -179,3 +179,32 @@ export interface PlatformStatsResponse {
   totalSaved: string;
   computedAt: string | null;
 }
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image: string | null;
+  role: string | null;
+  banned: boolean | null;
+  banReason: string | null;
+  banExpires: string | null;
+  createdAt: string;
+}
+
+export interface AdminUserListResponse {
+  users: AdminUser[];
+  total: number;
+}
+
+export interface AdminStatsResponse {
+  totalUsers: number;
+  activeUsers30d: number;
+  proUsers: number;
+  freeUsers: number;
+  totalSubscriptions: number;
+  signups7d: number;
+  signups30d: number;
+  bannedUsers: number;
+}

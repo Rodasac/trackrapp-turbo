@@ -1,5 +1,9 @@
 import { db, schema } from "@repo/database";
-import { requireSession, validationErrorResponse } from "@/lib/api/helpers";
+import {
+  requireSession,
+  requireProSubscription,
+  validationErrorResponse,
+} from "@/lib/api/helpers";
 import { pushSubscriptionSchema } from "@repo/shared/validations";
 import { and, eq } from "drizzle-orm";
 
@@ -7,6 +11,9 @@ export async function POST(request: Request) {
   const result = await requireSession(request);
   if ("error" in result) return result.error;
   const { session } = result;
+
+  const proResult = await requireProSubscription(session.user.id);
+  if ("error" in proResult) return proResult.error;
 
   const body = await request.json();
   const parsed = pushSubscriptionSchema.safeParse(body);
@@ -43,6 +50,9 @@ export async function DELETE(request: Request) {
   const result = await requireSession(request);
   if ("error" in result) return result.error;
   const { session } = result;
+
+  const proResult = await requireProSubscription(session.user.id);
+  if ("error" in proResult) return proResult.error;
 
   const url = new URL(request.url);
   const endpoint = url.searchParams.get("endpoint");

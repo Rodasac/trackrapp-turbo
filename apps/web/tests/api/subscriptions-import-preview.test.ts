@@ -1,12 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/auth", () => ({
-  auth: { api: { getSession: vi.fn() } },
+const { mockRequireSession, mockRequireProSubscription } = vi.hoisted(() => ({
+  mockRequireSession: vi.fn(),
+  mockRequireProSubscription: vi.fn(),
 }));
+
+vi.mock("@/lib/api/helpers", () => ({
+  requireSession: (...args: unknown[]) => mockRequireSession(...args),
+  requireProSubscription: (...args: unknown[]) =>
+    mockRequireProSubscription(...args),
+}));
+
+const { mockSelect } = vi.hoisted(() => ({ mockSelect: vi.fn() }));
 
 vi.mock("@repo/database", () => ({
   db: {
-    select: vi.fn(),
+    select: mockSelect,
     query: {
       categories: { findMany: vi.fn() },
     },
@@ -18,11 +27,8 @@ vi.mock("@repo/database", () => ({
 }));
 
 import { POST } from "@/app/api/subscriptions/import/preview/route";
-import { auth } from "@/lib/auth";
 import { db } from "@repo/database";
 
-const mockGetSession = vi.mocked(auth.api.getSession);
-const mockSelect = vi.mocked(db.select);
 const mockFindManyCategories = vi.mocked(db.query.categories.findMany);
 
 const fakeSession = { user: { id: "user-1" }, session: {} };
@@ -67,13 +73,16 @@ function makeSelectChain(returnValue: unknown) {
 describe("POST /api/subscriptions/import/preview", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetSession.mockResolvedValue(fakeSession as never);
+    mockRequireSession.mockResolvedValue({ session: fakeSession });
+    mockRequireProSubscription.mockResolvedValue({ isPro: true });
     makeSelectChain(catalogRows);
     mockFindManyCategories.mockResolvedValue([]);
   });
 
   it("returns 401 when not authenticated", async () => {
-    mockGetSession.mockResolvedValue(null as never);
+    mockRequireSession.mockResolvedValue({
+      error: Response.json({ error: "Unauthorized" }, { status: 401 }),
+    });
     const req = new Request(
       "http://localhost/api/subscriptions/import/preview",
       {
@@ -83,6 +92,24 @@ describe("POST /api/subscriptions/import/preview", () => {
     );
     const res = await POST(req);
     expect(res.status).toBe(401);
+  });
+
+  it("returns 403 for non-Pro user", async () => {
+    mockRequireProSubscription.mockResolvedValue({
+      error: Response.json(
+        { error: "Pro subscription required" },
+        { status: 403 },
+      ),
+    });
+    const req = new Request(
+      "http://localhost/api/subscriptions/import/preview",
+      {
+        method: "POST",
+        body: JSON.stringify({ rows: [validRow] }),
+      },
+    );
+    const res = await POST(req);
+    expect(res.status).toBe(403);
   });
 
   it("returns preview rows with matched service", async () => {

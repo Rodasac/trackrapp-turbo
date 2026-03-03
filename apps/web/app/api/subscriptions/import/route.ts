@@ -1,5 +1,5 @@
 import { db, schema } from "@repo/database";
-import { requireSession } from "@/lib/api/helpers";
+import { requireSession, requireProSubscription } from "@/lib/api/helpers";
 import type { CsvImportResult } from "@/lib/types/api";
 
 interface ConfirmedImportRow {
@@ -19,6 +19,9 @@ export async function POST(request: Request) {
   const result = await requireSession(request);
   if ("error" in result) return result.error;
   const { session } = result;
+
+  const proResult = await requireProSubscription(session.user.id);
+  if ("error" in proResult) return proResult.error;
 
   const body = (await request.json()) as { rows: ConfirmedImportRow[] };
   const rows: ConfirmedImportRow[] = body.rows ?? [];

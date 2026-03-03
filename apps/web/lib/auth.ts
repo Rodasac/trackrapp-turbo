@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import { betterAuth, User } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { admin } from "better-auth/plugins";
 import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 import { db } from "@repo/database";
@@ -68,26 +69,29 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     },
   },
-  plugins: process.env.STRIPE_SECRET_KEY
-    ? [
-        stripe({
-          stripeClient: new Stripe(process.env.STRIPE_SECRET_KEY),
-          stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
-          createCustomerOnSignUp: true,
-          subscription: {
-            enabled: true,
-            plans: [
-              {
-                name: "pro",
-                priceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID!,
-                annualDiscountPriceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
-                freeTrial: { days: PRICING.pro.trialDays },
-              },
-            ],
-          },
-        }),
-      ]
-    : [],
+  plugins: [
+    admin(),
+    ...(process.env.STRIPE_SECRET_KEY
+      ? [
+          stripe({
+            stripeClient: new Stripe(process.env.STRIPE_SECRET_KEY),
+            stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+            createCustomerOnSignUp: true,
+            subscription: {
+              enabled: true,
+              plans: [
+                {
+                  name: "pro",
+                  priceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID!,
+                  annualDiscountPriceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
+                  freeTrial: { days: PRICING.pro.trialDays },
+                },
+              ],
+            },
+          }),
+        ]
+      : []),
+  ],
 });
 
 const checkIfNewUser = (user: User) => {

@@ -115,6 +115,23 @@ export function mockSession() {
       id: "user-1",
       email: "test@example.com",
       name: "Test User",
+      role: "user",
+    },
+  };
+}
+
+export function mockAdminSession() {
+  return {
+    session: {
+      id: "session-admin-1",
+      userId: "admin-1",
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    },
+    user: {
+      id: "admin-1",
+      email: "admin@trackrapp.local",
+      name: "Admin User",
+      role: "admin",
     },
   };
 }

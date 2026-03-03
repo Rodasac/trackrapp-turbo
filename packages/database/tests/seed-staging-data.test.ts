@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import {
   buildDemoUser,
+  buildAdminUser,
   buildCustomCategories,
   buildStripeSubscription,
   buildProSubscriptions,
@@ -11,6 +12,7 @@ import {
   buildAiTips,
   DEMO_PRO_EMAIL,
   DEMO_FREE_EMAIL,
+  DEMO_ADMIN_EMAIL,
   DEMO_PASSWORD,
 } from "../src/seed-staging-data.js";
 
@@ -382,5 +384,38 @@ describe("exported constants", () => {
 
   it("DEMO_PASSWORD is Demo1234!", () => {
     expect(DEMO_PASSWORD).toBe("Demo1234!");
+  });
+
+  it("DEMO_ADMIN_EMAIL is admin@trackrapp.local", () => {
+    expect(DEMO_ADMIN_EMAIL).toBe("admin@trackrapp.local");
+  });
+});
+
+// ─── buildAdminUser ────────────────────────────────────────────────────────────
+
+describe("buildAdminUser", () => {
+  it("returns user with role admin", () => {
+    const result = buildAdminUser("hashed");
+    expect((result.user as Record<string, unknown>).role).toBe("admin");
+  });
+
+  it("returns user with DEMO_ADMIN_EMAIL", () => {
+    const result = buildAdminUser("hashed");
+    expect(result.user.email).toBe(DEMO_ADMIN_EMAIL);
+  });
+
+  it("returns user with emailVerified true", () => {
+    const result = buildAdminUser("hashed");
+    expect(result.user.emailVerified).toBe(true);
+  });
+
+  it("returns account with credential providerId", () => {
+    const result = buildAdminUser("hashed");
+    expect(result.account.providerId).toBe("credential");
+  });
+
+  it("account userId matches user id", () => {
+    const result = buildAdminUser("hashed");
+    expect(result.account.userId).toBe(result.user.id);
   });
 });

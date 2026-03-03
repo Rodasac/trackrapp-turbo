@@ -15,6 +15,7 @@ import { inArray, isNull } from "drizzle-orm";
 import * as schema from "./schema/index.js";
 import {
   buildDemoUser,
+  buildAdminUser,
   buildCustomCategories,
   buildStripeSubscription,
   buildProSubscriptions,
@@ -26,6 +27,7 @@ import {
   buildAiTips,
   DEMO_PRO_EMAIL,
   DEMO_FREE_EMAIL,
+  DEMO_ADMIN_EMAIL,
   DEMO_PASSWORD,
 } from "./seed-staging-data.js";
 
@@ -277,7 +279,7 @@ async function seedStaging() {
   const existingUsers = await db
     .select({ id: schema.users.id })
     .from(schema.users)
-    .where(inArray(schema.users.email, [DEMO_PRO_EMAIL, DEMO_FREE_EMAIL]));
+    .where(inArray(schema.users.email, [DEMO_PRO_EMAIL, DEMO_FREE_EMAIL, DEMO_ADMIN_EMAIL]));
 
   if (existingUsers.length > 0) {
     const ids = existingUsers.map((u) => u.id);
@@ -405,14 +407,24 @@ async function seedStaging() {
   await db.insert(schema.userPreferences).values(freeUserPrefs);
   console.log(`    ✓  User preferences inserted (autoRenewDefault: false)`);
 
+  // ── 7. Admin user ─────────────────────────────────────────────────────────────
+
+  console.log("\n  [Admin user]");
+
+  const { user: adminUser, account: adminAccount } = buildAdminUser(hashed);
+  await db.insert(schema.users).values(adminUser);
+  await db.insert(schema.accounts).values(adminAccount);
+  console.log(`    ✓  User created: ${DEMO_ADMIN_EMAIL} (role: admin)`);
+
   // ── Done ──────────────────────────────────────────────────────────────────────
 
   await client.end();
 
   console.log("\n✅  Staging seed complete!\n");
   console.log("  Demo credentials:");
-  console.log(`    Pro  : ${DEMO_PRO_EMAIL}  /  Demo1234!`);
-  console.log(`    Free : ${DEMO_FREE_EMAIL}  /  Demo1234!\n`);
+  console.log(`    Pro   : ${DEMO_PRO_EMAIL}  /  Demo1234!`);
+  console.log(`    Free  : ${DEMO_FREE_EMAIL}  /  Demo1234!`);
+  console.log(`    Admin : ${DEMO_ADMIN_EMAIL}  /  Demo1234!\n`);
 }
 
 seedStaging().catch((err) => {

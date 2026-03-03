@@ -98,6 +98,29 @@ export function saveTestUser(creds: {
   );
 }
 
+/**
+ * Grant a Pro subscription to the current user via the test-only API.
+ * Requires PLAYWRIGHT=true and the user to be logged in so we can get their email.
+ */
+export async function grantProPlan(page: Page, email: string): Promise<void> {
+  await page.request.post("/api/test/grant-pro", {
+    data: { email },
+  });
+}
+
+/**
+ * Set the role of a user via the test-only API.
+ */
+export async function setUserRole(
+  page: Page,
+  email: string,
+  role: string,
+): Promise<void> {
+  await page.request.post("/api/test/set-role", {
+    data: { email, role },
+  });
+}
+
 /** Read test user credentials saved by global-setup */
 export function loadTestUser(): {
   name: string;

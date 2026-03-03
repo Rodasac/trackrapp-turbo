@@ -1,6 +1,6 @@
 import { db, schema } from "@repo/database";
-import { and, eq, gt, inArray, desc } from "drizzle-orm";
-import { requireSession } from "@/lib/api/helpers";
+import { and, eq, gt, desc } from "drizzle-orm";
+import { requireSession, requireProSubscription } from "@/lib/api/helpers";
 
 export async function GET(request: Request) {
   const result = await requireSession(request);
@@ -9,23 +9,8 @@ export async function GET(request: Request) {
 
   const userId = session.user.id;
 
-  // Check Pro status
-  const [proRecord] = await db
-    .select()
-    .from(schema.subscriptions)
-    .where(
-      and(
-        eq(schema.subscriptions.referenceId, userId),
-        inArray(schema.subscriptions.status, ["active", "trialing"]),
-      ),
-    );
-
-  if (!proRecord) {
-    return Response.json(
-      { error: "Pro subscription required" },
-      { status: 403 },
-    );
-  }
+  const proResult = await requireProSubscription(userId);
+  if ("error" in proResult) return proResult.error;
 
   // Fetch non-expired tips
   const tips = await db

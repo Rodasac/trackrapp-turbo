@@ -1,5 +1,5 @@
 import { test as setup, expect } from "@playwright/test";
-import { signUpNewUser, saveTestUser } from "./fixtures/auth";
+import { signUpNewUser, saveTestUser, grantProPlan } from "./fixtures/auth";
 import { CONSENT_COOKIE } from "./fixtures/consent";
 
 const AUTH_FILE = "e2e/.auth/user.json";
@@ -11,6 +11,10 @@ setup("authenticate", async ({ page }) => {
   // Sign up a fresh user — Better Auth auto-logs in, ending at /dashboard
   const creds = await signUpNewUser(page);
   await expect(page).toHaveURL(/\/dashboard/);
+
+  // Grant Pro plan so tests that use this shared auth state
+  // (e.g. csv-import.spec.ts) can access Pro-gated features
+  await grantProPlan(page, creds.email);
 
   // Save credentials so auth specs can re-login if needed
   saveTestUser(creds);

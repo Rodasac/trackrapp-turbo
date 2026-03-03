@@ -1,5 +1,5 @@
 import { db, schema } from "@repo/database";
-import { requireSession } from "@/lib/api/helpers";
+import { requireSession, requireProSubscription } from "@/lib/api/helpers";
 import { toMonthlyRate } from "@repo/shared/billing";
 import { toDateString } from "@repo/shared/dates";
 import { eq, inArray } from "drizzle-orm";
@@ -13,6 +13,9 @@ export async function GET(request: Request) {
   const result = await requireSession(request);
   if ("error" in result) return result.error;
   const { session } = result;
+
+  const proResult = await requireProSubscription(session.user.id);
+  if ("error" in proResult) return proResult.error;
 
   // Fetch all subs (active + recently deactivated) for the user
   const subs = await db
