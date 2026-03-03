@@ -68,7 +68,7 @@ jobs:
           build-args: |
             NODE_ENV=development
           secrets: |
-            ENV_FILE="${{ secrets.STAGING_ENV }}"
+            ENV_FILE=${{ secrets.STAGING_ENV }}
 
   # ─── Deploy to staging VPS ─────────────────────────────────────────────────
   deploy:
