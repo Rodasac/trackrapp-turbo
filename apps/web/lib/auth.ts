@@ -17,6 +17,19 @@ export const auth = betterAuth({
     provider: "pg",
     usePlural: true,
   }),
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 5,
+    storage: "memory",
+    customRules: {
+      "/sign-in/email": { window: 60, max: 5 },
+      "/sign-up/email": { window: 60, max: 3 },
+      "/forgot-password": { window: 60, max: 3 },
+      "/reset-password": { window: 60, max: 3 },
+      "/send-verification-email": { window: 60, max: 3 },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
