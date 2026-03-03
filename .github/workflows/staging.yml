@@ -6,6 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  ACME_EMAIL: ${{ secrets.ACME_EMAIL_STAGING }}
 
 jobs:
   # ─── Build staging images ──────────────────────────────────────────────────
@@ -64,6 +65,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+          secrets: |
+            ENV_FILE=${{ secrets.STAGING_ENV }}
 
   # ─── Deploy to staging VPS ─────────────────────────────────────────────────
   deploy:
@@ -102,10 +105,12 @@ jobs:
           host: ${{ secrets.VPS_HOST_STAGING }}
           username: ${{ secrets.VPS_USER_STAGING }}
           key: ${{ secrets.VPS_SSH_KEY_STAGING }}
-          envs: IMAGE_TAG
+          envs: IMAGE_TAG,ACME_EMAIL
           script: |
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+
             docker network create traefik-public 2>/dev/null || true
-            docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml up -d
+            ACME_EMAIL="$ACME_EMAIL" docker compose -f /opt/trackrapp/traefik/docker-compose.traefik.yml up -d
 
             cd /opt/trackrapp/staging
             chmod +x scripts/backup.sh
