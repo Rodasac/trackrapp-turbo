@@ -18,7 +18,7 @@ export const auth = betterAuth({
     usePlural: true,
   }),
   rateLimit: {
-    enabled: true,
+    enabled: process.env.PLAYWRIGHT !== "true",
     window: 60,
     max: 5,
     storage: "memory",
