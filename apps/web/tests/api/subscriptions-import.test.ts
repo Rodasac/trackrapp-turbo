@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/auth", () => ({
-  auth: { api: { getSession: vi.fn() } },
+const { mockRequireSession, mockRequireProSubscription } = vi.hoisted(() => ({
+  mockRequireSession: vi.fn(),
+  mockRequireProSubscription: vi.fn(),
+}));
+
+vi.mock("@/lib/api/helpers", () => ({
+  requireSession: (...args: unknown[]) => mockRequireSession(...args),
+  requireProSubscription: (...args: unknown[]) =>
+    mockRequireProSubscription(...args),
 }));
 
 const { mockInsert } = vi.hoisted(() => ({ mockInsert: vi.fn() }));
@@ -17,9 +24,7 @@ vi.mock("@repo/database", () => ({
 }));
 
 import { POST } from "@/app/api/subscriptions/import/route";
-import { auth } from "@/lib/auth";
 
-const mockGetSession = vi.mocked(auth.api.getSession);
 const fakeSession = { user: { id: "user-1" }, session: {} };
 
 const validRow = {
@@ -46,17 +51,35 @@ function makeInsertChain(returnValue: unknown) {
 describe("POST /api/subscriptions/import", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetSession.mockResolvedValue(fakeSession as never);
+    mockRequireSession.mockResolvedValue({ session: fakeSession });
+    mockRequireProSubscription.mockResolvedValue({ isPro: true });
   });
 
   it("returns 401 when not authenticated", async () => {
-    mockGetSession.mockResolvedValue(null as never);
+    mockRequireSession.mockResolvedValue({
+      error: Response.json({ error: "Unauthorized" }, { status: 401 }),
+    });
     const req = new Request("http://localhost/api/subscriptions/import", {
       method: "POST",
       body: JSON.stringify({ rows: [validRow] }),
     });
     const res = await POST(req);
     expect(res.status).toBe(401);
+  });
+
+  it("returns 403 for non-Pro user", async () => {
+    mockRequireProSubscription.mockResolvedValue({
+      error: Response.json(
+        { error: "Pro subscription required" },
+        { status: 403 },
+      ),
+    });
+    const req = new Request("http://localhost/api/subscriptions/import", {
+      method: "POST",
+      body: JSON.stringify({ rows: [validRow] }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(403);
   });
 
   it("bulk inserts subscriptions and returns count", async () => {

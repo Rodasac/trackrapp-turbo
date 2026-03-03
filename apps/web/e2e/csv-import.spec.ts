@@ -1,3 +1,13 @@
+/**
+ * CSV import tests that require a Pro user.
+ * The default E2E test user (set up by global-setup.ts) has been granted
+ * a Pro subscription via the storageState. Full Pro-user CSV import tests
+ * are in csv-import-pro.spec.ts.
+ *
+ * These tests run with the default auth state (set up by global-setup.ts)
+ * which uses a Pro user via the PLAYWRIGHT test env grant-pro helper applied
+ * at signup time. See global-setup.ts.
+ */
 import { test, expect } from "@playwright/test";
 import { uniqueSuffix } from "./fixtures/auth";
 

@@ -8,6 +8,7 @@ import {
   Lightbulb,
   Settings,
   LogOut,
+  Shield,
 } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
@@ -17,13 +18,15 @@ import { NotificationBell } from "@/components/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 // Notifications uses a custom icon component; others use lucide icons directly.
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/notifications", label: "Notifications", icon: null },
   { href: "/tips", label: "Tips", icon: Lightbulb },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
+
+const ADMIN_NAV_ITEM = { href: "/admin", label: "Admin", icon: Shield };
 
 function initials(name?: string | null) {
   if (!name) return "?";
@@ -39,6 +42,8 @@ export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
+  const navItems = isAdmin ? [...BASE_NAV_ITEMS, ADMIN_NAV_ITEM] : BASE_NAV_ITEMS;
 
   async function handleSignOut() {
     await signOut();
@@ -64,7 +69,7 @@ export function SidebarNav() {
 
       {/* Navigation */}
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + "/");
           return (
             <Link

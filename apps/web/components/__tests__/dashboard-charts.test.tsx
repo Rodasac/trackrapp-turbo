@@ -7,6 +7,10 @@ vi.mock("@/hooks/use-dashboard-charts", () => ({
   useDashboardCharts: vi.fn(),
 }));
 
+vi.mock("@/hooks/use-subscription-plan", () => ({
+  useIsPro: vi.fn().mockReturnValue(true),
+}));
+
 // Stub chart sub-components to avoid recharts jsdom issues
 vi.mock("../charts/spending-trend-chart", () => ({
   SpendingTrendChart: ({ data }: { data: unknown[] }) => (
@@ -25,10 +29,26 @@ vi.mock("../charts/top-subscriptions-chart", () => ({
 }));
 
 import { useDashboardCharts } from "@/hooks/use-dashboard-charts";
+import { useIsPro } from "@/hooks/use-subscription-plan";
+
 const mockUseDashboardCharts = vi.mocked(useDashboardCharts);
+const mockUseIsPro = vi.mocked(useIsPro);
 
 describe("DashboardCharts", () => {
-  it("shows loading skeleton while fetching", () => {
+  it("shows upgrade prompt for free users", () => {
+    mockUseIsPro.mockReturnValue(false);
+    mockUseDashboardCharts.mockReturnValue({
+      isLoading: false,
+      data: undefined,
+    } as never);
+    renderWithProviders(<DashboardCharts />);
+    expect(screen.getByText(/spending analytics/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /view plans/i })).toBeInTheDocument();
+    expect(screen.queryByTestId("dashboard-charts")).toBeNull();
+  });
+
+  it("shows loading skeleton while fetching (Pro user)", () => {
+    mockUseIsPro.mockReturnValue(true);
     mockUseDashboardCharts.mockReturnValue({
       isLoading: true,
       data: undefined,

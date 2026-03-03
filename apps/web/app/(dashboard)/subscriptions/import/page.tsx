@@ -11,11 +11,14 @@ import {
   type MappedRow,
 } from "@/components/csv-import/mapping-step";
 import { PreviewStep } from "@/components/csv-import/preview-step";
+import { ProFeatureGate } from "@/components/pro-feature-gate";
+import { useIsPro } from "@/hooks/use-subscription-plan";
 import type { ParsedCsv } from "@repo/shared/csv";
 
 type Step = 1 | 2 | 3;
 
 export default function ImportPage() {
+  const isPro = useIsPro();
   const [step, setStep] = useState<Step>(1);
   const [parsed, setParsed] = useState<ParsedCsv | null>(null);
   const [mappedRows, setMappedRows] = useState<MappedRow[]>([]);
@@ -28,6 +31,17 @@ export default function ImportPage() {
   function handleMapped(rows: MappedRow[]) {
     setMappedRows(rows);
     setStep(3);
+  }
+
+  if (isPro === false) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16">
+        <ProFeatureGate
+          feature="CSV Import"
+          description="Import your subscriptions in bulk from a CSV file. Upgrade to Pro to unlock this feature."
+        />
+      </div>
+    );
   }
 
   return (

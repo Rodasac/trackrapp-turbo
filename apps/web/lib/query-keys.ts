@@ -61,4 +61,9 @@ export const queryKeys = {
   platformStats: {
     all: ["platform-stats"] as const,
   },
+  admin: {
+    stats: ["admin", "stats"] as const,
+    users: (params: Record<string, unknown>) =>
+      ["admin", "users", params] as const,
+  },
 } as const;

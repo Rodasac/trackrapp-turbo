@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -13,10 +14,12 @@ import {
   FormLabel,
 } from "@repo/ui/form";
 import { Switch } from "@repo/ui/switch";
+import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { PushNotificationManager } from "@/components/push-notification-manager";
 import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 import { useUpdateNotificationPreferences } from "@/hooks/use-notification-mutations";
+import { useIsPro } from "@/hooks/use-subscription-plan";
 import {
   notificationPreferencesSchema,
   type NotificationPreferencesValues,
@@ -33,6 +36,7 @@ const REMINDER_DAY_OPTIONS = [
 export function NotificationPreferencesForm() {
   const { data: prefs, isLoading } = useNotificationPreferences();
   const { mutateAsync: updatePrefs } = useUpdateNotificationPreferences();
+  const isPro = useIsPro();
 
   const form = useForm<NotificationPreferencesValues>({
     resolver: zodResolver(notificationPreferencesSchema),
@@ -100,38 +104,58 @@ export function NotificationPreferencesForm() {
           )}
         />
 
-        {/* Push toggle */}
-        <FormField
-          control={form.control}
-          name="pushEnabled"
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">
-                  Browser push notifications
-                </FormLabel>
-                <FormDescription>
-                  Get notified directly in your browser
-                </FormDescription>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        {pushEnabled && (
-          <div className="rounded-lg border p-4">
-            <p className="text-muted-foreground mb-3 text-sm">
-              Allow browser notifications to receive push alerts
-            </p>
-            <PushNotificationManager
-              vapidPublicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY}
+        {/* Push toggle — Pro only */}
+        {isPro ? (
+          <>
+            <FormField
+              control={form.control}
+              name="pushEnabled"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Browser push notifications
+                    </FormLabel>
+                    <FormDescription>
+                      Get notified directly in your browser
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
             />
+            {pushEnabled && (
+              <div className="rounded-lg border p-4">
+                <p className="text-muted-foreground mb-3 text-sm">
+                  Allow browser notifications to receive push alerts
+                </p>
+                <PushNotificationManager
+                  vapidPublicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY}
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="flex items-center justify-between rounded-lg border p-4 opacity-60">
+            <div className="space-y-0.5">
+              <p className="text-base font-medium leading-none">
+                Browser push notifications
+              </p>
+              <p className="text-muted-foreground text-sm">
+                Get notified directly in your browser
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge>Pro</Badge>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/pricing">Upgrade</Link>
+              </Button>
+            </div>
           </div>
         )}
 

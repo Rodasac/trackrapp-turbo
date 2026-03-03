@@ -1,4 +1,6 @@
 import { auth } from "@/lib/auth";
+import { db, schema } from "@repo/database";
+import { and, eq, inArray } from "drizzle-orm";
 import type { ZodError } from "zod";
 
 type SessionSuccess = {
@@ -30,6 +32,55 @@ export function validationErrorResponse(zodError: ZodError): Response {
     { error: "Validation failed", issues: zodError.issues },
     { status: 400 },
   );
+}
+
+/**
+ * Check that a user has an active or trialing Pro subscription.
+ * Returns { isPro: true } or { error: Response } (403).
+ */
+export async function requireProSubscription(
+  userId: string,
+): Promise<{ isPro: true } | { error: Response }> {
+  const [proRecord] = await db
+    .select()
+    .from(schema.subscriptions)
+    .where(
+      and(
+        eq(schema.subscriptions.referenceId, userId),
+        inArray(schema.subscriptions.status, ["active", "trialing"]),
+      ),
+    );
+
+  if (!proRecord) {
+    return {
+      error: Response.json(
+        { error: "Pro subscription required" },
+        { status: 403 },
+      ),
+    };
+  }
+
+  return { isPro: true };
+}
+
+/**
+ * Verify the request is authenticated AND the user has the "admin" role.
+ * Returns { session } or { error: Response } (401/403).
+ */
+export async function requireAdmin(
+  request: Request,
+): Promise<SessionSuccess | SessionError> {
+  const result = await requireSession(request);
+  if ("error" in result) return result;
+  const { session } = result;
+
+  if ((session.user as { role?: string }).role !== "admin") {
+    return {
+      error: Response.json({ error: "Forbidden" }, { status: 403 }),
+    };
+  }
+
+  return { session };
 }
 
 /**

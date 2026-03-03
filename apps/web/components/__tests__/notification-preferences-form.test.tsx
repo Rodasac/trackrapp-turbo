@@ -15,6 +15,9 @@ vi.mock("@/hooks/use-notification-mutations", () => ({
   useSubscribeToPush: vi.fn(),
   useUnsubscribeFromPush: vi.fn(),
 }));
+vi.mock("@/hooks/use-subscription-plan", () => ({
+  useIsPro: vi.fn().mockReturnValue(true),
+}));
 // Mock PushNotificationManager to avoid browser API surface
 vi.mock("@/components/push-notification-manager", () => ({
   PushNotificationManager: () => (
@@ -44,6 +47,8 @@ import {
   useSubscribeToPush,
   useUnsubscribeFromPush,
 } from "@/hooks/use-notification-mutations";
+import { useIsPro } from "@/hooks/use-subscription-plan";
+const mockUseIsPro = vi.mocked(useIsPro);
 
 const mockMutateAsync = vi.fn().mockResolvedValue({});
 
@@ -199,5 +204,22 @@ describe("NotificationPreferencesForm", () => {
       expect(call.reminderDaysBefore).toContain(1);
       expect(call.reminderDaysBefore).toHaveLength(1);
     });
+  });
+
+  it("shows push toggle for Pro users", () => {
+    mockUseIsPro.mockReturnValue(true);
+    renderWithProviders(<NotificationPreferencesForm />);
+    // Push toggle should be an interactive switch
+    const switches = screen.getAllByRole("switch");
+    expect(switches).toHaveLength(2); // email + push
+  });
+
+  it("shows upgrade prompt instead of push toggle for free users", () => {
+    mockUseIsPro.mockReturnValue(false);
+    renderWithProviders(<NotificationPreferencesForm />);
+    // Only email switch remains; push section shows upgrade link
+    const switches = screen.getAllByRole("switch");
+    expect(switches).toHaveLength(1); // only email toggle
+    expect(screen.getByRole("link", { name: /upgrade/i })).toBeInTheDocument();
   });
 });
