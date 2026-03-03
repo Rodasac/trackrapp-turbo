@@ -73,7 +73,6 @@ services:
       - traefik.http.routers.web-staging.rule=Host(`staging.trackrapp.xyz`)
       - traefik.http.routers.web-staging.entrypoints=websecure
       - traefik.http.routers.web-staging.tls=true
-      - traefik.http.routers.web-staging.tls.certresolver=letsencrypt
       - traefik.http.services.web-staging.loadbalancer.server.port=3000
     networks:
       - trackr-staging
@@ -115,7 +114,6 @@ services:
       - traefik.http.routers.mailpit-staging.rule=Host(`mail-staging.trackrapp.xyz`)
       - traefik.http.routers.mailpit-staging.entrypoints=websecure
       - traefik.http.routers.mailpit-staging.tls=true
-      - traefik.http.routers.mailpit-staging.tls.certresolver=letsencrypt
       - traefik.http.services.mailpit-staging.loadbalancer.server.port=8025
     networks:
       - trackr-staging
@@ -131,7 +129,6 @@ services:
       - traefik.http.routers.dozzle-staging.rule=Host(`logs-staging.trackrapp.xyz`)
       - traefik.http.routers.dozzle-staging.entrypoints=websecure
       - traefik.http.routers.dozzle-staging.tls=true
-      - traefik.http.routers.dozzle-staging.tls.certresolver=letsencrypt
       - traefik.http.routers.dozzle-staging.middlewares=dozzle-auth
       - traefik.http.middlewares.dozzle-auth.basicauth.users=${DOZZLE_BASIC_AUTH}
       - traefik.http.services.dozzle-staging.loadbalancer.server.port=8080
