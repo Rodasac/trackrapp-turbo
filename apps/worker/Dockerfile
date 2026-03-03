@@ -12,7 +12,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=pruner /app/out/full/ .
 RUN pnpm turbo run build --filter=worker
 # Create flat node_modules with production deps only (no pnpm symlinks)
-RUN pnpm --filter=worker deploy /app/deployed --prod
+RUN pnpm --filter=worker deploy /app/deployed --prod --legacy
 
 FROM node:24-alpine AS runner
 WORKDIR /app
