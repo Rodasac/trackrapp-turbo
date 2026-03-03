@@ -26,7 +26,7 @@ ENV NODE_ENV=production
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 worker
-# Only the bundled dist is needed — all deps are inlined by tsup (shims: true handles CJS require() calls)
+# Only the bundled dist is needed — all deps inlined, banner provides createRequire shim
 COPY --from=installer --chown=worker:nodejs /app/apps/worker/dist ./dist
 
 USER worker

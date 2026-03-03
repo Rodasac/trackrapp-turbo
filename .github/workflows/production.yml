@@ -55,6 +55,7 @@ jobs:
 
       - name: Build and push ${{ matrix.image }}
         uses: docker/build-push-action@v6
+        env: { BETTER_AUTH_URL: https://trackrappp.xyz, BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET_PRODUCTION }} }
         with:
           context: .
           file: ${{ matrix.dockerfile }}
