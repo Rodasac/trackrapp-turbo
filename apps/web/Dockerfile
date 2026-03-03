@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile
 # Copy full pruned source and build
 COPY --from=pruner /app/out/full/ .
 RUN --mount=type=secret,id=ENV_FILE \
-    export $(grep -v '^\s*#' /run/secrets/ENV_FILE | grep -v '^\s*$' | xargs) && \
+    set -a && . /run/secrets/ENV_FILE && set +a && \
     pnpm turbo run build --filter=web
 
 FROM node:24-alpine AS runner
