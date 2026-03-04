@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import { betterAuth, User } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { dash, sentinel } from "@better-auth/infra";
 import { admin } from "better-auth/plugins";
 import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
@@ -71,6 +72,47 @@ export const auth = betterAuth({
   },
   plugins: [
     admin(),
+    dash(),
+    sentinel({
+      apiKey: process.env.BETTER_AUTH_API_KEY ?? "",
+      security: {
+        compromisedPassword: {
+          enabled: true,
+          action: "block",
+        },
+
+        // Location-based
+        impossibleTravel: {
+          enabled: true,
+          action: "challenge",
+        },
+
+        // Abuse prevention
+        freeTrialAbuse: {
+          enabled: true,
+          maxAccountsPerVisitor: 3,
+          action: "block",
+        },
+        velocity: {
+          enabled: true,
+          maxSignupsPerVisitor: 5,
+          action: "challenge",
+        },
+
+        // Bot protection
+        botBlocking: { action: "challenge" },
+        suspiciousIpBlocking: { action: "block" },
+
+        // Account monitoring
+        staleUsers: {
+          enabled: true,
+          staleDays: 90,
+          notifyUser: true,
+          notifyAdmin: true,
+          adminEmail: "security@trackrapp.xyz",
+        },
+      },
+    }),
     ...(process.env.STRIPE_SECRET_KEY
       ? [
           stripe({
