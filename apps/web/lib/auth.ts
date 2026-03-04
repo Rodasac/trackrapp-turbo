@@ -118,7 +118,7 @@ export const auth = betterAuth({
           stripe({
             stripeClient: new Stripe(process.env.STRIPE_SECRET_KEY),
             stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
-            createCustomerOnSignUp: true,
+            createCustomerOnSignUp: process.env.PLAYWRIGHT !== "true",
             subscription: {
               enabled: true,
               plans: [
