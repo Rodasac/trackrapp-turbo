@@ -47,7 +47,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY:-trackrapp/trackrapp}/web:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_APP_ENV: https://staging.trackrapp.xyz
+      NEXT_PUBLIC_APP_ENV: ${NEXT_PUBLIC_APP_ENV:-development}
       DATABASE_URL: ${DATABASE_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL}
