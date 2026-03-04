@@ -13,12 +13,14 @@ import {
 import { PreviewStep } from "@/components/csv-import/preview-step";
 import { ProFeatureGate } from "@/components/pro-feature-gate";
 import { useIsPro } from "@/hooks/use-subscription-plan";
+import { useUserPreferences } from "@/hooks/use-user-preferences";
 import type { ParsedCsv } from "@repo/shared/csv";
 
 type Step = 1 | 2 | 3;
 
 export default function ImportPage() {
   const isPro = useIsPro();
+  const { data: userPrefs } = useUserPreferences();
   const [step, setStep] = useState<Step>(1);
   const [parsed, setParsed] = useState<ParsedCsv | null>(null);
   const [mappedRows, setMappedRows] = useState<MappedRow[]>([]);
@@ -75,6 +77,7 @@ export default function ImportPage() {
           headers={parsed.headers}
           rows={parsed.rows}
           onContinue={handleMapped}
+          defaultCurrency={userPrefs?.defaultCurrency}
         />
       )}
 
