@@ -47,6 +47,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY:-trackrapp/trackrapp}/web:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
+      NEXT_PUBLIC_APP_ENV: https://staging.trackrapp.xyz
       DATABASE_URL: ${DATABASE_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL}
@@ -54,6 +55,8 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_PRO_MONTHLY_PRICE_ID: ${STRIPE_PRO_PRICE_ID}
+      STRIPE_PRO_ANNUAL_PRICE_ID: ${STRIPE_PRO_YEARLY_PRICE_ID}
       UPLOADTHING_TOKEN: ${UPLOADTHING_TOKEN}
       SMTP_HOST: mailpit
       SMTP_PORT: 1025
