@@ -60,9 +60,10 @@ interface MappingStepProps {
   headers: string[];
   rows: string[][];
   onContinue: (mappedRows: MappedRow[]) => void;
+  defaultCurrency?: string;
 }
 
-export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
+export function MappingStep({ headers, rows, onContinue, defaultCurrency }: MappingStepProps) {
   const autoDetected = detectColumnMapping(headers);
 
   const [mapping, setMapping] = useState<Record<string, TrackrField | null>>(
@@ -72,7 +73,7 @@ export function MappingStep({ headers, rows, onContinue }: MappingStepProps) {
   const [defaults, setDefaults] = useState<ImportDefaults>({
     billingCycle: "monthly",
     nextRenewalDate: new Date().toISOString().split("T")[0] ?? "",
-    currency: "USD",
+    currency: defaultCurrency ?? "USD",
     categoryName: "",
     startDate: "",
   });

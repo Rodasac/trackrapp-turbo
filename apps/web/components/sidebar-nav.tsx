@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   Shield,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
@@ -16,6 +17,7 @@ import { Separator } from "@repo/ui/separator";
 import { useSession, signOut } from "@/lib/auth-client";
 import { NotificationBell } from "@/components/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useIsPro } from "@/hooks/use-subscription-plan";
 
 // Notifications uses a custom icon component; others use lucide icons directly.
 const BASE_NAV_ITEMS = [
@@ -42,11 +44,13 @@ export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
+  const isPro = useIsPro();
   const isAdmin =
     (session?.user as { role?: string } | undefined)?.role === "admin";
   const navItems = isAdmin
     ? [...BASE_NAV_ITEMS, ADMIN_NAV_ITEM]
     : BASE_NAV_ITEMS;
+  const showUpgradeCta = !isPro && !isAdmin;
 
   async function handleSignOut() {
     await signOut();
@@ -95,6 +99,18 @@ export function SidebarNav() {
           );
         })}
       </nav>
+
+      {showUpgradeCta && (
+        <div className="p-3">
+          <Link
+            href="/pricing"
+            className="bg-brand/10 text-brand hover:bg-brand/20 flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors"
+          >
+            <Sparkles className="size-4 shrink-0" />
+            Upgrade to Pro
+          </Link>
+        </div>
+      )}
 
       <Separator />
 

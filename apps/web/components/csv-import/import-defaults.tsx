@@ -9,6 +9,7 @@ import {
 } from "@repo/ui/select";
 import { useCategories } from "@/hooks/use-categories";
 import type { ImportDefaults } from "./mapping-step";
+import { CURRENCIES } from "@repo/shared/constants";
 
 interface ImportDefaultsPanelProps {
   defaults: ImportDefaults;
@@ -21,8 +22,6 @@ const BILLING_CYCLES = [
   { value: "weekly", label: "Weekly" },
   { value: "quarterly", label: "Quarterly" },
 ];
-
-const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"];
 
 export function ImportDefaultsPanel({
   defaults,

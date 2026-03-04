@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,8 +36,10 @@ import { ServiceCatalogSearch } from "@/components/service-catalog-search";
 import { AddCategoryDialog } from "@/components/add-category-dialog";
 import { useCategories } from "@/hooks/use-categories";
 import { useSaveSubscription } from "@/hooks/use-subscription-mutations";
+import { useUserPreferences } from "@/hooks/use-user-preferences";
 import type { Category, ServiceCatalogEntry } from "@repo/database";
 import { DynamicIcon } from "lucide-react/dynamic";
+import { CURRENCIES } from "@repo/shared/constants";
 
 interface SubscriptionFormProps {
   mode: "create" | "edit";
@@ -55,16 +57,18 @@ export function SubscriptionForm({
 }: SubscriptionFormProps) {
   const router = useRouter();
   const { data: categories = [] } = useCategories();
+  const { data: userPrefs } = useUserPreferences();
   const saveSubscription = useSaveSubscription(mode, subscriptionId);
   const [nextRenewalOpen, setNextRenewalOpen] = useState(false);
   const [startDateOpen, setStartDateOpen] = useState(false);
+  const currencyApplied = useRef(false);
 
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
     defaultValues: {
       name: "",
       price: "",
-      currency: "USD",
+      currency: initialValues?.currency ?? userPrefs?.defaultCurrency ?? "USD",
       billingCycle: "monthly",
       nextRenewalDate: "",
       startDate: "",
@@ -75,6 +79,19 @@ export function SubscriptionForm({
       ...initialValues,
     },
   });
+
+  // Apply preference once it loads for new subscriptions that have no explicit currency
+  useEffect(() => {
+    if (
+      mode === "create" &&
+      !initialValues?.currency &&
+      userPrefs?.defaultCurrency &&
+      !currencyApplied.current
+    ) {
+      currencyApplied.current = true;
+      form.setValue("currency", userPrefs.defaultCurrency);
+    }
+  }, [userPrefs?.defaultCurrency, mode, initialValues?.currency, form]);
 
   function handleCatalogSelect(entry: ServiceCatalogEntry) {
     form.setValue("name", entry.name);
@@ -175,9 +192,20 @@ export function SubscriptionForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Currency</FormLabel>
-                <FormControl>
-                  <Input placeholder="USD" {...field} />
-                </FormControl>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="USD" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {CURRENCIES.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

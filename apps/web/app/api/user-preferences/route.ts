@@ -4,7 +4,8 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 const updatePreferencesSchema = z.object({
-  autoRenewDefault: z.boolean(),
+  autoRenewDefault: z.boolean().optional(),
+  defaultCurrency: z.string().min(1).optional(),
 });
 
 async function getOrCreatePreferences(userId: string) {
@@ -56,7 +57,7 @@ export async function PUT(request: Request) {
 
   const [updated] = await db
     .update(schema.userPreferences)
-    .set({ autoRenewDefault: parsed.data.autoRenewDefault })
+    .set(parsed.data)
     .where(eq(schema.userPreferences.userId, session.user.id))
     .returning();
 

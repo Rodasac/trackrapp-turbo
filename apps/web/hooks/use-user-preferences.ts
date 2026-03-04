@@ -16,7 +16,7 @@ export function useUserPreferences() {
 export function useUpdateUserPreferences() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (prefs: { autoRenewDefault: boolean }) => {
+    mutationFn: async (prefs: Partial<UserPreferencesResponse>) => {
       const res = await fetch("/api/user-preferences", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

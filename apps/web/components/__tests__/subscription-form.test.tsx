@@ -117,7 +117,7 @@ describe("SubscriptionForm", () => {
     renderWithProviders(<SubscriptionForm mode="create" />);
     expect(screen.getByPlaceholderText("Netflix")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("9.99")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("USD")).toBeInTheDocument();
+    expect(screen.getByText("Currency")).toBeInTheDocument();
   });
 
   it("shows 'Add subscription' button in create mode", () => {
