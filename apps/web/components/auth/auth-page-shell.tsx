@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CreditCard } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export function AuthPageShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("auth.shell");
@@ -15,7 +16,10 @@ export function AuthPageShell({ children }: { children: React.ReactNode }) {
           <CreditCard className="text-emerald-400 size-5" />
           <span className="font-display text-lg font-medium">TrackrApp</span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-1">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Left panel (lg+) */}
@@ -38,7 +42,7 @@ export function AuthPageShell({ children }: { children: React.ReactNode }) {
           aria-hidden
         />
 
-        {/* Logo + ThemeToggle */}
+        {/* Logo + controls */}
         <div className="relative flex items-center justify-between p-8">
           <Link href="/" className="flex items-center gap-2.5">
             <CreditCard className="text-emerald-400 size-6" />
@@ -46,7 +50,10 @@ export function AuthPageShell({ children }: { children: React.ReactNode }) {
               TrackrApp
             </span>
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Tagline */}

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import TipsPage from "@/app/(dashboard)/tips/page";
+import TipsPage from "@/app/[locale]/(dashboard)/tips/page";
 import { renderWithProviders } from "@/tests/test-utils";
 import { mockSubscriptionPlan, mockProPlan } from "@/tests/fixtures";
 

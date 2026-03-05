@@ -64,9 +64,7 @@ export async function Footer() {
               </div>
               <span className="font-semibold">TrackrApp</span>
             </Link>
-            <p className="text-muted-foreground mt-3 text-sm">
-              {t("tagline")}
-            </p>
+            <p className="text-muted-foreground mt-3 text-sm">{t("tagline")}</p>
           </div>
 
           <FooterLinkGroup title={t("product")} links={PRODUCT_LINKS} />

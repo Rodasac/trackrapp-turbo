@@ -9,9 +9,7 @@ interface GoogleSignInButtonProps {
   label?: string;
 }
 
-export function GoogleSignInButton({
-  label,
-}: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ label }: GoogleSignInButtonProps) {
   const t = useTranslations("auth.google");
   const [isPending, setIsPending] = useState(false);
 

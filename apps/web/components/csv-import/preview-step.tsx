@@ -170,10 +170,16 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
               </th>
               <th className="px-3 py-2 text-left font-medium">Name</th>
               <th className="px-3 py-2 text-left font-medium">Price</th>
-              <th className="px-3 py-2 text-left font-medium">{t("cycleColumn")}</th>
-              <th className="px-3 py-2 text-left font-medium">{t("renewalColumn")}</th>
+              <th className="px-3 py-2 text-left font-medium">
+                {t("cycleColumn")}
+              </th>
+              <th className="px-3 py-2 text-left font-medium">
+                {t("renewalColumn")}
+              </th>
               <th className="px-3 py-2 text-left font-medium">Category</th>
-              <th className="px-3 py-2 text-left font-medium">{t("matchColumn")}</th>
+              <th className="px-3 py-2 text-left font-medium">
+                {t("matchColumn")}
+              </th>
             </tr>
           </thead>
           <tbody>

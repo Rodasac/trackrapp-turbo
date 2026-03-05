@@ -50,9 +50,7 @@ export default function TipsPage() {
             <Badge variant="secondary">{t("proBadge")}</Badge>
           </div>
           <p className="text-muted-foreground text-sm mt-1">
-            {isPro
-              ? t("refreshedWeekly")
-              : t("aiPoweredDescription")}
+            {isPro ? t("refreshedWeekly") : t("aiPoweredDescription")}
           </p>
         </div>
         {!isPro && !planLoading && (
@@ -80,18 +78,14 @@ export default function TipsPage() {
           <div className="text-muted-foreground rounded-lg border border-dashed py-24 text-center text-sm">
             <Lightbulb className="mx-auto mb-3 size-8 opacity-40" />
             <p className="font-medium">{t("noTipsYet")}</p>
-            <p className="mt-1">
-              {t("noTipsMessage")}
-            </p>
+            <p className="mt-1">{t("noTipsMessage")}</p>
           </div>
         )
       ) : (
         <div className="text-muted-foreground rounded-lg border border-dashed py-24 text-center text-sm">
           <Lightbulb className="mx-auto mb-3 size-8 opacity-40" />
           <p className="font-medium">{t("proFeatureTitle")}</p>
-          <p className="mt-1">
-            {t("proFeatureDescription")}
-          </p>
+          <p className="mt-1">{t("proFeatureDescription")}</p>
           <Button asChild className="mt-4">
             <Link href="/pricing">{t("viewPlans")}</Link>
           </Button>

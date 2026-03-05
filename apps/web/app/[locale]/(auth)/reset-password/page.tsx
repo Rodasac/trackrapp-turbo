@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Link } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,22 +21,25 @@ import { Input } from "@repo/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { useTranslations } from "next-intl";
 
-const schema = z
-  .object({
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type FormValues = z.infer<typeof schema>;
+type FormValues = { newPassword: string; confirmPassword: string };
 
 function ResetPasswordForm() {
   const t = useTranslations("auth.resetPassword");
+  const tv = useTranslations("validation");
+
+  const schema = useMemo(
+    () =>
+      z
+        .object({
+          newPassword: z.string().min(8, tv("passwordMin8")),
+          confirmPassword: z.string().min(8, tv("passwordMin8")),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: tv("passwordsDontMatch"),
+          path: ["confirmPassword"],
+        }),
+    [tv],
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -50,7 +53,9 @@ function ResetPasswordForm() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
-          <h1 className="font-display text-3xl tracking-tight">{t("invalidLinkHeading")}</h1>
+          <h1 className="font-display text-3xl tracking-tight">
+            {t("invalidLinkHeading")}
+          </h1>
           <p className="text-muted-foreground text-sm">
             {t("invalidLinkDescription")}
           </p>
@@ -81,12 +86,8 @@ function ResetPasswordForm() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="font-display text-3xl tracking-tight">
-          {t("heading")}
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          {t("description")}
-        </p>
+        <h1 className="font-display text-3xl tracking-tight">{t("heading")}</h1>
+        <p className="text-muted-foreground text-sm">{t("description")}</p>
       </div>
 
       <Form {...form}>
@@ -135,7 +136,9 @@ function ResetPasswordForm() {
             disabled={form.formState.isSubmitting}
             className="mt-1"
           >
-            {form.formState.isSubmitting ? t("resetPasswordButtonLoading") : t("resetPasswordButton")}
+            {form.formState.isSubmitting
+              ? t("resetPasswordButtonLoading")
+              : t("resetPasswordButton")}
           </Button>
         </form>
       </Form>

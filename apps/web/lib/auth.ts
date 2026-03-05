@@ -84,8 +84,7 @@ export const auth = betterAuth({
           USER_NOT_FOUND: "Usuario no encontrado",
           FAILED_TO_CREATE_USER: "Error al crear la cuenta",
           FAILED_TO_SEND_EMAIL: "Error al enviar el correo",
-          PASSWORD_TOO_SHORT:
-            "La contraseña debe tener al menos 8 caracteres",
+          PASSWORD_TOO_SHORT: "La contraseña debe tener al menos 8 caracteres",
           PASSWORD_TOO_LONG: "La contraseña es demasiado larga",
         },
       },

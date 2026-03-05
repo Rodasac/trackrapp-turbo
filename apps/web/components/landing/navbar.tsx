@@ -6,6 +6,7 @@ import { Button } from "@repo/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@repo/ui/sheet";
 import { useSession } from "@/lib/auth-client";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { useTranslations } from "next-intl";
 
 export function Navbar() {
@@ -46,6 +47,7 @@ export function Navbar() {
         {/* Right side */}
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
+          <LanguageSwitcher />
 
           {isLoggedIn ? (
             <Button asChild size="sm">

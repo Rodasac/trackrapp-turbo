@@ -6,6 +6,10 @@ vi.mock("@/components/theme-toggle", () => ({
   ThemeToggle: () => <button data-testid="theme-toggle">Toggle theme</button>,
 }));
 
+vi.mock("@/components/language-switcher", () => ({
+  LanguageSwitcher: () => <button data-testid="language-switcher">Lang</button>,
+}));
+
 describe("AuthPageShell", () => {
   it("renders logo links to /", () => {
     render(

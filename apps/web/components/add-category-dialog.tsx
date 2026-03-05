@@ -22,8 +22,9 @@ import {
   FormMessage,
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
+import { useMemo } from "react";
 import {
-  categoryFormSchema,
+  createCategoryFormSchema,
   type CategoryFormValues,
 } from "@repo/shared/validations";
 import { useCreateCategory } from "@/hooks/use-subscription-mutations";
@@ -39,9 +40,19 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
   const [open, setOpen] = useState(false);
   const createCategory = useCreateCategory();
   const t = useTranslations("subscriptions.addCategory");
+  const tv = useTranslations("validation");
+
+  const schema = useMemo(
+    () =>
+      createCategoryFormSchema({
+        nameRequired: tv("nameRequired"),
+        iconInvalid: tv("iconInvalid"),
+      }),
+    [tv],
+  );
 
   const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categoryFormSchema),
+    resolver: zodResolver(schema),
     defaultValues: { name: "", color: "", icon: undefined },
   });
 

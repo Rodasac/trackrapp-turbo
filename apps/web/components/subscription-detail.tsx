@@ -142,7 +142,9 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold">{sub.name}</h2>
-            {!sub.isActive && <Badge variant="secondary">{t("inactiveBadge")}</Badge>}
+            {!sub.isActive && (
+              <Badge variant="secondary">{t("inactiveBadge")}</Badge>
+            )}
           </div>
           {sub.category && (
             <Badge
@@ -332,7 +334,10 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
             )}
             {sub.description && (
               <div className="col-span-2 sm:col-span-3">
-                <InfoRow label={t("descriptionLabel")} value={sub.description} />
+                <InfoRow
+                  label={t("descriptionLabel")}
+                  value={sub.description}
+                />
               </div>
             )}
             {sub.notes && (
@@ -348,7 +353,9 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
       {sub.priceHistory.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("priceHistoryTitle")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("priceHistoryTitle")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {sub.priceHistory.length >= 2 ? (

@@ -22,7 +22,7 @@ vi.mock("@/hooks/use-admin-users", () => ({
 }));
 
 import React from "react";
-import AdminPage from "@/app/(dashboard)/admin/page";
+import AdminPage from "@/app/[locale]/(dashboard)/admin/page";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 
 const mockUseIsAdmin = vi.mocked(useIsAdmin);

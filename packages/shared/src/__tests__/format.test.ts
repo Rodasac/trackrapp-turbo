@@ -83,10 +83,18 @@ describe("formatRenewalDate", () => {
   });
 
   it("uses Spanish relative labels when provided", () => {
-    expect(formatRenewalDate("2026-02-24", "es-ES", { today: "hoy" })).toContain("(hoy)");
-    expect(formatRenewalDate("2026-02-25", "es-ES", { tomorrow: "mañana" })).toContain("(mañana)");
-    expect(formatRenewalDate("2026-02-20", "es-ES", { overdue: "vencido" })).toContain("(vencido)");
-    expect(formatRenewalDate("2026-03-10", "es-ES", { inDays: "en {days} días" })).toContain("(en 14 días)");
+    expect(
+      formatRenewalDate("2026-02-24", "es-ES", { today: "hoy" }),
+    ).toContain("(hoy)");
+    expect(
+      formatRenewalDate("2026-02-25", "es-ES", { tomorrow: "mañana" }),
+    ).toContain("(mañana)");
+    expect(
+      formatRenewalDate("2026-02-20", "es-ES", { overdue: "vencido" }),
+    ).toContain("(vencido)");
+    expect(
+      formatRenewalDate("2026-03-10", "es-ES", { inDays: "en {days} días" }),
+    ).toContain("(en 14 días)");
   });
 });
 

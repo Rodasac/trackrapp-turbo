@@ -17,9 +17,10 @@
     "clean": "pnpm dlx rimraf .next/cache node_modules/"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.5.3",
     "@better-auth/i18n": "^1.5.3",
     "@better-auth/infra": "^0.1.8",
-    "@better-auth/stripe": "^1.4.19",
+    "@better-auth/stripe": "^1.5.3",
     "@hookform/resolvers": "^5.2.2",
     "@repo/database": "workspace:*",
     "@repo/logger": "workspace:*",
@@ -29,7 +30,7 @@
     "@uploadthing/react": "^7.3.3",
     "@uploadthing/shared": "^7.1.10",
     "argon2": "^0.44.0",
-    "better-auth": "^1.4.19",
+    "better-auth": "^1.5.3",
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.575.0",
     "motion": "^12.34.4",
@@ -39,6 +40,7 @@
     "nodemailer": "^7.0.5",
     "rate-limiter-flexible": "^9.1.1",
     "react": "^19.2.4",
+    "react-day-picker": "^9.13.2",
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.71.2",
     "recharts": "3.7.0",

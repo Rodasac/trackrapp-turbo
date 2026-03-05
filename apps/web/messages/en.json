@@ -31,10 +31,8 @@
       "description": "Enter your email and password to continue",
       "emailLabel": "Email",
       "emailPlaceholder": "you@example.com",
-      "emailError": "Enter a valid email address",
       "passwordLabel": "Password",
       "passwordPlaceholder": "••••••••",
-      "passwordError": "Password is required",
       "forgotPasswordLink": "Forgot password?",
       "signInButton": "Sign in",
       "signInButtonLoading": "Signing in…",
@@ -56,10 +54,8 @@
       "description": "Start tracking your subscriptions for free",
       "nameLabel": "Name",
       "namePlaceholder": "Jane Smith",
-      "nameError": "Name must be at least 2 characters",
       "emailLabel": "Email",
       "emailPlaceholder": "you@example.com",
-      "emailError": "Enter a valid email address",
       "passwordLabel": "Password",
       "passwordPlaceholder": "Min. 8 characters",
       "signUpButton": "Create account",
@@ -75,7 +71,6 @@
       "description": "Enter your email and we'll send you a reset link",
       "emailLabel": "Email",
       "emailPlaceholder": "you@example.com",
-      "emailError": "Enter a valid email address",
       "sendResetButton": "Send reset link",
       "sendResetButtonLoading": "Sending…",
       "backToSignIn": "Back to sign in",
@@ -150,6 +145,13 @@
       "spendingTrend": "Spending trend",
       "categoryBreakdown": "By category",
       "topSubscriptions": "Top subscriptions"
+    },
+    "renewalCalendar": {
+      "title": "Upcoming renewals",
+      "description": "View upcoming renewals for the next 30 days. Click on a date to see details.",
+      "noRenewals": "No renewals in the next 30 days",
+      "showAll": "Show all",
+      "noRenewalsOn": "No renewals on {date}"
     }
   },
   "subscriptions": {
@@ -429,7 +431,22 @@
       "info": "Info",
       "comparison": "Comparison"
     },
-    "generatedOn": "Generated {date}"
+    "generatedOn": "Generated {date}",
+    "staticTitle": "Spending insights",
+    "staticDescription": "These info and tips are generated based on common financial advice and are not personalized.",
+    "staticEmpty": "No insights yet — add more subscriptions to get personalized tips.",
+    "generated": {
+      "annualSavingsTitle": "Switch to annual billing",
+      "annualSavingsMessage": "Switching your {count, plural, one {# monthly subscription} other {# monthly subscriptions}} to annual could save you ~${savings}/year (est. 17% discount).",
+      "highSpendTitle": "High {catName} spend",
+      "highSpendMessage": "{catName} accounts for {pct}% of your monthly spend (${amount}/mo). Consider reviewing these subscriptions.",
+      "forgottenTitle": "Possibly forgotten subscriptions",
+      "forgottenMessage": "{count, plural, one {# subscription is} other {# subscriptions are}} more than 60 days past their renewal date. You may have cancelled {count, plural, one {it} other {them}} without updating TrackrApp.",
+      "dailyCostTitle": "Your subscription cost per day",
+      "dailyCostMessage": "You spend ${daily}/day across all {count, plural, one {# subscription} other {# subscriptions}} — that's ${weekly}/week.",
+      "overlapTitle": "Potential overlap detected",
+      "overlapMessage": "You have {count} subscriptions in the \"{catName}\" category. These might offer overlapping features — consider whether you need all of them."
+    }
   },
   "admin": {
     "heading": "Admin",
@@ -681,7 +698,13 @@
     "passwordLowercase": "Must contain at least one lowercase letter",
     "passwordNumber": "Must contain at least one number",
     "passwordSymbol": "Must contain at least one symbol",
-    "passwordsMustMatch": "Passwords must match"
+    "passwordsMustMatch": "Passwords must match",
+    "priceInvalid": "Enter a valid price (e.g. 9.99)",
+    "emailInvalid": "Enter a valid email address",
+    "iconInvalid": "Invalid icon name",
+    "passwordRequired": "Password is required",
+    "nameMin2": "Name must be at least 2 characters",
+    "passwordsDontMatch": "Passwords don't match"
   },
   "apiError": {
     "unauthorized": "Unauthorized",

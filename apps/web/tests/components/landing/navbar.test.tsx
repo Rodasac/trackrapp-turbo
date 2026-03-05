@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Navbar } from "@/components/landing/navbar";
 
+vi.mock("@/components/language-switcher", () => ({
+  LanguageSwitcher: () => <button data-testid="language-switcher">Lang</button>,
+}));
+
 // Mock dropdown-menu to avoid Radix context/portal requirements in jsdom
 vi.mock("@repo/ui/dropdown-menu", () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => (

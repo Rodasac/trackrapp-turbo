@@ -50,7 +50,9 @@ export function ComparisonTable() {
               <div className="text-sm font-medium text-muted-foreground">
                 {t("featureHeader")}
               </div>
-              <div className="text-center text-sm font-semibold">{t("freeHeader")}</div>
+              <div className="text-center text-sm font-semibold">
+                {t("freeHeader")}
+              </div>
               <div className="text-center text-sm font-semibold text-brand">
                 {t("proHeader")}
               </div>
@@ -68,10 +70,18 @@ export function ComparisonTable() {
               >
                 <span className="text-sm">{feature}</span>
                 <div className="text-center">
-                  {free ? <CheckIcon label={t("included")} /> : <CrossIcon label={t("notIncluded")} />}
+                  {free ? (
+                    <CheckIcon label={t("included")} />
+                  ) : (
+                    <CrossIcon label={t("notIncluded")} />
+                  )}
                 </div>
                 <div className="text-center">
-                  {pro ? <CheckIcon label={t("included")} /> : <CrossIcon label={t("notIncluded")} />}
+                  {pro ? (
+                    <CheckIcon label={t("included")} />
+                  ) : (
+                    <CrossIcon label={t("notIncluded")} />
+                  )}
                 </div>
               </div>
             ))}

@@ -56,6 +56,8 @@ describe("translateApiError", () => {
 
   it("returns English strings when using English translator", () => {
     expect(translateApiError("Unauthorized", tEn)).toBe("Unauthorized");
-    expect(translateApiError("Unknown error", tEn)).toBe("Something went wrong");
+    expect(translateApiError("Unknown error", tEn)).toBe(
+      "Something went wrong",
+    );
   });
 });

@@ -1,3 +1,4 @@
+import createMiddleware from "next-intl/middleware";
 import { auth } from "@/lib/auth";
 import {
   resolveTier,
@@ -8,6 +9,9 @@ import {
 } from "@/lib/rate-limit";
 import { RateLimiterRes } from "rate-limiter-flexible";
 import { NextRequest, NextResponse } from "next/server";
+import { routing } from "@/i18n/routing";
+
+const intlMiddleware = createMiddleware(routing);
 
 const PROTECTED_PATHS = [
   "/dashboard",
@@ -24,6 +28,17 @@ const AUTH_PATHS = [
   "/check-email",
   "/check-email-reset",
 ];
+
+// Strip non-default locale prefix so auth checks work for all locales.
+// e.g. /es/dashboard → /dashboard (Spanish prefix removed)
+function stripLocale(pathname: string): string {
+  const nonDefaultLocales = routing.locales.filter(
+    (l) => l !== routing.defaultLocale,
+  );
+  if (nonDefaultLocales.length === 0) return pathname;
+  const pattern = new RegExp(`^/(${nonDefaultLocales.join("|")})(\/|$)`); // eslint-disable-line no-useless-escape
+  return pathname.replace(pattern, "/");
+}
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -63,12 +78,26 @@ export async function proxy(request: NextRequest) {
   }
 
   // ---------------------------------------------------------------------------
-  // Page-level auth logic (unchanged)
+  // Locale routing — let next-intl detect/redirect locale for page routes
   // ---------------------------------------------------------------------------
-  const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
-  const isAuthPage = AUTH_PATHS.some((p) => pathname.startsWith(p));
+  const intlResponse = intlMiddleware(request);
 
-  if (!isProtected && !isAuthPage) return NextResponse.next();
+  // If next-intl wants to redirect (e.g. locale normalisation), honour it
+  if (intlResponse.status >= 300 && intlResponse.status < 400) {
+    return intlResponse;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Page-level auth logic
+  // Strip any locale prefix before matching protected/auth paths.
+  // ---------------------------------------------------------------------------
+  const strippedPathname = stripLocale(pathname);
+  const isProtected = PROTECTED_PATHS.some((p) =>
+    strippedPathname.startsWith(p),
+  );
+  const isAuthPage = AUTH_PATHS.some((p) => strippedPathname.startsWith(p));
+
+  if (!isProtected && !isAuthPage) return intlResponse;
 
   const session = await auth.api.getSession({ headers: request.headers });
 
@@ -78,14 +107,15 @@ export async function proxy(request: NextRequest) {
 
   if (isProtected && !session) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
+    loginUrl.searchParams.set("callbackUrl", strippedPathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  // Return the intl response so locale headers/cookies are preserved
+  return intlResponse;
 }
 
 export const config = {
-  // Include /api routes (for rate limiting). Exclude static files/internals.
+  // Include /api routes (rate limiting). Exclude static files/Next internals.
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

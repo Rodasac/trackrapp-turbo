@@ -35,12 +35,8 @@ function CheckEmailContent() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="font-display text-3xl tracking-tight">
-          {t("heading")}
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          {t("description")}
-        </p>
+        <h1 className="font-display text-3xl tracking-tight">{t("heading")}</h1>
+        <p className="text-muted-foreground text-sm">{t("description")}</p>
       </div>
 
       {email && (

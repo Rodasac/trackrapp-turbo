@@ -20,9 +20,10 @@ import { PushNotificationManager } from "@/components/push-notification-manager"
 import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 import { useUpdateNotificationPreferences } from "@/hooks/use-notification-mutations";
 import { useIsPro } from "@/hooks/use-subscription-plan";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
-  notificationPreferencesSchema,
+  createNotificationPreferencesSchema,
   type NotificationPreferencesValues,
 } from "@repo/shared/validations";
 
@@ -30,12 +31,21 @@ const REMINDER_DAY_VALUES = [30, 14, 7, 3, 1];
 
 export function NotificationPreferencesForm() {
   const t = useTranslations("settings.notifications");
+  const tv = useTranslations("validation");
   const { data: prefs, isLoading } = useNotificationPreferences();
   const { mutateAsync: updatePrefs } = useUpdateNotificationPreferences();
   const isPro = useIsPro();
 
+  const schema = useMemo(
+    () =>
+      createNotificationPreferencesSchema({
+        reminderDaysMin: tv("atLeastOneReminderDay"),
+      }),
+    [tv],
+  );
+
   const form = useForm<NotificationPreferencesValues>({
-    resolver: zodResolver(notificationPreferencesSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       emailEnabled: true,
       pushEnabled: false,
@@ -85,7 +95,9 @@ export function NotificationPreferencesForm() {
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">{t("emailRemindersLabel")}</FormLabel>
+                <FormLabel className="text-base">
+                  {t("emailRemindersLabel")}
+                </FormLabel>
                 <FormDescription>
                   {t("emailRemindersDescription")}
                 </FormDescription>
@@ -162,13 +174,20 @@ export function NotificationPreferencesForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("remindMeLabel")}</FormLabel>
-              <FormDescription>
-                {t("remindMeDescription")}
-              </FormDescription>
+              <FormDescription>{t("remindMeDescription")}</FormDescription>
               <div className="mt-2 flex flex-wrap gap-2">
                 {REMINDER_DAY_VALUES.map((value) => {
                   const checked = field.value.includes(value);
-                  const label = t(value === 1 ? "1Day" : `${value}Days` as "30Days" | "14Days" | "7Days" | "3Days" | "1Day");
+                  const label = t(
+                    value === 1
+                      ? "1Day"
+                      : (`${value}Days` as
+                          | "30Days"
+                          | "14Days"
+                          | "7Days"
+                          | "3Days"
+                          | "1Day"),
+                  );
                   return (
                     <button
                       key={value}
@@ -204,7 +223,9 @@ export function NotificationPreferencesForm() {
         />
 
         <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? t("saveButtonLoading") : t("saveButton")}
+          {form.formState.isSubmitting
+            ? t("saveButtonLoading")
+            : t("saveButton")}
         </Button>
       </form>
     </Form>

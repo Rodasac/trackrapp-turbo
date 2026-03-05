@@ -11,9 +11,7 @@ export default function PricingPage() {
     <div className="flex min-h-svh flex-col items-center px-4 py-16">
       <div className="mb-4 text-center">
         <h1 className="text-3xl font-bold tracking-tight">{t("heading")}</h1>
-        <p className="text-muted-foreground mt-2">
-          {t("description")}
-        </p>
+        <p className="text-muted-foreground mt-2">{t("description")}</p>
       </div>
 
       <PricingCards />

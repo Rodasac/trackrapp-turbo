@@ -31,10 +31,8 @@
       "description": "Introduce tu correo y contraseña para continuar",
       "emailLabel": "Correo electrónico",
       "emailPlaceholder": "tu@ejemplo.com",
-      "emailError": "Introduce una dirección de correo válida",
       "passwordLabel": "Contraseña",
       "passwordPlaceholder": "••••••••",
-      "passwordError": "La contraseña es obligatoria",
       "forgotPasswordLink": "¿Olvidaste tu contraseña?",
       "signInButton": "Iniciar sesión",
       "signInButtonLoading": "Iniciando sesión…",
@@ -56,10 +54,8 @@
       "description": "Empieza a rastrear tus suscripciones gratis",
       "nameLabel": "Nombre",
       "namePlaceholder": "Ana García",
-      "nameError": "El nombre debe tener al menos 2 caracteres",
       "emailLabel": "Correo electrónico",
       "emailPlaceholder": "tu@ejemplo.com",
-      "emailError": "Introduce una dirección de correo válida",
       "passwordLabel": "Contraseña",
       "passwordPlaceholder": "Mín. 8 caracteres",
       "signUpButton": "Crear cuenta",
@@ -75,7 +71,6 @@
       "description": "Introduce tu correo y te enviaremos un enlace de restablecimiento",
       "emailLabel": "Correo electrónico",
       "emailPlaceholder": "tu@ejemplo.com",
-      "emailError": "Introduce una dirección de correo válida",
       "sendResetButton": "Enviar enlace de restablecimiento",
       "sendResetButtonLoading": "Enviando…",
       "backToSignIn": "Volver al inicio de sesión",
@@ -150,6 +145,13 @@
       "spendingTrend": "Tendencia de gasto",
       "categoryBreakdown": "Por categoría",
       "topSubscriptions": "Top suscripciones"
+    },
+    "renewalCalendar": {
+      "title": "Próximas renovaciones",
+      "description": "Ver las renovaciones de los próximos 30 días. Haz clic en una fecha para ver los detalles.",
+      "noRenewals": "No hay renovaciones en los próximos 30 días",
+      "showAll": "Mostrar todo",
+      "noRenewalsOn": "Sin renovaciones el {date}"
     }
   },
   "subscriptions": {
@@ -429,7 +431,22 @@
       "info": "Info",
       "comparison": "Comparativa"
     },
-    "generatedOn": "Generado el {date}"
+    "generatedOn": "Generado el {date}",
+    "staticTitle": "Análisis de gasto",
+    "staticDescription": "Estos consejos se generan a partir de consejos financieros generales y no son personalizados.",
+    "staticEmpty": "Aún no hay análisis — añade más suscripciones para obtener consejos.",
+    "generated": {
+      "annualSavingsTitle": "Cambia a facturación anual",
+      "annualSavingsMessage": "Cambiando {count, plural, one {tu # suscripción mensual} other {tus # suscripciones mensuales}} a anual podrías ahorrar ~${savings}/año (est. 17% de descuento).",
+      "highSpendTitle": "Alto gasto en {catName}",
+      "highSpendMessage": "{catName} representa el {pct}% de tu gasto mensual (${amount}/mes). Considera revisar estas suscripciones.",
+      "forgottenTitle": "Suscripciones posiblemente olvidadas",
+      "forgottenMessage": "{count, plural, one {# suscripción lleva} other {# suscripciones llevan}} más de 60 días desde su fecha de renovación. Puede que {count, plural, one {la hayas cancelado} other {las hayas cancelado}} sin actualizar TrackrApp.",
+      "dailyCostTitle": "Tu coste de suscripciones por día",
+      "dailyCostMessage": "Gastas ${daily}/día entre {count, plural, one {# suscripción} other {# suscripciones}} — es decir, ${weekly}/semana.",
+      "overlapTitle": "Posible solapamiento detectado",
+      "overlapMessage": "Tienes {count} suscripciones en la categoría \"{catName}\". Puede que ofrezcan funciones similares — considera si las necesitas todas."
+    }
   },
   "admin": {
     "heading": "Admin",
@@ -682,7 +699,13 @@
     "passwordLowercase": "Debe contener al menos una minúscula",
     "passwordNumber": "Debe contener al menos un número",
     "passwordSymbol": "Debe contener al menos un símbolo",
-    "passwordsMustMatch": "Las contraseñas deben coincidir"
+    "passwordsMustMatch": "Las contraseñas deben coincidir",
+    "priceInvalid": "Introduce un precio válido (p. ej. 9.99)",
+    "emailInvalid": "Introduce una dirección de correo válida",
+    "iconInvalid": "Nombre de icono no válido",
+    "passwordRequired": "La contraseña es obligatoria",
+    "nameMin2": "El nombre debe tener al menos 2 caracteres",
+    "passwordsDontMatch": "Las contraseñas no coinciden"
   },
   "apiError": {
     "unauthorized": "No autorizado",

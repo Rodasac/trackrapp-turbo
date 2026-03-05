@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createWrapper } from "@/tests/test-utils";
-import TipsPage from "@/app/(dashboard)/tips/page";
+import TipsPage from "@/app/[locale]/(dashboard)/tips/page";
 
 // Mock subscription plan hook
 const mockPlanData = vi.fn();

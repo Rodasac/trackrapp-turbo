@@ -117,14 +117,18 @@ export function DeleteSubscriptionDialog({
               onClick={handleDeactivate}
               disabled={pending}
             >
-              {deactivate.isPending ? t("deactivateButtonLoading") : t("deactivateButton")}
+              {deactivate.isPending
+                ? t("deactivateButtonLoading")
+                : t("deactivateButton")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               disabled={pending}
             >
-              {hardDelete.isPending ? t("deleteButtonLoading") : t("deleteButton")}
+              {hardDelete.isPending
+                ? t("deleteButtonLoading")
+                : t("deleteButton")}
             </Button>
           </DialogFooter>
         </DialogContent>

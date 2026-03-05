@@ -231,8 +231,7 @@ export function createStrongPasswordSchema(msgs?: PasswordValidationMessages) {
     .regex(/[^A-Za-z0-9]/, m.symbol);
 }
 
-export interface ChangePasswordValidationMessages
-  extends PasswordValidationMessages {
+export interface ChangePasswordValidationMessages extends PasswordValidationMessages {
   currentPasswordMin?: string;
   passwordsMustMatch?: string;
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Link } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,23 +20,34 @@ import {
 import { Input } from "@repo/ui/input";
 import { signUp } from "@/lib/auth-client";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
-import { strongPasswordSchema } from "@repo/shared";
+import { createStrongPasswordSchema } from "@repo/shared";
 import { useTranslations } from "next-intl";
 
-const schema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.email("Enter a valid email address"),
-  password: strongPasswordSchema,
-});
-
-type FormValues = z.infer<typeof schema>;
+type FormValues = { name: string; email: string; password: string };
 
 function SignupForm() {
   const t = useTranslations("auth.signup");
   const tGoogle = useTranslations("auth.google");
+  const tv = useTranslations("validation");
   const router = useRouter();
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan");
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(2, tv("nameMin2")),
+        email: z.string().email(tv("emailInvalid")),
+        password: createStrongPasswordSchema({
+          minLength: tv("passwordMin8"),
+          uppercase: tv("passwordUppercase"),
+          lowercase: tv("passwordLowercase"),
+          number: tv("passwordNumber"),
+          symbol: tv("passwordSymbol"),
+        }),
+      }),
+    [tv],
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -60,9 +71,7 @@ function SignupForm() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h1 className="font-display text-3xl tracking-tight">{t("heading")}</h1>
-        <p className="text-muted-foreground text-sm">
-          {t("description")}
-        </p>
+        <p className="text-muted-foreground text-sm">{t("description")}</p>
       </div>
 
       <Form {...form}>
@@ -140,7 +149,9 @@ function SignupForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">{t("orDivider")}</span>
+          <span className="bg-background px-2 text-muted-foreground">
+            {t("orDivider")}
+          </span>
         </div>
       </div>
 

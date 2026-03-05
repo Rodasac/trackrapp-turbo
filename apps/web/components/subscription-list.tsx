@@ -241,8 +241,12 @@ export function SubscriptionList() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="nextRenewalDate:asc">{t("sortRenewalAsc")}</SelectItem>
-            <SelectItem value="nextRenewalDate:desc">{t("sortRenewalDesc")}</SelectItem>
+            <SelectItem value="nextRenewalDate:asc">
+              {t("sortRenewalAsc")}
+            </SelectItem>
+            <SelectItem value="nextRenewalDate:desc">
+              {t("sortRenewalDesc")}
+            </SelectItem>
             <SelectItem value="name:asc">{t("sortNameAsc")}</SelectItem>
             <SelectItem value="name:desc">{t("sortNameDesc")}</SelectItem>
             <SelectItem value="price:asc">{t("sortPriceAsc")}</SelectItem>

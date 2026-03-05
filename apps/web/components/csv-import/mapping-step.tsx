@@ -18,7 +18,6 @@ import {
 import { cn } from "@repo/ui/lib/utils";
 import { ImportDefaultsPanel } from "./import-defaults";
 
-
 // name + price must always come from a CSV column
 const ALWAYS_REQUIRED: TrackrField[] = ["name", "price"];
 
@@ -50,7 +49,12 @@ interface MappingStepProps {
   defaultCurrency?: string;
 }
 
-export function MappingStep({ headers, rows, onContinue, defaultCurrency }: MappingStepProps) {
+export function MappingStep({
+  headers,
+  rows,
+  onContinue,
+  defaultCurrency,
+}: MappingStepProps) {
   const t = useTranslations("csvImport.mapping");
 
   const TRACKR_FIELDS: {
@@ -147,9 +151,7 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
       <ImportDefaultsPanel defaults={defaults} onChange={setDefaults} />
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          {t("instruction")}
-        </p>
+        <p className="text-sm text-muted-foreground">{t("instruction")}</p>
         <span
           className={cn(
             "text-sm font-medium",
@@ -165,7 +167,9 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/40">
-              <th className="px-4 py-2 text-left font-medium">{t("csvColumn")}</th>
+              <th className="px-4 py-2 text-left font-medium">
+                {t("csvColumn")}
+              </th>
               <th className="px-4 py-2 text-left font-medium">{t("mapsTo")}</th>
             </tr>
           </thead>

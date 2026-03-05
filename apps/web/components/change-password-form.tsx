@@ -13,19 +13,35 @@ import {
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
 import { Button } from "@repo/ui/button";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useChangePassword } from "@/hooks/use-profile-mutations";
 import {
-  changePasswordSchema,
+  createChangePasswordSchema,
   type ChangePasswordValues,
 } from "@repo/shared/validations";
 
 export function ChangePasswordForm() {
   const t = useTranslations("settings.password");
+  const tv = useTranslations("validation");
   const { mutateAsync: changePassword, isPending } = useChangePassword();
 
+  const schema = useMemo(
+    () =>
+      createChangePasswordSchema({
+        currentPasswordMin: tv("passwordMin8"),
+        minLength: tv("passwordMin8"),
+        uppercase: tv("passwordUppercase"),
+        lowercase: tv("passwordLowercase"),
+        number: tv("passwordNumber"),
+        symbol: tv("passwordSymbol"),
+        passwordsMustMatch: tv("passwordsMustMatch"),
+      }),
+    [tv],
+  );
+
   const form = useForm<ChangePasswordValues>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       currentPassword: "",
       newPassword: "",

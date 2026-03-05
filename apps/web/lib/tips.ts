@@ -2,11 +2,54 @@ import { toMonthlyRate } from "@repo/shared/billing";
 import type { SubscriptionListItem } from "@/lib/types/api";
 import type { StaticTip } from "@/lib/types/api";
 
+export interface TipMessages {
+  annualSavingsTitle: string;
+  annualSavingsMessage: (params: { count: number; savings: string }) => string;
+  highSpendTitle: (params: { catName: string }) => string;
+  highSpendMessage: (params: {
+    catName: string;
+    pct: number;
+    amount: string;
+  }) => string;
+  forgottenTitle: string;
+  forgottenMessage: (params: { count: number }) => string;
+  dailyCostTitle: string;
+  dailyCostMessage: (params: {
+    daily: string;
+    count: number;
+    weekly: string;
+  }) => string;
+  overlapTitle: string;
+  overlapMessage: (params: { count: number; catName: string }) => string;
+}
+
+const DEFAULT_TIP_MESSAGES: TipMessages = {
+  annualSavingsTitle: "Switch to annual billing",
+  annualSavingsMessage: ({ count, savings }) =>
+    `Switching your ${count} monthly subscription${count > 1 ? "s" : ""} to annual could save you ~$${savings}/year (est. 17% discount).`,
+  highSpendTitle: ({ catName }) => `High ${catName} spend`,
+  highSpendMessage: ({ catName, pct, amount }) =>
+    `${catName} accounts for ${pct}% of your monthly spend ($${amount}/mo). Consider reviewing these subscriptions.`,
+  forgottenTitle: "Possibly forgotten subscriptions",
+  forgottenMessage: ({ count }) =>
+    `${count} subscription${count > 1 ? "s are" : " is"} more than 60 days past their renewal date. You may have cancelled ${count > 1 ? "them" : "it"} without updating TrackrApp.`,
+  dailyCostTitle: "Your subscription cost per day",
+  dailyCostMessage: ({ daily, count, weekly }) =>
+    `You spend $${daily}/day across all ${count} subscription${count !== 1 ? "s" : ""} — that's $${weekly}/week.`,
+  overlapTitle: "Potential overlap detected",
+  overlapMessage: ({ count, catName }) =>
+    `You have ${count} subscriptions in the "${catName}" category. These might offer overlapping features — consider whether you need all of them.`,
+};
+
 /**
  * Generate actionable tips from the user's active subscriptions.
  * Pure function — no side effects, fully testable.
  */
-export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
+export function generateStaticTips(
+  subs: SubscriptionListItem[],
+  messages: TipMessages = DEFAULT_TIP_MESSAGES,
+): StaticTip[] {
+  const msg = messages;
   if (subs.length === 0) return [];
 
   const tips: StaticTip[] = [];
@@ -27,8 +70,11 @@ export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
     if (potentialSavings >= 10) {
       tips.push({
         id: "annual-savings",
-        title: "Switch to annual billing",
-        message: `Switching your ${monthlySubs.length} monthly subscription${monthlySubs.length > 1 ? "s" : ""} to annual could save you ~$${potentialSavings.toFixed(0)}/year (est. 17% discount).`,
+        title: msg.annualSavingsTitle,
+        message: msg.annualSavingsMessage({
+          count: monthlySubs.length,
+          savings: potentialSavings.toFixed(0),
+        }),
         type: "savings",
       });
     }
@@ -46,8 +92,12 @@ export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
       if (catTotal / totalMonthly > 0.4) {
         tips.push({
           id: `high-spend-${catName.toLowerCase().replace(/\s+/g, "-")}`,
-          title: `High ${catName} spend`,
-          message: `${catName} accounts for ${Math.round((catTotal / totalMonthly) * 100)}% of your monthly spend ($${catTotal.toFixed(2)}/mo). Consider reviewing these subscriptions.`,
+          title: msg.highSpendTitle({ catName }),
+          message: msg.highSpendMessage({
+            catName,
+            pct: Math.round((catTotal / totalMonthly) * 100),
+            amount: catTotal.toFixed(2),
+          }),
           type: "warning",
         });
         break; // Only flag the top one
@@ -66,8 +116,8 @@ export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
   if (forgotten.length > 0) {
     tips.push({
       id: "forgotten-subscriptions",
-      title: "Possibly forgotten subscriptions",
-      message: `${forgotten.length} subscription${forgotten.length > 1 ? "s are" : " is"} more than 60 days past their renewal date. You may have cancelled ${forgotten.length > 1 ? "them" : "it"} without updating TrackrApp.`,
+      title: msg.forgottenTitle,
+      message: msg.forgottenMessage({ count: forgotten.length }),
       type: "warning",
     });
   }
@@ -82,8 +132,12 @@ export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
     const dailyCost = totalMonthly / daysInMonth;
     tips.push({
       id: "daily-cost",
-      title: "Your subscription cost per day",
-      message: `You spend $${dailyCost.toFixed(2)}/day across all ${subs.length} subscription${subs.length !== 1 ? "s" : ""} — that's $${(dailyCost * 7).toFixed(2)}/week.`,
+      title: msg.dailyCostTitle,
+      message: msg.dailyCostMessage({
+        daily: dailyCost.toFixed(2),
+        count: subs.length,
+        weekly: (dailyCost * 7).toFixed(2),
+      }),
       type: "info",
     });
   }
@@ -104,8 +158,8 @@ export function generateStaticTips(subs: SubscriptionListItem[]): StaticTip[] {
     const [catName, count] = overlapping[0]!;
     tips.push({
       id: `overlap-${catName.toLowerCase().replace(/\s+/g, "-")}`,
-      title: "Potential overlap detected",
-      message: `You have ${count} subscriptions in the "${catName}" category. These might offer overlapping features — consider whether you need all of them.`,
+      title: msg.overlapTitle,
+      message: msg.overlapMessage({ count, catName }),
       type: "info",
     });
   }

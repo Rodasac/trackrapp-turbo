@@ -38,7 +38,10 @@ export function HeroSection() {
               {t("headline")}
             </div>
             <h1 className="font-display text-5xl font-normal leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
-              {t("track")} <span className="text-emerald-400">{t("subscriptionHighlight")}</span>
+              {t("track")}{" "}
+              <span className="text-emerald-400">
+                {t("subscriptionHighlight")}
+              </span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-lg text-white/60 lg:mx-0">
               {t("description")}
@@ -60,9 +63,7 @@ export function HeroSection() {
                 <Link href="#pricing">{t("seePricing")}</Link>
               </Button>
             </div>
-            <p className="mt-4 text-xs text-white/30">
-              {t("noCardRequired")}
-            </p>
+            <p className="mt-4 text-xs text-white/30">{t("noCardRequired")}</p>
           </FadeIn>
 
           {/* Right: App mockup */}

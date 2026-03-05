@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -24,12 +24,13 @@ import { AvatarUpload } from "@/components/avatar-upload";
 import { ChangePasswordForm } from "@/components/change-password-form";
 import { ChangeEmailForm } from "@/components/change-email-form";
 import {
-  profileFormSchema,
+  createProfileFormSchema,
   type ProfileFormValues,
 } from "@repo/shared/validations";
 
 export function ProfileForm() {
   const t = useTranslations("settings.profile");
+  const tv = useTranslations("validation");
   const { data: sessionData, isPending: sessionLoading } = useSession();
   const { data: providerData, isLoading: providerLoading } =
     useAccountProvider();
@@ -40,8 +41,13 @@ export function ProfileForm() {
   const isLoading = sessionLoading || providerLoading;
   const isCredentialUser = providerData?.provider === "credential";
 
+  const schema = useMemo(
+    () => createProfileFormSchema({ nameRequired: tv("nameRequired") }),
+    [tv],
+  );
+
   const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+    resolver: zodResolver(schema),
     defaultValues: { name: "", image: undefined },
   });
 
@@ -60,7 +66,9 @@ export function ProfileForm() {
       });
       toast.success(t("photoUpdatedToast"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("failedToSavePhotoToast"));
+      toast.error(
+        err instanceof Error ? err.message : t("failedToSavePhotoToast"),
+      );
     }
   }
 

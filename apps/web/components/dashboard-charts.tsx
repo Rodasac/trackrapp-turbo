@@ -61,7 +61,9 @@ export function DashboardCharts() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t("categoryBreakdown")}</CardTitle>
+            <CardTitle className="text-base">
+              {t("categoryBreakdown")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <CategoryBreakdownChart data={data?.categoryBreakdown ?? []} />

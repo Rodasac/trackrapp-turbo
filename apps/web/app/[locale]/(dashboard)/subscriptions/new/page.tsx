@@ -32,9 +32,7 @@ export default async function NewSubscriptionPage() {
       <Card className="max-w-lg">
         <CardHeader>
           <CardTitle>{t("new.detailsTitle")}</CardTitle>
-          <CardDescription>
-            {t("new.detailsDescription")}
-          </CardDescription>
+          <CardDescription>{t("new.detailsDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <SubscriptionForm mode="create" />

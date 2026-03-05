@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import CheckEmailResetPage from "@/app/(auth)/check-email-reset/page";
+import CheckEmailResetPage from "@/app/[locale]/(auth)/check-email-reset/page";
 import { renderWithProviders } from "@/tests/test-utils";
 import { toast } from "sonner";
 

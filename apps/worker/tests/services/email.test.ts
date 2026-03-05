@@ -65,9 +65,8 @@ vi.mock("@repo/shared/i18n", () => ({
       };
       let result = templates[key] ?? key;
       if (params) {
-        result = result.replace(
-          /\{(\w+)\}/g,
-          (_, k) => (params[k] !== undefined ? String(params[k]) : `{${k}}`),
+        result = result.replace(/\{(\w+)\}/g, (_, k) =>
+          params[k] !== undefined ? String(params[k]) : `{${k}}`,
         );
       }
       return result;

@@ -60,11 +60,17 @@ export async function sendRenewalReminder(
 
   const subject = isTomorrow
     ? t("renewal.subjectTomorrow", { name: subscriptionName })
-    : t("renewal.subjectDays", { name: subscriptionName, days: daysUntilRenewal });
+    : t("renewal.subjectDays", {
+        name: subscriptionName,
+        days: daysUntilRenewal,
+      });
 
   const previewText = isTomorrow
     ? t("renewal.previewTomorrow", { name: subscriptionName })
-    : t("renewal.previewDays", { name: subscriptionName, days: daysUntilRenewal });
+    : t("renewal.previewDays", {
+        name: subscriptionName,
+        days: daysUntilRenewal,
+      });
 
   const bodyLine = isTomorrow
     ? t("renewal.bodyTomorrow", { name: subscriptionName })
@@ -72,7 +78,10 @@ export async function sendRenewalReminder(
 
   const textBodyLine = isTomorrow
     ? t("renewal.textBodyTomorrow", { name: subscriptionName })
-    : t("renewal.textBodyDays", { name: subscriptionName, days: daysUntilRenewal });
+    : t("renewal.textBodyDays", {
+        name: subscriptionName,
+        days: daysUntilRenewal,
+      });
 
   const text = [
     t("renewal.textGreeting"),

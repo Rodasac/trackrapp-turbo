@@ -60,9 +60,7 @@ export default function ImportPage() {
         </Button>
         <div>
           <h1 className="text-2xl font-semibold">{t("heading")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("description")}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("description")}</p>
         </div>
       </div>
 

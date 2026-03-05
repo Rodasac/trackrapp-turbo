@@ -100,9 +100,7 @@ export default function NotificationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">{t("heading")}</h1>
-          <p className="text-muted-foreground text-sm">
-            {t("description")}
-          </p>
+          <p className="text-muted-foreground text-sm">{t("description")}</p>
         </div>
         {hasUnread && (
           <Button

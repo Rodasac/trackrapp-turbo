@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Calendar } from "@repo/ui/calendar";
+import { es, enUS } from "react-day-picker/locale";
 import {
   Card,
   CardContent,
@@ -18,12 +19,15 @@ import {
 } from "@repo/shared/format";
 import { parseDateString, toDateString } from "@repo/shared/dates";
 import type { RenewalItem } from "@/lib/types/api";
+import { useLocale, useTranslations } from "next-intl";
 
 function getRenewalDates(renewals: RenewalItem[]): Date[] {
   return renewals.map((r) => parseDateString(r.nextRenewalDate));
 }
 
 export function RenewalCalendar() {
+  const locale = useLocale();
+  const t = useTranslations("dashboard.renewalCalendar");
   const { data: renewals = [], isLoading } = useRenewalCalendar();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
@@ -44,11 +48,8 @@ export function RenewalCalendar() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Upcoming renewals</CardTitle>
-        <CardDescription>
-          View upcoming renewals for the next 30 days. Click on a date to see
-          details.
-        </CardDescription>
+        <CardTitle className="text-base">{t("title")}</CardTitle>
+        <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <Calendar
@@ -60,12 +61,13 @@ export function RenewalCalendar() {
           modifiersClassNames={{
             renewal: "bg-brand/20 font-semibold text-brand rounded-full",
           }}
+          locale={locale === "es" ? es : enUS}
           className="rounded-md border"
         />
 
         {renewals.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
-            No renewals in the next 30 days
+            {t("noRenewals")}
           </p>
         ) : (
           <>
@@ -79,7 +81,7 @@ export function RenewalCalendar() {
                   onClick={() => setSelectedDate(undefined)}
                   className="text-brand hover:underline"
                 >
-                  Show all
+                  {t("showAll")}
                 </button>
               </div>
             )}
@@ -87,14 +89,16 @@ export function RenewalCalendar() {
             {selectedDateStr && !isFiltered && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
-                  No renewals on {formatShortDate(selectedDateStr)}
+                  {t("noRenewalsOn", {
+                    date: formatShortDate(selectedDateStr),
+                  })}
                 </span>
                 <button
                   data-testid="clear-date-filter"
                   onClick={() => setSelectedDate(undefined)}
                   className="text-brand hover:underline"
                 >
-                  Show all
+                  {t("showAll")}
                 </button>
               </div>
             )}

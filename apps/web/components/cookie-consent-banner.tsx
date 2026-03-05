@@ -133,7 +133,9 @@ export function CookieConsentBanner() {
             {/* Analytics */}
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-foreground">{t("analyticsLabel")}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {t("analyticsLabel")}
+                </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {t("analyticsDesc")}
                 </p>

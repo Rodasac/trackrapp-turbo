@@ -34,15 +34,15 @@ function SettingsContent() {
     <div className="flex flex-col gap-6 p-6">
       <div>
         <h1 className="text-2xl font-semibold">{t("heading")}</h1>
-        <p className="text-muted-foreground text-sm">
-          {t("description")}
-        </p>
+        <p className="text-muted-foreground text-sm">{t("description")}</p>
       </div>
 
       <Tabs defaultValue={defaultTab} className="max-w-2xl">
         <TabsList>
           <TabsTrigger value="profile">{t("profileTab")}</TabsTrigger>
-          <TabsTrigger value="notifications">{t("notificationsTab")}</TabsTrigger>
+          <TabsTrigger value="notifications">
+            {t("notificationsTab")}
+          </TabsTrigger>
           <TabsTrigger value="billing">{t("billingTab")}</TabsTrigger>
           <TabsTrigger value="preferences">{t("preferencesTab")}</TabsTrigger>
         </TabsList>
@@ -63,9 +63,7 @@ function SettingsContent() {
           <Card>
             <CardHeader>
               <CardTitle>{t("notificationsTitle")}</CardTitle>
-              <CardDescription>
-                {t("notificationsDescription")}
-              </CardDescription>
+              <CardDescription>{t("notificationsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <NotificationPreferencesForm />
@@ -89,9 +87,7 @@ function SettingsContent() {
           <Card>
             <CardHeader>
               <CardTitle>{t("preferencesTitle")}</CardTitle>
-              <CardDescription>
-                {t("preferencesDescription")}
-              </CardDescription>
+              <CardDescription>{t("preferencesDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <SubscriptionPreferencesForm />

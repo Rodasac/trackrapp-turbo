@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import ResetPasswordPage from "@/app/(auth)/reset-password/page";
+import ResetPasswordPage from "@/app/[locale]/(auth)/reset-password/page";
 import { renderWithProviders } from "@/tests/test-utils";
 import { toast } from "sonner";
 
@@ -15,6 +15,24 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () =>
     new URLSearchParams(mockToken ? `token=${mockToken}` : ""),
   usePathname: () => "/reset-password",
+}));
+
+vi.mock("@/i18n/navigation", () => ({
+  useRouter: () => ({ push: mockPush, replace: vi.fn() }),
+  usePathname: () => "/reset-password",
+  Link: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
 }));
 
 const { mockResetPassword } = vi.hoisted(() => ({

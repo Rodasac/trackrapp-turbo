@@ -121,9 +121,7 @@ function setupDbMocks(options: {
       reminderDaysBefore: [7, 3, 1],
     },
   ];
-  const userPrefs = options.userPrefs ?? [
-    { userId: "user-1", locale: "en" },
-  ];
+  const userPrefs = options.userPrefs ?? [{ userId: "user-1", locale: "en" }];
   const pushSubs = options.pushSubs ?? [];
 
   vi.mocked(db.query.trackedSubscriptions.findMany).mockResolvedValue(
@@ -134,7 +132,7 @@ function setupDbMocks(options: {
   // Order: 1) notificationPreferences, 2) userPreferences, 3) pushSubscriptions
   const mockWhere = vi
     .fn()
-    .mockResolvedValueOnce(prefs)     // notificationPreferences
+    .mockResolvedValueOnce(prefs) // notificationPreferences
     .mockResolvedValueOnce(userPrefs) // userPreferences
     .mockResolvedValueOnce(pushSubs); // pushSubscriptions
   const mockFrom = vi.fn(() => ({ where: mockWhere }));

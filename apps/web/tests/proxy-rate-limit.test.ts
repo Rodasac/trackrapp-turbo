@@ -15,6 +15,16 @@ import { RateLimiterRes } from "rate-limiter-flexible";
 // Mocks — must be hoisted before imports that use them
 // ---------------------------------------------------------------------------
 
+// next-intl/middleware uses Next.js server internals not available in test env.
+// createMiddleware(routing) must return a *function* (the middleware), not a response.
+vi.mock("next-intl/middleware", () => ({
+  default: vi.fn(() => () => ({ status: 200, headers: new Headers() })),
+}));
+
+vi.mock("@/i18n/routing", () => ({
+  routing: { locales: ["en", "es"], defaultLocale: "en" },
+}));
+
 const mockGetSession = vi.fn();
 vi.mock("@/lib/auth", () => ({
   auth: {

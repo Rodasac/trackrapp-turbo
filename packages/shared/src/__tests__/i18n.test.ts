@@ -82,8 +82,6 @@ describe("getTranslator — notification domain", () => {
         price: "15.99",
         days: 7,
       }),
-    ).toBe(
-      "Tu suscripción a Netflix (USD 15.99) se renueva en 7 días.",
-    );
+    ).toBe("Tu suscripción a Netflix (USD 15.99) se renueva en 7 días.");
   });
 });

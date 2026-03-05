@@ -30,7 +30,11 @@ type NavKey =
   | "admin";
 
 // Notifications uses a custom icon component; others use lucide icons directly.
-const BASE_NAV_ITEMS: { href: string; key: NavKey; icon: React.ElementType | null }[] = [
+const BASE_NAV_ITEMS: {
+  href: string;
+  key: NavKey;
+  icon: React.ElementType | null;
+}[] = [
   { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
   { href: "/subscriptions", key: "subscriptions", icon: CreditCard },
   { href: "/notifications", key: "notifications", icon: null },

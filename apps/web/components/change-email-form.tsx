@@ -14,20 +14,27 @@ import {
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
 import { Button } from "@repo/ui/button";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useChangeEmail } from "@/hooks/use-change-email";
 import {
-  changeEmailSchema,
+  createChangeEmailSchema,
   type ChangeEmailValues,
 } from "@repo/shared/validations";
 
 export function ChangeEmailForm() {
   const t = useTranslations("settings.profile");
+  const tv = useTranslations("validation");
   const { mutateAsync: changeEmail, isPending } = useChangeEmail();
   const [sentTo, setSentTo] = useState<string | null>(null);
 
+  const schema = useMemo(
+    () => createChangeEmailSchema({ emailInvalid: tv("emailInvalid") }),
+    [tv],
+  );
+
   const form = useForm<ChangeEmailValues>({
-    resolver: zodResolver(changeEmailSchema),
+    resolver: zodResolver(schema),
     defaultValues: { newEmail: "" },
   });
 
@@ -38,9 +45,7 @@ export function ChangeEmailForm() {
       form.reset();
     } catch (err) {
       toast.error(
-        err instanceof Error
-          ? err.message
-          : t("failedToChangeEmail"),
+        err instanceof Error ? err.message : t("failedToChangeEmail"),
       );
     }
   }
@@ -79,7 +84,9 @@ export function ChangeEmailForm() {
           )}
         />
         <Button type="submit" disabled={isPending}>
-          {isPending ? t("sendVerificationButtonLoading") : t("sendVerificationButton")}
+          {isPending
+            ? t("sendVerificationButtonLoading")
+            : t("sendVerificationButton")}
         </Button>
       </form>
     </Form>

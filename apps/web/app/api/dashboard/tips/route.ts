@@ -1,9 +1,10 @@
 import { db, schema } from "@repo/database";
 import { requireSession } from "@/lib/api/helpers";
 import { eq, and } from "drizzle-orm";
-import { generateStaticTips } from "@/lib/tips";
+import { generateStaticTips, type TipMessages } from "@/lib/tips";
 import type { SubscriptionListItem } from "@/lib/types/api";
 import type { IconName } from "lucide-react/dynamic";
+import { getTranslations } from "next-intl/server";
 
 export async function GET(request: Request) {
   const result = await requireSession(request);
@@ -42,6 +43,20 @@ export async function GET(request: Request) {
     previousRenewalDate: sub.previousRenewalDate ?? null,
   }));
 
-  const tips = generateStaticTips(items);
+  const t = await getTranslations("tips.generated");
+  const messages: TipMessages = {
+    annualSavingsTitle: t("annualSavingsTitle"),
+    annualSavingsMessage: (params) => t("annualSavingsMessage", params),
+    highSpendTitle: (params) => t("highSpendTitle", params),
+    highSpendMessage: (params) => t("highSpendMessage", params),
+    forgottenTitle: t("forgottenTitle"),
+    forgottenMessage: (params) => t("forgottenMessage", params),
+    dailyCostTitle: t("dailyCostTitle"),
+    dailyCostMessage: (params) => t("dailyCostMessage", params),
+    overlapTitle: t("overlapTitle"),
+    overlapMessage: (params) => t("overlapMessage", params),
+  };
+
+  const tips = generateStaticTips(items, messages);
   return Response.json(tips);
 }

@@ -102,7 +102,9 @@ export function BillingSettings() {
 
       {plan.cancelAtPeriodEnd && plan.periodEnd && (
         <p className="text-sm text-amber-600 dark:text-amber-400">
-          {t("subscriptionCancelsMessage", { date: formatDate(plan.periodEnd) })}
+          {t("subscriptionCancelsMessage", {
+            date: formatDate(plan.periodEnd),
+          })}
         </p>
       )}
 
@@ -117,7 +119,9 @@ export function BillingSettings() {
         onClick={handleBillingPortal}
         disabled={billingPortal.isPending}
       >
-        {billingPortal.isPending ? t("manageBillingButtonLoading") : t("manageBillingButton")}
+        {billingPortal.isPending
+          ? t("manageBillingButtonLoading")
+          : t("manageBillingButton")}
       </Button>
     </div>
   );

@@ -4,6 +4,16 @@ import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@/tests/test-utils";
 import { RenewalCalendar } from "../renewal-calendar";
 
+vi.mock("react-day-picker/locale", () => ({
+  enUS: {},
+  es: {},
+}));
+
+vi.mock("next-intl", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("next-intl")>();
+  return { ...actual, useLocale: () => "en" };
+});
+
 vi.mock("@/hooks/use-renewal-calendar", () => ({
   useRenewalCalendar: vi.fn(),
 }));
@@ -16,6 +26,7 @@ vi.mock("@repo/ui/calendar", () => ({
   }: {
     modifiers?: { renewal?: Date[] };
     onSelect?: (d: Date | undefined) => void;
+    locale?: unknown;
   }) => (
     <div data-testid="calendar">
       <span data-testid="renewal-count">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,7 +29,7 @@ import {
 import { Textarea } from "@repo/ui/textarea";
 import { cn } from "@repo/ui/lib/utils";
 import {
-  subscriptionFormSchema,
+  createSubscriptionFormSchema,
   type SubscriptionFormValues,
 } from "@repo/shared/validations";
 import { formatShortDate, parseDateString, toDateString } from "@repo/shared";
@@ -57,7 +57,20 @@ export function SubscriptionForm({
   onSuccess,
 }: SubscriptionFormProps) {
   const t = useTranslations("subscriptions.form");
+  const tv = useTranslations("validation");
   const router = useRouter();
+
+  const schema = useMemo(
+    () =>
+      createSubscriptionFormSchema({
+        nameRequired: tv("nameRequired"),
+        priceRequired: tv("priceRequired"),
+        priceInvalid: tv("priceInvalid"),
+        currencyRequired: tv("currencyRequired"),
+        renewalDateRequired: tv("renewalDateRequired"),
+      }),
+    [tv],
+  );
   const { data: categories = [] } = useCategories();
   const { data: userPrefs } = useUserPreferences();
   const saveSubscription = useSaveSubscription(mode, subscriptionId);
@@ -66,7 +79,7 @@ export function SubscriptionForm({
   const currencyApplied = useRef(false);
 
   const form = useForm<SubscriptionFormValues>({
-    resolver: zodResolver(subscriptionFormSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: "",
       price: "",
@@ -127,9 +140,7 @@ export function SubscriptionForm({
   async function onSubmit(values: SubscriptionFormValues) {
     try {
       await saveSubscription.mutateAsync(values);
-      toast.success(
-        mode === "create" ? t("addedToast") : t("updatedToast"),
-      );
+      toast.success(mode === "create" ? t("addedToast") : t("updatedToast"));
       if (onSuccess) {
         onSuccess();
       } else {
@@ -230,7 +241,9 @@ export function SubscriptionForm({
                 <SelectContent>
                   <SelectItem value="monthly">{t("cycleMonthly")}</SelectItem>
                   <SelectItem value="yearly">{t("cycleYearly")}</SelectItem>
-                  <SelectItem value="quarterly">{t("cycleQuarterly")}</SelectItem>
+                  <SelectItem value="quarterly">
+                    {t("cycleQuarterly")}
+                  </SelectItem>
                   <SelectItem value="weekly">{t("cycleWeekly")}</SelectItem>
                 </SelectContent>
               </Select>

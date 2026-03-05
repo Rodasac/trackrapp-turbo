@@ -60,8 +60,20 @@ vi.mock("next/navigation", () => ({
 
 // Mock locale-aware navigation (next-intl doesn't resolve in jsdom)
 vi.mock("@/i18n/navigation", () => ({
-  Link: ({ href, children, ...props }: { href: string; children: React.ReactNode; [key: string]: unknown }) =>
-    React.createElement("a", { href: typeof href === "string" ? href : String(href), ...props }, children),
+  Link: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) =>
+    React.createElement(
+      "a",
+      { href: typeof href === "string" ? href : String(href), ...props },
+      children,
+    ),
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
@@ -77,13 +89,23 @@ vi.mock("@/i18n/navigation", () => ({
 
 // Mock next-intl so useTranslations/getTranslations work without a provider
 vi.mock("next-intl", async (importOriginal) => {
-  const messages = (await import("../messages/en.json")).default as Record<string, unknown>;
+  const messages = (await import("../messages/en.json")).default as Record<
+    string,
+    unknown
+  >;
 
-  function getNestedValue(obj: Record<string, unknown>, keyPath: string): unknown {
+  function getNestedValue(
+    obj: Record<string, unknown>,
+    keyPath: string,
+  ): unknown {
     const parts = keyPath.split(".");
     let current: unknown = obj;
     for (const part of parts) {
-      if (current && typeof current === "object" && part in (current as Record<string, unknown>)) {
+      if (
+        current &&
+        typeof current === "object" &&
+        part in (current as Record<string, unknown>)
+      ) {
         current = (current as Record<string, unknown>)[part];
       } else {
         return undefined;
@@ -113,7 +135,7 @@ vi.mock("next-intl", async (importOriginal) => {
       if (typeof raw !== "string") return key;
       if (!params) return raw;
       return raw.replace(/\{(\w+)\}/g, (_: string, k: string) =>
-        params[k] !== undefined ? String(params[k]) : `{${k}}`
+        params[k] !== undefined ? String(params[k]) : `{${k}}`,
       );
     };
   }
@@ -123,18 +145,29 @@ vi.mock("next-intl", async (importOriginal) => {
     ...original,
     useTranslations: (namespace: string) => makeTranslator(namespace),
     getTranslations: async (namespace: string) => makeTranslator(namespace),
-    NextIntlClientProvider: ({ children }: { children: React.ReactNode }) => children,
+    NextIntlClientProvider: ({ children }: { children: React.ReactNode }) =>
+      children,
   };
 });
 
 vi.mock("next-intl/server", async () => {
-  const messages = (await import("../messages/en.json")).default as Record<string, unknown>;
+  const messages = (await import("../messages/en.json")).default as Record<
+    string,
+    unknown
+  >;
 
-  function getNestedValue(obj: Record<string, unknown>, keyPath: string): unknown {
+  function getNestedValue(
+    obj: Record<string, unknown>,
+    keyPath: string,
+  ): unknown {
     const parts = keyPath.split(".");
     let current: unknown = obj;
     for (const part of parts) {
-      if (current && typeof current === "object" && part in (current as Record<string, unknown>)) {
+      if (
+        current &&
+        typeof current === "object" &&
+        part in (current as Record<string, unknown>)
+      ) {
         current = (current as Record<string, unknown>)[part];
       } else {
         return undefined;
@@ -164,7 +197,7 @@ vi.mock("next-intl/server", async () => {
       if (typeof raw !== "string") return key;
       if (!params) return raw;
       return raw.replace(/\{(\w+)\}/g, (_: string, k: string) =>
-        params[k] !== undefined ? String(params[k]) : `{${k}}`
+        params[k] !== undefined ? String(params[k]) : `{${k}}`,
       );
     };
   }

@@ -54,7 +54,9 @@ export function PricingCards() {
         cancelUrl: `${window.location.origin}/pricing`,
       });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : tBilling("upgradeFailed"));
+      toast.error(
+        err instanceof Error ? err.message : tBilling("upgradeFailed"),
+      );
     }
   }
 
@@ -89,14 +91,14 @@ export function PricingCards() {
         <Card className="glass">
           <CardHeader>
             <CardTitle>{t("free.name")}</CardTitle>
-            <CardDescription>
-              {t("free.description")}
-            </CardDescription>
+            <CardDescription>{t("free.description")}</CardDescription>
             <div className="mt-2 flex items-baseline gap-1">
               <span className="text-3xl font-bold">
                 ${PRICING.free.monthly}
               </span>
-              <span className="text-muted-foreground text-sm">{t("free.perMonth")}</span>
+              <span className="text-muted-foreground text-sm">
+                {t("free.perMonth")}
+              </span>
             </div>
           </CardHeader>
           <Separator />
@@ -133,20 +135,25 @@ export function PricingCards() {
                   <span className="text-3xl font-bold">
                     ${PRICING.pro.annual}
                   </span>
-                  <span className="text-muted-foreground text-sm">{t("pro.perYear")}</span>
+                  <span className="text-muted-foreground text-sm">
+                    {t("pro.perYear")}
+                  </span>
                 </>
               ) : (
                 <>
                   <span className="text-3xl font-bold">
                     ${PRICING.pro.monthly}
                   </span>
-                  <span className="text-muted-foreground text-sm">{t("pro.perMonth")}</span>
+                  <span className="text-muted-foreground text-sm">
+                    {t("pro.perMonth")}
+                  </span>
                 </>
               )}
             </div>
             {annual && (
               <p className="text-muted-foreground text-xs">
-                ${PRO_EFFECTIVE_MONTHLY}{t("pro.effectiveMonthly")}{" "}
+                ${PRO_EFFECTIVE_MONTHLY}
+                {t("pro.effectiveMonthly")}{" "}
                 {t("pro.savings", { percentage: PRO_ANNUAL_DISCOUNT_PCT })}
               </p>
             )}
@@ -176,7 +183,9 @@ export function PricingCards() {
                 onClick={handleUpgrade}
                 disabled={upgrade.isPending}
               >
-                {upgrade.isPending ? tBilling("upgradeButtonLoading") : t("pro.startTrial")}
+                {upgrade.isPending
+                  ? tBilling("upgradeButtonLoading")
+                  : t("pro.startTrial")}
               </Button>
             ) : (
               <Button className="bg-brand hover:bg-brand/90 w-full" asChild>

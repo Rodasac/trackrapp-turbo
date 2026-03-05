@@ -82,7 +82,9 @@ export function SubscriptionPreferencesForm() {
       </div>
       <div className="flex items-center justify-between gap-4">
         <div className="space-y-1">
-          <Label className="text-sm font-medium">{t("defaultCurrencyLabel")}</Label>
+          <Label className="text-sm font-medium">
+            {t("defaultCurrencyLabel")}
+          </Label>
           <p className="text-muted-foreground text-sm">
             {t("defaultCurrencyDescription")}
           </p>

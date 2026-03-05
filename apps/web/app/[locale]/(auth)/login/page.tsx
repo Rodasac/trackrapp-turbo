@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useForm } from "react-hook-form";
@@ -21,15 +21,20 @@ import { signIn, authClient } from "@/lib/auth-client";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { useTranslations } from "next-intl";
 
-const schema = z.object({
-  email: z.string().email("Enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type FormValues = z.infer<typeof schema>;
+type FormValues = { email: string; password: string };
 
 export default function LoginPage() {
   const t = useTranslations("auth.login");
+  const tv = useTranslations("validation");
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        email: z.string().email(tv("emailInvalid")),
+        password: z.string().min(1, tv("passwordRequired")),
+      }),
+    [tv],
+  );
   const tGoogle = useTranslations("auth.google");
   const router = useRouter();
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
@@ -75,9 +80,7 @@ export default function LoginPage() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h1 className="font-display text-3xl tracking-tight">{t("heading")}</h1>
-        <p className="text-muted-foreground text-sm">
-          {t("description")}
-        </p>
+        <p className="text-muted-foreground text-sm">{t("description")}</p>
       </div>
 
       <Form {...form}>
@@ -142,7 +145,9 @@ export default function LoginPage() {
                 onClick={handleResendVerification}
                 disabled={isResending}
               >
-                {isResending ? t("resendVerificationButtonLoading") : t("resendVerificationButton")}
+                {isResending
+                  ? t("resendVerificationButtonLoading")
+                  : t("resendVerificationButton")}
               </Button>
             </div>
           )}
@@ -151,7 +156,9 @@ export default function LoginPage() {
             disabled={form.formState.isSubmitting}
             className="mt-1"
           >
-            {form.formState.isSubmitting ? t("signInButtonLoading") : t("signInButton")}
+            {form.formState.isSubmitting
+              ? t("signInButtonLoading")
+              : t("signInButton")}
           </Button>
         </form>
       </Form>
@@ -161,7 +168,9 @@ export default function LoginPage() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">{t("orDivider")}</span>
+          <span className="bg-background px-2 text-muted-foreground">
+            {t("orDivider")}
+          </span>
         </div>
       </div>
 
