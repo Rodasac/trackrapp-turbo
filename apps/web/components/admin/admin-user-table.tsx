@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   Table,
   TableBody,
@@ -38,6 +39,7 @@ export function AdminUserTable({
   total,
   onSearch,
 }: AdminUserTableProps) {
+  const t = useTranslations("admin.users");
   const [search, setSearch] = useState("");
   const { mutate: banUser } = useBanUser();
   const { mutate: unbanUser } = useUnbanUser();
@@ -52,28 +54,30 @@ export function AdminUserTable({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Input
-          placeholder="Search users by email…"
+          placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
           className="max-w-sm"
         />
-        <p className="text-muted-foreground text-sm">{total} users</p>
+        <p className="text-muted-foreground text-sm">
+          {t("userCount", { total })}
+        </p>
       </div>
 
       {users.length === 0 ? (
         <p className="text-muted-foreground py-8 text-center text-sm">
-          No users found
+          {t("noUsersFound")}
         </p>
       ) : (
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Joined</TableHead>
+                <TableHead>{t("nameHeader")}</TableHead>
+                <TableHead>{t("emailHeader")}</TableHead>
+                <TableHead>{t("roleHeader")}</TableHead>
+                <TableHead>{t("statusHeader")}</TableHead>
+                <TableHead>{t("joinedHeader")}</TableHead>
                 <TableHead className="w-10" />
               </TableRow>
             </TableHeader>
@@ -86,11 +90,13 @@ export function AdminUserTable({
                     <Badge
                       variant={user.role === "admin" ? "default" : "secondary"}
                     >
-                      {user.role ?? "user"}
+                      {user.role === "admin" ? t("adminRole") : t("userRole")}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {user.banned && <Badge variant="destructive">Banned</Badge>}
+                    {user.banned && (
+                      <Badge variant="destructive">{t("bannedBadge")}</Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {new Date(user.createdAt).toLocaleDateString()}
@@ -100,7 +106,7 @@ export function AdminUserTable({
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="size-8">
                           <MoreHorizontal className="size-4" />
-                          <span className="sr-only">Open menu</span>
+                          <span className="sr-only">{t("openMenu")}</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -108,13 +114,13 @@ export function AdminUserTable({
                           <DropdownMenuItem
                             onClick={() => unbanUser({ userId: user.id })}
                           >
-                            Unban user
+                            {t("unbanAction")}
                           </DropdownMenuItem>
                         ) : (
                           <DropdownMenuItem
                             onClick={() => banUser({ userId: user.id })}
                           >
-                            Ban user
+                            {t("banAction")}
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
@@ -124,7 +130,7 @@ export function AdminUserTable({
                               setRole({ userId: user.id, role: "admin" })
                             }
                           >
-                            Make admin
+                            {t("makeAdminAction")}
                           </DropdownMenuItem>
                         ) : (
                           <DropdownMenuItem
@@ -132,7 +138,7 @@ export function AdminUserTable({
                               setRole({ userId: user.id, role: "user" })
                             }
                           >
-                            Remove admin
+                            {t("removeAdminAction")}
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>

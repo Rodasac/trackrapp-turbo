@@ -81,6 +81,13 @@ describe("formatRenewalDate", () => {
     const result = formatRenewalDate("2026-04-01");
     expect(result).not.toContain("(");
   });
+
+  it("uses Spanish relative labels when provided", () => {
+    expect(formatRenewalDate("2026-02-24", "es-ES", { today: "hoy" })).toContain("(hoy)");
+    expect(formatRenewalDate("2026-02-25", "es-ES", { tomorrow: "mañana" })).toContain("(mañana)");
+    expect(formatRenewalDate("2026-02-20", "es-ES", { overdue: "vencido" })).toContain("(vencido)");
+    expect(formatRenewalDate("2026-03-10", "es-ES", { inDays: "en {days} días" })).toContain("(en 14 días)");
+  });
 });
 
 describe("formatShortDate", () => {
@@ -91,5 +98,22 @@ describe("formatShortDate", () => {
   it("formats a known date", () => {
     // Mar 15, 2026
     expect(formatShortDate("2026-03-15")).toBe("Mar 15, 2026");
+  });
+
+  it("formats a date with a different locale", () => {
+    const result = formatShortDate("2026-03-15", "es-ES");
+    // Spanish locale formats differently but contains the month number or name
+    expect(result).toBeTruthy();
+    expect(result).toContain("2026");
+  });
+});
+
+describe("billingCycleLabel with custom labels", () => {
+  it("returns custom label for monthly", () => {
+    expect(billingCycleLabel("monthly", { monthly: "/mes" })).toBe("/mes");
+  });
+
+  it("falls back to English default when custom label not provided for that cycle", () => {
+    expect(billingCycleLabel("yearly", { monthly: "/mes" })).toBe("/yr");
   });
 });

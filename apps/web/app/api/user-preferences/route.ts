@@ -6,6 +6,7 @@ import { z } from "zod";
 const updatePreferencesSchema = z.object({
   autoRenewDefault: z.boolean().optional(),
   defaultCurrency: z.string().min(1).optional(),
+  locale: z.enum(["en", "es"]).optional(),
 });
 
 async function getOrCreatePreferences(userId: string) {

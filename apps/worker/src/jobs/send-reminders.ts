@@ -8,6 +8,7 @@ import { createTransporter, sendRenewalReminder } from "../services/email.js";
 import { sendPushNotification } from "../services/push.js";
 import { validateEnv } from "../env.js";
 import { remindersLog } from "../logger.js";
+import { getTranslator } from "@repo/shared/i18n";
 
 const DEFAULT_REMINDER_DAYS = [7, 3, 1];
 
@@ -52,7 +53,7 @@ export async function runSendReminders(): Promise<void> {
     return;
   }
 
-  // 2. Batch-fetch notification preferences and push subscriptions for these users
+  // 2. Batch-fetch notification preferences, user preferences, and push subscriptions
   const userIds = [...new Set(subscriptions.map((s) => s.userId))];
 
   const prefsRows = await db
@@ -61,6 +62,13 @@ export async function runSendReminders(): Promise<void> {
     .where(inArray(schema.notificationPreferences.userId, userIds));
 
   const prefsMap = new Map(prefsRows.map((p) => [p.userId, p]));
+
+  const userPrefsRows = await db
+    .select()
+    .from(schema.userPreferences)
+    .where(inArray(schema.userPreferences.userId, userIds));
+
+  const userPrefsMap = new Map(userPrefsRows.map((p) => [p.userId, p]));
 
   const pushRows = await db
     .select()
@@ -95,14 +103,32 @@ export async function runSendReminders(): Promise<void> {
     // Dedup: skip if we already sent a reminder for this subscription recently
     if (await hasExistingReminder(sub.id, sub.nextRenewalDate)) continue;
 
-    const dayLabel = daysUntil === 1 ? "tomorrow" : `in ${daysUntil} days`;
+    const userLocale = userPrefsMap.get(sub.userId)?.locale ?? "en";
+    const tn = getTranslator(userLocale, "notification");
+    const isTomorrow = daysUntil === 1;
+
+    const notifTitle = isTomorrow
+      ? tn("renewal.titleTomorrow", { name: sub.name })
+      : tn("renewal.titleDays", { name: sub.name, days: daysUntil });
+    const notifMessage = isTomorrow
+      ? tn("renewal.messageTomorrow", {
+          name: sub.name,
+          currency: sub.currency,
+          price: sub.price,
+        })
+      : tn("renewal.messageDays", {
+          name: sub.name,
+          currency: sub.currency,
+          price: sub.price,
+          days: daysUntil,
+        });
 
     // Create in-app notification
     await createNotification({
       userId: sub.userId,
       type: "renewal_reminder",
-      title: `${sub.name} renews ${dayLabel}`,
-      message: `Your ${sub.name} subscription (${sub.currency} ${sub.price}) renews ${dayLabel}.`,
+      title: notifTitle,
+      message: notifMessage,
       relatedSubscriptionId: sub.id,
     });
 
@@ -115,6 +141,7 @@ export async function runSendReminders(): Promise<void> {
         price: sub.price,
         currency: sub.currency,
         daysUntilRenewal: daysUntil,
+        locale: userLocale,
       });
     }
 
@@ -128,7 +155,7 @@ export async function runSendReminders(): Promise<void> {
             keys: { p256dh: pushSub.p256dh, auth: pushSub.auth },
           },
           {
-            title: `${sub.name} renews ${dayLabel}`,
+            title: notifTitle,
             message: `${sub.currency} ${sub.price}`,
             url: `/subscriptions/${sub.id}`,
           },

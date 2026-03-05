@@ -27,6 +27,7 @@ import {
   type CategoryFormValues,
 } from "@repo/shared/validations";
 import { useCreateCategory } from "@/hooks/use-subscription-mutations";
+import { useTranslations } from "next-intl";
 import type { Category } from "@repo/database";
 import { IconSearch } from "@/components/icon-search";
 
@@ -37,6 +38,7 @@ interface AddCategoryDialogProps {
 export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
   const [open, setOpen] = useState(false);
   const createCategory = useCreateCategory();
+  const t = useTranslations("subscriptions.addCategory");
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
@@ -49,9 +51,9 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
       onCreated(cat);
       setOpen(false);
       form.reset();
-      toast.success("Category created");
+      toast.success(t("createdToast"));
     } catch {
-      toast.error("Failed to create category");
+      toast.error(t("failedToast"));
     }
   }
 
@@ -64,13 +66,13 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
         onClick={() => setOpen(true)}
       >
         <Plus className="size-3" />
-        New category
+        {t("newButton")}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>New category</DialogTitle>
+            <DialogTitle>{t("title")}</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form
@@ -85,9 +87,9 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("nameLabel")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. Entertainment" {...field} />
+                      <Input placeholder={t("namePlaceholder")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -98,9 +100,9 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
                 name="color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Color (hex)</FormLabel>
+                    <FormLabel>{t("colorLabel")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="#6366f1" {...field} />
+                      <Input placeholder={t("colorPlaceholder")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,7 +113,7 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
                 name="icon"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Icon</FormLabel>
+                    <FormLabel>{t("iconLabel")}</FormLabel>
                     <FormControl>
                       <IconSearch
                         value={field.value}
@@ -128,10 +130,10 @@ export function AddCategoryDialog({ onCreated }: AddCategoryDialogProps) {
                   variant="outline"
                   onClick={() => setOpen(false)}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? "Creating…" : "Create"}
+                  {form.formState.isSubmitting ? t("creating") : t("create")}
                 </Button>
               </DialogFooter>
             </form>

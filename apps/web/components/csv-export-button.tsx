@@ -4,9 +4,11 @@ import { useState } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export function CsvExportButton() {
   const [isExporting, setIsExporting] = useState(false);
+  const t = useTranslations("subscriptions.csvExport");
 
   async function handleExport() {
     setIsExporting(true);
@@ -24,9 +26,9 @@ export function CsvExportButton() {
       a.remove();
       URL.revokeObjectURL(url);
 
-      toast.success("Export downloaded");
+      toast.success(t("downloadedToast"));
     } catch {
-      toast.error("Failed to export subscriptions");
+      toast.error(t("failedToast"));
     } finally {
       setIsExporting(false);
     }
@@ -41,7 +43,7 @@ export function CsvExportButton() {
       data-testid="csv-export-button"
     >
       <Download className="mr-2 size-4" />
-      {isExporting ? "Exporting…" : "Export CSV"}
+      {isExporting ? t("exporting") : t("button")}
     </Button>
   );
 }

@@ -3,19 +3,13 @@ import { screen } from "@testing-library/react";
 import { renderWithProviders } from "@/tests/test-utils";
 import { mockSession, mockAdminSession } from "@/tests/fixtures";
 
-const { mockUseSession, mockUsePathname } = vi.hoisted(() => ({
+const { mockUseSession } = vi.hoisted(() => ({
   mockUseSession: vi.fn(),
-  mockUsePathname: vi.fn(() => "/dashboard"),
 }));
 
 vi.mock("@/lib/auth-client", () => ({
   useSession: mockUseSession,
   signOut: vi.fn(),
-}));
-
-vi.mock("next/navigation", () => ({
-  usePathname: mockUsePathname,
-  useRouter: vi.fn(() => ({ push: vi.fn() })),
 }));
 
 vi.mock("@/components/notification-bell", () => ({
@@ -24,6 +18,10 @@ vi.mock("@/components/notification-bell", () => ({
 
 vi.mock("@/components/theme-toggle", () => ({
   ThemeToggle: () => <button>Theme</button>,
+}));
+
+vi.mock("@/components/language-switcher", () => ({
+  LanguageSwitcher: () => <button>Lang</button>,
 }));
 
 import React from "react";

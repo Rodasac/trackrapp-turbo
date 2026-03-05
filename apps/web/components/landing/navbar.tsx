@@ -1,21 +1,23 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { CreditCard, Menu } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@repo/ui/sheet";
 import { useSession } from "@/lib/auth-client";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-const NAV_LINKS = [
-  { href: "/#features", label: "Features" },
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#pricing", label: "Pricing" },
-];
+import { useTranslations } from "next-intl";
 
 export function Navbar() {
   const { data: session } = useSession();
   const isLoggedIn = !!session;
+  const t = useTranslations("landing.nav");
+
+  const NAV_LINKS = [
+    { href: "/#features", label: t("features") },
+    { href: "/#how-it-works", label: t("howItWorks") },
+    { href: "/#pricing", label: t("pricing") },
+  ];
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
@@ -47,7 +49,7 @@ export function Navbar() {
 
           {isLoggedIn ? (
             <Button asChild size="sm">
-              <Link href="/dashboard">Dashboard</Link>
+              <Link href="/dashboard">{t("dashboard")}</Link>
             </Button>
           ) : (
             <>
@@ -57,14 +59,14 @@ export function Navbar() {
                 size="sm"
                 className="hidden sm:inline-flex"
               >
-                <Link href="/login">Sign in</Link>
+                <Link href="/login">{t("signIn")}</Link>
               </Button>
               <Button
                 asChild
                 size="sm"
                 className="hidden bg-brand hover:bg-brand/90 sm:inline-flex"
               >
-                <Link href="/signup">Get started</Link>
+                <Link href="/signup">{t("getStarted")}</Link>
               </Button>
             </>
           )}
@@ -76,7 +78,7 @@ export function Navbar() {
                 variant="ghost"
                 size="icon"
                 className="sm:hidden"
-                aria-label="Open menu"
+                aria-label={t("openMenu")}
               >
                 <Menu className="size-5" />
               </Button>
@@ -97,7 +99,7 @@ export function Navbar() {
                   {isLoggedIn ? (
                     <SheetClose asChild>
                       <Button asChild size="sm" className="w-full">
-                        <Link href="/dashboard">Dashboard</Link>
+                        <Link href="/dashboard">{t("dashboard")}</Link>
                       </Button>
                     </SheetClose>
                   ) : (
@@ -109,7 +111,7 @@ export function Navbar() {
                           size="sm"
                           className="w-full"
                         >
-                          <Link href="/login">Sign in</Link>
+                          <Link href="/login">{t("signIn")}</Link>
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
@@ -118,7 +120,7 @@ export function Navbar() {
                           size="sm"
                           className="bg-brand hover:bg-brand/90 w-full"
                         >
-                          <Link href="/signup">Get started</Link>
+                          <Link href="/signup">{t("getStarted")}</Link>
                         </Button>
                       </SheetClose>
                     </>

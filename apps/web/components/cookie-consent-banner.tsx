@@ -1,11 +1,12 @@
 "use client";
 
 import { useSyncExternalStore, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { Switch } from "@repo/ui/switch";
 import { getCookieConsent, setCookieConsent } from "@/lib/cookie-consent";
+import { useTranslations } from "next-intl";
 
 // Hydration-safe mounted guard — same pattern as ThemeToggle
 const subscribe = () => () => {};
@@ -22,6 +23,8 @@ export function CookieConsentBanner() {
   const [showPreferences, setShowPreferences] = useState(false);
   const [functional, setFunctional] = useState(true);
   const [analytics, setAnalytics] = useState(true);
+
+  const t = useTranslations("cookies");
 
   if (!mounted || dismissed || getCookieConsent() !== null) return null;
 
@@ -55,16 +58,15 @@ export function CookieConsentBanner() {
         </div>
 
         <h2 className="font-serif text-xl font-normal text-foreground mb-2">
-          We use cookies
+          {t("heading")}
         </h2>
         <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
-          We use cookies to improve your experience and analyse site usage. Read
-          our{" "}
+          {t("description")}{" "}
           <Link
             href="/cookies"
             className="underline text-foreground hover:text-brand"
           >
-            Cookie Policy
+            {t("cookiePolicyLink")}
           </Link>
           .
         </p>
@@ -74,7 +76,7 @@ export function CookieConsentBanner() {
           onClick={handleAcceptAll}
           className="w-full mb-3 bg-brand hover:bg-brand/90 text-white"
         >
-          Accept all cookies
+          {t("acceptAll")}
         </Button>
 
         {/* Manage preferences toggle */}
@@ -83,7 +85,7 @@ export function CookieConsentBanner() {
           onClick={() => setShowPreferences((v) => !v)}
           className="w-full text-muted-foreground hover:text-foreground"
         >
-          Manage preferences
+          {t("managePreferences")}
           {showPreferences ? (
             <ChevronUp className="ml-2 size-4" />
           ) : (
@@ -98,16 +100,16 @@ export function CookieConsentBanner() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-medium text-foreground">
-                  Strictly necessary
+                  {t("strictlyNecessaryLabel")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Required for the site to function. Cannot be disabled.
+                  {t("strictlyNecessaryDesc")}
                 </p>
               </div>
               <Switch
                 checked
                 disabled
-                aria-label="Strictly necessary cookies"
+                aria-label={t("strictlyNecessaryLabel")}
               />
             </div>
 
@@ -115,31 +117,31 @@ export function CookieConsentBanner() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-medium text-foreground">
-                  Functional
+                  {t("functionalLabel")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Remembers your preferences and settings.
+                  {t("functionalDesc")}
                 </p>
               </div>
               <Switch
                 checked={functional}
                 onCheckedChange={setFunctional}
-                aria-label="Functional cookies"
+                aria-label={t("functionalLabel")}
               />
             </div>
 
             {/* Analytics */}
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-foreground">Analytics</p>
+                <p className="text-sm font-medium text-foreground">{t("analyticsLabel")}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Helps us understand how you use the app.
+                  {t("analyticsDesc")}
                 </p>
               </div>
               <Switch
                 checked={analytics}
                 onCheckedChange={setAnalytics}
-                aria-label="Analytics cookies"
+                aria-label={t("analyticsLabel")}
               />
             </div>
 
@@ -148,7 +150,7 @@ export function CookieConsentBanner() {
               onClick={handleSavePreferences}
               className="w-full mt-2"
             >
-              Save preferences
+              {t("savePreferences")}
             </Button>
           </div>
         )}

@@ -103,7 +103,7 @@ describe("ChangeEmailForm", () => {
     await waitFor(() =>
       expect(screen.getByText(/verification email sent to/i)).toBeTruthy(),
     );
-    expect(screen.getByText("new@example.com")).toBeTruthy();
+    expect(screen.getByText(/new@example\.com/i)).toBeTruthy();
   });
 
   it("shows error toast when mutation fails", async () => {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@repo/ui/button";
 import {
   Select,
@@ -17,20 +18,6 @@ import {
 import { cn } from "@repo/ui/lib/utils";
 import { ImportDefaultsPanel } from "./import-defaults";
 
-const TRACKR_FIELDS: {
-  value: TrackrField;
-  label: string;
-  required: boolean;
-}[] = [
-  { value: "name", label: "Name", required: true },
-  { value: "price", label: "Price", required: true },
-  { value: "currency", label: "Currency", required: false },
-  { value: "billingCycle", label: "Billing Cycle", required: true },
-  { value: "nextRenewalDate", label: "Next Renewal Date", required: true },
-  { value: "categoryName", label: "Category", required: false },
-  { value: "startDate", label: "Start Date", required: false },
-  { value: "status", label: "Status", required: false },
-];
 
 // name + price must always come from a CSV column
 const ALWAYS_REQUIRED: TrackrField[] = ["name", "price"];
@@ -64,6 +51,23 @@ interface MappingStepProps {
 }
 
 export function MappingStep({ headers, rows, onContinue, defaultCurrency }: MappingStepProps) {
+  const t = useTranslations("csvImport.mapping");
+
+  const TRACKR_FIELDS: {
+    value: TrackrField;
+    label: string;
+    required: boolean;
+  }[] = [
+    { value: "name", label: t("fieldName"), required: true },
+    { value: "price", label: t("fieldPrice"), required: true },
+    { value: "currency", label: t("fieldCurrency"), required: false },
+    { value: "billingCycle", label: t("fieldBillingCycle"), required: true },
+    { value: "nextRenewalDate", label: t("fieldNextRenewal"), required: true },
+    { value: "categoryName", label: t("fieldCategory"), required: false },
+    { value: "startDate", label: t("fieldStartDate"), required: false },
+    { value: "status", label: t("fieldStatus"), required: false },
+  ];
+
   const autoDetected = detectColumnMapping(headers);
 
   const [mapping, setMapping] = useState<Record<string, TrackrField | null>>(
@@ -134,10 +138,7 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
         <div className="flex items-center gap-2">
           <CheckCircle2 className="size-4 shrink-0 text-yellow-500" />
           <p className="text-sm text-yellow-700">
-            <strong>Tip:</strong> You can skip columns you don&apos;t need. Name
-            and price are mandatory. Billing cycle and next renewal date can be
-            inferred from the CSV, or you can provide a default value, but must
-            have a valid value.
+            <strong>{t("tipHeading")}</strong> {t("tip")}
           </p>
         </div>
       </div>
@@ -147,7 +148,7 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Map your CSV columns to TrackrApp fields.
+          {t("instruction")}
         </p>
         <span
           className={cn(
@@ -155,7 +156,7 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
             canContinue ? "text-green-600" : "text-amber-600",
           )}
         >
-          {mappedCount} of {headers.length} columns mapped
+          {t("columnsMapped", { mapped: mappedCount, total: headers.length })}
         </span>
       </div>
 
@@ -164,8 +165,8 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/40">
-              <th className="px-4 py-2 text-left font-medium">CSV Column</th>
-              <th className="px-4 py-2 text-left font-medium">Maps To</th>
+              <th className="px-4 py-2 text-left font-medium">{t("csvColumn")}</th>
+              <th className="px-4 py-2 text-left font-medium">{t("mapsTo")}</th>
             </tr>
           </thead>
           <tbody>
@@ -193,11 +194,11 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
                       }
                     >
                       <SelectTrigger className="h-8 w-48 text-xs">
-                        <SelectValue placeholder="Skip this column" />
+                        <SelectValue placeholder={t("skipColumn")} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="__skip__">
-                          Skip this column
+                          {t("skipColumn")}
                         </SelectItem>
                         {TRACKR_FIELDS.map((f) => (
                           <SelectItem key={f.value} value={f.value}>
@@ -254,7 +255,7 @@ export function MappingStep({ headers, rows, onContinue, defaultCurrency }: Mapp
 
       <div className="flex justify-end">
         <Button onClick={handleContinue} disabled={!canContinue}>
-          Continue to Preview
+          {t("continueButton")}
         </Button>
       </div>
     </div>

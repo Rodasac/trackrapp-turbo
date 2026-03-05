@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { BarChart3 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
@@ -12,6 +13,7 @@ import { CategoryBreakdownChart } from "./charts/category-breakdown-chart";
 import { TopSubscriptionsChart } from "./charts/top-subscriptions-chart";
 
 export function DashboardCharts() {
+  const t = useTranslations("dashboard.charts");
   const isPro = useIsPro();
   const { data, isLoading } = useDashboardCharts();
 
@@ -23,13 +25,12 @@ export function DashboardCharts() {
             <BarChart3 className="size-6 text-muted-foreground" />
           </div>
           <Badge className="mb-3">Pro</Badge>
-          <h3 className="mb-2 text-lg font-semibold">Spending Analytics</h3>
+          <h3 className="mb-2 text-lg font-semibold">{t("title")}</h3>
           <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-            Unlock spending trend charts, category breakdowns, and top
-            subscription insights with a Pro plan.
+            {t("upgradeDescription")}
           </p>
           <Button asChild>
-            <Link href="/pricing">View plans</Link>
+            <Link href="/pricing">{t("viewPlans")}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -50,7 +51,7 @@ export function DashboardCharts() {
     <div data-testid="dashboard-charts" className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Spending trend</CardTitle>
+          <CardTitle className="text-base">{t("spendingTrend")}</CardTitle>
         </CardHeader>
         <CardContent>
           <SpendingTrendChart data={data?.spendingTrend ?? []} />
@@ -60,7 +61,7 @@ export function DashboardCharts() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">By category</CardTitle>
+            <CardTitle className="text-base">{t("categoryBreakdown")}</CardTitle>
           </CardHeader>
           <CardContent>
             <CategoryBreakdownChart data={data?.categoryBreakdown ?? []} />
@@ -69,7 +70,7 @@ export function DashboardCharts() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Top subscriptions</CardTitle>
+            <CardTitle className="text-base">{t("topSubscriptions")}</CardTitle>
           </CardHeader>
           <CardContent>
             <TopSubscriptionsChart data={data?.topSubscriptions ?? []} />

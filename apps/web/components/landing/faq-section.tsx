@@ -8,17 +8,20 @@ import {
 } from "@repo/ui/accordion";
 import { FadeIn } from "@/components/landing/motion/fade-in";
 import { FAQ_ITEMS } from "@/lib/faq-data";
+import { useTranslations } from "next-intl";
 
 export function FaqSection() {
+  const t = useTranslations("landing.faq");
+
   return (
     <section className="bg-background py-20 sm:py-28">
       <div className="mx-auto max-w-3xl px-6">
         <FadeIn className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Frequently asked questions
+            {t("sectionTitle")}
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-lg">
-            Everything you need to know about TrackrApp.
+            {t("sectionDescription")}
           </p>
         </FadeIn>
 

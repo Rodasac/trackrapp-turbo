@@ -6,6 +6,7 @@ import { Loader2, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@repo/ui/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
+import { useTranslations } from "next-intl";
 
 interface AvatarUploadProps {
   image?: string | null;
@@ -29,6 +30,7 @@ export function AvatarUpload({
   className,
 }: AvatarUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations("settings.profile");
 
   const { startUpload, isUploading } = useUploadThing("avatarUploader");
 
@@ -43,7 +45,7 @@ export function AvatarUpload({
         onUploadComplete(url);
       }
     } catch {
-      toast.error("Failed to upload avatar. Please try again.");
+      toast.error(t("avatarUploadFailed"));
     } finally {
       // Reset input so the same file can be re-uploaded if needed
       if (fileInputRef.current) fileInputRef.current.value = "";

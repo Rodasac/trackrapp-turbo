@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Trash2 } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import {
@@ -34,6 +35,7 @@ export function DeleteSubscriptionDialog({
   onDeactivate,
   trigger,
 }: DeleteSubscriptionDialogProps) {
+  const t = useTranslations("subscriptions.deleteDialog");
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const deactivate = useDeactivateSubscription();
@@ -44,23 +46,23 @@ export function DeleteSubscriptionDialog({
   async function handleDeactivate() {
     try {
       await deactivate.mutateAsync(subscriptionId);
-      toast.success("Subscription deactivated");
+      toast.success(t("deactivatedToast"));
       setOpen(false);
       onDeactivate?.();
     } catch {
-      toast.error("Failed to deactivate");
+      toast.error(t("failedToDeactivateToast"));
     }
   }
 
   async function handleDelete() {
     try {
       await hardDelete.mutateAsync(subscriptionId);
-      toast.success("Subscription deleted");
+      toast.success(t("deletedToast"));
       setOpen(false);
       onDelete?.();
       router.push("/subscriptions");
     } catch {
-      toast.error("Failed to delete");
+      toast.error(t("failedToDeleteToast"));
     }
   }
 
@@ -83,22 +85,22 @@ export function DeleteSubscriptionDialog({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Remove subscription?</DialogTitle>
+            <DialogTitle>{t("title")}</DialogTitle>
             <DialogDescription>
-              Choose how to remove &ldquo;{subscriptionName}&rdquo;.
+              {t("description", { name: subscriptionName })}
             </DialogDescription>
           </DialogHeader>
 
           <div className="rounded-md border p-3 text-sm">
-            <p className="font-medium">Deactivate</p>
+            <p className="font-medium">{t("deactivateTitle")}</p>
             <p className="text-muted-foreground mt-0.5">
-              Hides it from your active list but keeps history.
+              {t("deactivateDescription")}
             </p>
           </div>
           <div className="rounded-md border border-destructive/30 p-3 text-sm">
-            <p className="text-destructive font-medium">Delete permanently</p>
+            <p className="text-destructive font-medium">{t("deleteTitle")}</p>
             <p className="text-muted-foreground mt-0.5">
-              Removes all data including price history. This cannot be undone.
+              {t("deleteDescription")}
             </p>
           </div>
 
@@ -108,21 +110,21 @@ export function DeleteSubscriptionDialog({
               onClick={() => setOpen(false)}
               disabled={pending}
             >
-              Cancel
+              {t("cancelButton")}
             </Button>
             <Button
               variant="secondary"
               onClick={handleDeactivate}
               disabled={pending}
             >
-              {deactivate.isPending ? "Deactivating…" : "Deactivate"}
+              {deactivate.isPending ? t("deactivateButtonLoading") : t("deactivateButton")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               disabled={pending}
             >
-              {hardDelete.isPending ? "Deleting…" : "Delete permanently"}
+              {hardDelete.isPending ? t("deleteButtonLoading") : t("deleteButton")}
             </Button>
           </DialogFooter>
         </DialogContent>

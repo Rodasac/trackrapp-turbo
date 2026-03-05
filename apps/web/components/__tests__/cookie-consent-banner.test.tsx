@@ -145,7 +145,7 @@ describe("CookieConsentBanner", () => {
     );
 
     const functionalSwitch = screen.getByRole("switch", {
-      name: /functional cookies/i,
+      name: /functional/i,
     });
     // default: checked
     expect(functionalSwitch).toHaveAttribute("aria-checked", "true");
@@ -161,7 +161,7 @@ describe("CookieConsentBanner", () => {
     );
 
     const analyticsSwitch = screen.getByRole("switch", {
-      name: /analytics cookies/i,
+      name: /analytics/i,
     });
     expect(analyticsSwitch).toHaveAttribute("aria-checked", "true");
 
@@ -176,7 +176,7 @@ describe("CookieConsentBanner", () => {
     );
 
     // Turn off analytics
-    fireEvent.click(screen.getByRole("switch", { name: /analytics cookies/i }));
+    fireEvent.click(screen.getByRole("switch", { name: /analytics/i }));
 
     fireEvent.click(screen.getByRole("button", { name: /save preferences/i }));
 

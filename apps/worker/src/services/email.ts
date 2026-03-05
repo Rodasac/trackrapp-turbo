@@ -5,6 +5,7 @@ import {
   emailButton,
   EMAIL_BRAND,
 } from "@repo/shared/email-templates";
+import { getTranslator } from "@repo/shared/i18n";
 
 export interface TransporterConfig {
   host: string;
@@ -21,6 +22,7 @@ export interface RenewalReminderParams {
   price: string;
   currency: string;
   daysUntilRenewal: number;
+  locale?: string;
 }
 
 export function createTransporter(config: TransporterConfig): Transporter {
@@ -39,45 +41,70 @@ export async function sendRenewalReminder(
   transporter: Transporter,
   params: RenewalReminderParams,
 ): Promise<void> {
-  const { to, from, subscriptionName, price, currency, daysUntilRenewal } =
-    params;
+  const {
+    to,
+    from,
+    subscriptionName,
+    price,
+    currency,
+    daysUntilRenewal,
+    locale = "en",
+  } = params;
 
-  const dayLabel =
-    daysUntilRenewal === 1 ? "tomorrow" : `in ${daysUntilRenewal} days`;
-  const subject =
-    daysUntilRenewal === 1
-      ? `Reminder: ${subscriptionName} renews tomorrow`
-      : `Reminder: ${subscriptionName} renews in ${daysUntilRenewal} days`;
+  const t = getTranslator(locale, "email");
+  const isTomorrow = daysUntilRenewal === 1;
+
+  const dayLabel = isTomorrow
+    ? t("renewal.dayLabelTomorrow")
+    : t("renewal.dayLabelDays", { days: daysUntilRenewal });
+
+  const subject = isTomorrow
+    ? t("renewal.subjectTomorrow", { name: subscriptionName })
+    : t("renewal.subjectDays", { name: subscriptionName, days: daysUntilRenewal });
+
+  const previewText = isTomorrow
+    ? t("renewal.previewTomorrow", { name: subscriptionName })
+    : t("renewal.previewDays", { name: subscriptionName, days: daysUntilRenewal });
+
+  const bodyLine = isTomorrow
+    ? t("renewal.bodyTomorrow", { name: subscriptionName })
+    : t("renewal.bodyDays", { name: subscriptionName, days: daysUntilRenewal });
+
+  const textBodyLine = isTomorrow
+    ? t("renewal.textBodyTomorrow", { name: subscriptionName })
+    : t("renewal.textBodyDays", { name: subscriptionName, days: daysUntilRenewal });
 
   const text = [
-    `Hi there,`,
+    t("renewal.textGreeting"),
     ``,
-    `This is a reminder that your ${subscriptionName} subscription renews ${dayLabel}.`,
+    textBodyLine,
     ``,
-    `Amount: ${currency} ${price}`,
+    t("renewal.textAmount", { currency, price }),
     ``,
-    `Log in to TrackrApp to manage your subscriptions.`,
+    t("renewal.textFooter"),
     ``,
-    `— TrackrApp`,
+    t("renewal.textSignature"),
   ].join("\n");
 
   const appUrl = process.env.APP_URL ?? EMAIL_BRAND.appUrl;
 
   const html = emailLayout({
-    previewText: `Your ${subscriptionName} subscription renews ${dayLabel}.`,
+    previewText,
     appUrl,
+    locale,
     content: `
-      <h2 style="margin:0 0 8px;font-family:${EMAIL_BRAND.fontStack};font-size:24px;color:#0f172a;font-weight:400;">Renewal Reminder</h2>
+      <h2 style="margin:0 0 8px;font-family:${EMAIL_BRAND.fontStack};font-size:24px;color:#0f172a;font-weight:400;">${t("renewal.heading")}</h2>
       <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;">
-        Your <strong>${subscriptionName}</strong> subscription renews ${dayLabel}.
+        ${bodyLine}
       </p>
       <p style="margin:0 0 28px;font-size:20px;font-weight:700;color:#0f172a;">${currency} ${price}</p>
-      ${emailButton("View in TrackrApp", `${appUrl}/subscriptions`)}
+      ${emailButton(t("renewal.cta"), `${appUrl}/subscriptions`)}
       <p style="margin:24px 0 0;font-size:13px;color:#94a3b8;line-height:1.6;">
-        Log in to TrackrApp to manage your subscriptions.
+        ${t("renewal.footerText")}
       </p>
     `,
   });
 
+  void dayLabel; // used via bodyLine/textBodyLine but keep for potential future use
   await transporter.sendMail({ from, to, subject, text, html });
 }

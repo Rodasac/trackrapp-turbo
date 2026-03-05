@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/select";
+import { useTranslations } from "next-intl";
 import { useCategories } from "@/hooks/use-categories";
 import type { ImportDefaults } from "./mapping-step";
 import { CURRENCIES } from "@repo/shared/constants";
@@ -16,18 +17,19 @@ interface ImportDefaultsPanelProps {
   onChange: (d: ImportDefaults) => void;
 }
 
-const BILLING_CYCLES = [
-  { value: "monthly", label: "Monthly" },
-  { value: "yearly", label: "Yearly" },
-  { value: "weekly", label: "Weekly" },
-  { value: "quarterly", label: "Quarterly" },
-];
-
 export function ImportDefaultsPanel({
   defaults,
   onChange,
 }: ImportDefaultsPanelProps) {
+  const t = useTranslations("csvImport.defaults");
   const { data: categories = [] } = useCategories();
+
+  const BILLING_CYCLES = [
+    { value: "monthly", label: t("monthly") },
+    { value: "yearly", label: t("yearly") },
+    { value: "weekly", label: t("weekly") },
+    { value: "quarterly", label: t("quarterly") },
+  ];
 
   function set<K extends keyof ImportDefaults>(
     key: K,
@@ -39,9 +41,9 @@ export function ImportDefaultsPanel({
   return (
     <details className="rounded-md border bg-muted/30 p-4">
       <summary className="cursor-pointer select-none text-sm font-medium">
-        Default Values
+        {t("title")}
         <span className="ml-2 text-xs font-normal text-muted-foreground">
-          (used when a column is not mapped)
+          {t("subtitle")}
         </span>
       </summary>
 
@@ -52,14 +54,14 @@ export function ImportDefaultsPanel({
             htmlFor="default-billing-cycle"
             className="text-xs font-medium"
           >
-            Billing Cycle
+            {t("billingCycleLabel")}
           </label>
           <Select
             value={defaults.billingCycle}
             onValueChange={(v) => set("billingCycle", v)}
           >
             <SelectTrigger id="default-billing-cycle" className="h-8 text-xs">
-              <SelectValue placeholder="Select..." />
+              <SelectValue placeholder={t("selectPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
               {BILLING_CYCLES.map((c) => (
@@ -74,14 +76,14 @@ export function ImportDefaultsPanel({
         {/* Currency */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="default-currency" className="text-xs font-medium">
-            Currency
+            {t("currencyLabel")}
           </label>
           <Select
             value={defaults.currency}
             onValueChange={(v) => set("currency", v)}
           >
             <SelectTrigger id="default-currency" className="h-8 text-xs">
-              <SelectValue placeholder="Select..." />
+              <SelectValue placeholder={t("selectPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
               {CURRENCIES.map((c) => (
@@ -96,7 +98,7 @@ export function ImportDefaultsPanel({
         {/* Category */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="default-category" className="text-xs font-medium">
-            Category
+            {t("categoryLabel")}
           </label>
           <Select
             value={defaults.categoryName || "__none__"}
@@ -105,10 +107,10 @@ export function ImportDefaultsPanel({
             }
           >
             <SelectTrigger id="default-category" className="h-8 text-xs">
-              <SelectValue placeholder="None" />
+              <SelectValue placeholder={t("none")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__none__">None</SelectItem>
+              <SelectItem value="__none__">{t("none")}</SelectItem>
               {categories.map((c) => (
                 <SelectItem key={c.id} value={c.name}>
                   {c.name}
@@ -124,7 +126,7 @@ export function ImportDefaultsPanel({
             htmlFor="default-next-renewal-date"
             className="text-xs font-medium"
           >
-            Next Renewal Date
+            {t("nextRenewalLabel")}
           </label>
           <input
             id="default-next-renewal-date"
@@ -138,7 +140,7 @@ export function ImportDefaultsPanel({
         {/* Start Date */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="default-start-date" className="text-xs font-medium">
-            Start Date
+            {t("startDateLabel")}
           </label>
           <input
             id="default-start-date"

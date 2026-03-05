@@ -42,6 +42,7 @@ import {
   TableRow,
 } from "@repo/ui/table";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import {
   formatPrice,
   billingCycleLabel,
@@ -124,6 +125,8 @@ function SkeletonRow() {
 }
 
 export function SubscriptionList() {
+  const t = useTranslations("subscriptions.list");
+  const tSubs = useTranslations("subscriptions");
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -155,41 +158,41 @@ export function SubscriptionList() {
   async function handleDeactivate(id: number) {
     try {
       await deactivate.mutateAsync(id);
-      toast.success("Subscription cancelled");
+      toast.success(t("cancelledToast"));
     } catch {
-      toast.error("Failed to cancel");
+      toast.error(t("failedToCancelToast"));
     }
   }
 
   async function handleRenew(id: number) {
     try {
       await renew.mutateAsync(id);
-      toast.success("Renewed");
+      toast.success(t("renewedToast"));
     } catch {
-      toast.error("Failed to renew");
+      toast.error(t("failedToRenewToast"));
     }
   }
 
   async function handleUndoRenewal(id: number) {
     try {
       await undoRenewal.mutateAsync(id);
-      toast.success("Renewal undone");
+      toast.success(t("renewalUndoneToast"));
     } catch {
-      toast.error("Failed to undo renewal");
+      toast.error(t("failedToUndoRenewalToast"));
     }
   }
 
   async function handleReactivate(id: number) {
     try {
       await reactivate.mutateAsync(id);
-      toast.success("Subscription reactivated");
+      toast.success(t("reactivatedToast"));
     } catch {
-      toast.error("Failed to reactivate");
+      toast.error(t("failedToReactivateToast"));
     }
   }
 
   if (isError) {
-    toast.error("Failed to load subscriptions");
+    toast.error(t("failedToLoadToast"));
   }
 
   const hasFilters = !!(search || categoryFilter !== "all");
@@ -201,7 +204,7 @@ export function SubscriptionList() {
         <div className="relative min-w-48 flex-1">
           <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
           <Input
-            placeholder="Search subscriptions…"
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -213,7 +216,7 @@ export function SubscriptionList() {
             <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
+            <SelectItem value="all">{t("allCategories")}</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat.id} value={String(cat.id)}>
                 <DynamicIcon
@@ -238,12 +241,12 @@ export function SubscriptionList() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="nextRenewalDate:asc">Renewal ↑</SelectItem>
-            <SelectItem value="nextRenewalDate:desc">Renewal ↓</SelectItem>
-            <SelectItem value="name:asc">Name A–Z</SelectItem>
-            <SelectItem value="name:desc">Name Z–A</SelectItem>
-            <SelectItem value="price:asc">Price ↑</SelectItem>
-            <SelectItem value="price:desc">Price ↓</SelectItem>
+            <SelectItem value="nextRenewalDate:asc">{t("sortRenewalAsc")}</SelectItem>
+            <SelectItem value="nextRenewalDate:desc">{t("sortRenewalDesc")}</SelectItem>
+            <SelectItem value="name:asc">{t("sortNameAsc")}</SelectItem>
+            <SelectItem value="name:desc">{t("sortNameDesc")}</SelectItem>
+            <SelectItem value="price:asc">{t("sortPriceAsc")}</SelectItem>
+            <SelectItem value="price:desc">{t("sortPriceDesc")}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -254,7 +257,7 @@ export function SubscriptionList() {
             onCheckedChange={setShowInactive}
           />
           <Label htmlFor="show-inactive" className="text-sm">
-            Show inactive
+            {t("showInactive")}
           </Label>
         </div>
 
@@ -268,10 +271,10 @@ export function SubscriptionList() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-8" />
-              <TableHead>Name</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Next renewal</TableHead>
+              <TableHead>{t("nameHeader")}</TableHead>
+              <TableHead>{t("priceHeader")}</TableHead>
+              <TableHead>{t("categoryHeader")}</TableHead>
+              <TableHead>{t("nextRenewalHeader")}</TableHead>
               <TableHead className="w-8" />
             </TableRow>
           </TableHeader>
@@ -298,7 +301,7 @@ export function SubscriptionList() {
                         <span className="font-medium">{sub.name}</span>
                         {!sub.isActive && (
                           <Badge variant="secondary" className="text-xs">
-                            Inactive
+                            {t("inactiveBadge")}
                           </Badge>
                         )}
                       </div>
@@ -347,7 +350,7 @@ export function SubscriptionList() {
                             variant="outline"
                             className="border-amber-500 text-xs text-amber-600 dark:text-amber-400"
                           >
-                            Due
+                            {t("dueBadge")}
                           </Badge>
                         )}
                       </div>
@@ -361,20 +364,20 @@ export function SubscriptionList() {
                             className="size-8"
                           >
                             <MoreHorizontal className="size-4" />
-                            <span className="sr-only">Actions</span>
+                            <span className="sr-only">{t("actions")}</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
                             <Link href={`/subscriptions/${sub.id}`}>
                               <Eye className="mr-2 size-4" />
-                              View
+                              {t("viewAction")}
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <Link href={`/subscriptions/${sub.id}?edit=1`}>
                               <Pencil className="mr-2 size-4" />
-                              Edit
+                              {t("editAction")}
                             </Link>
                           </DropdownMenuItem>
                           {sub.isActive &&
@@ -384,7 +387,7 @@ export function SubscriptionList() {
                                 onClick={() => handleRenew(sub.id)}
                               >
                                 <RefreshCw className="mr-2 size-4" />
-                                Renew
+                                {t("renewAction")}
                               </DropdownMenuItem>
                             )}
                           {sub.previousRenewalDate && (
@@ -392,7 +395,7 @@ export function SubscriptionList() {
                               onClick={() => handleUndoRenewal(sub.id)}
                             >
                               <Undo2 className="mr-2 size-4" />
-                              Undo renewal
+                              {t("undoRenewalAction")}
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuSeparator />
@@ -401,14 +404,14 @@ export function SubscriptionList() {
                               onClick={() => handleDeactivate(sub.id)}
                             >
                               <PowerOff className="mr-2 size-4" />
-                              Cancel subscription
+                              {t("cancelAction")}
                             </DropdownMenuItem>
                           ) : (
                             <DropdownMenuItem
                               onClick={() => handleReactivate(sub.id)}
                             >
                               <RotateCcw className="mr-2 size-4" />
-                              Reactivate
+                              {t("reactivateAction")}
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuItem asChild>
@@ -419,7 +422,7 @@ export function SubscriptionList() {
                                 <span className="flex cursor-pointer items-center px-2 py-1.5 text-sm">
                                   <Trash2 className="mr-2 size-4 text-destructive" />
                                   <span className="text-destructive">
-                                    Delete
+                                    {t("deleteAction")}
                                   </span>
                                 </span>
                               }
@@ -439,19 +442,17 @@ export function SubscriptionList() {
         <div className="text-muted-foreground rounded-lg border border-dashed py-16 text-center text-sm">
           {hasFilters ? (
             <>
-              <p className="font-medium">No matches</p>
-              <p className="mt-1">Try adjusting your filters.</p>
+              <p className="font-medium">{t("noMatches")}</p>
+              <p className="mt-1">{t("noMatchesHelp")}</p>
             </>
           ) : (
             <>
-              <p className="font-medium">No subscriptions yet</p>
-              <p className="mt-1">
-                Add your first subscription to get started.
-              </p>
+              <p className="font-medium">{t("noSubscriptions")}</p>
+              <p className="mt-1">{t("noSubscriptionsHelp")}</p>
               <Button asChild className="mt-4">
                 <Link href="/subscriptions/new">
                   <Plus className="size-4" />
-                  Add subscription
+                  {tSubs("addButton")}
                 </Link>
               </Button>
             </>

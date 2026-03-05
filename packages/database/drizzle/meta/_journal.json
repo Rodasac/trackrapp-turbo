@@ -36,6 +36,13 @@
       "when": 1772635659313,
       "tag": "0004_panoramic_tattoo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772677593071,
+      "tag": "0005_heavy_wild_child",
+      "breakpoints": true
     }
   ]
 }

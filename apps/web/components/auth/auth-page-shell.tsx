@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { CreditCard } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function AuthPageShell({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("auth.shell");
   return (
     <div className="min-h-svh flex flex-col lg:flex-row">
       {/* Mobile header (< lg) */}
@@ -51,10 +53,10 @@ export function AuthPageShell({ children }: { children: React.ReactNode }) {
         <div className="relative flex flex-1 items-center px-8 pb-16">
           <div>
             <h2 className="font-display text-4xl font-normal text-white leading-snug">
-              Never miss a renewal
+              {t("tagline")}
             </h2>
             <p className="mt-3 text-base text-white/50 max-w-xs leading-relaxed">
-              Track subscriptions, get reminders, and understand your spending.
+              {t("taglineDescription")}
             </p>
           </div>
         </div>

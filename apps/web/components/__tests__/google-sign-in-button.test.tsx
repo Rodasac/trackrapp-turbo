@@ -22,7 +22,7 @@ describe("GoogleSignInButton", () => {
   it("renders with default label", () => {
     render(<GoogleSignInButton />);
     expect(
-      screen.getByRole("button", { name: /continue with google/i }),
+      screen.getByRole("button", { name: /sign in with google/i }),
     ).toBeInTheDocument();
   });
 

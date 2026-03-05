@@ -3,35 +3,37 @@
 import { FadeIn } from "@/components/landing/motion/fade-in";
 import { AnimatedCounter } from "@/components/landing/motion/animated-counter";
 import { usePlatformStats } from "@/hooks/use-platform-stats";
+import { useTranslations } from "next-intl";
 
 export function StatsSection() {
   const { data } = usePlatformStats();
+  const t = useTranslations("landing.stats");
 
   const stats = [
     {
       to: data?.totalSubscriptions ?? 0,
       suffix: "+",
-      label: "Subscriptions tracked",
-      description: "Across all users worldwide",
+      label: t("subscriptionsTracked"),
+      description: t("subscriptionsTrackedDesc"),
     },
     {
       to: data?.totalUsers ?? 0,
       suffix: "+",
-      label: "Users signed up",
-      description: "And growing every day",
+      label: t("usersSigned"),
+      description: t("usersSignedDesc"),
     },
     {
       to: data?.totalReminders ?? 0,
       suffix: "+",
-      label: "Reminders sent",
-      description: "Never miss a renewal again",
+      label: t("remindersSent"),
+      description: t("remindersSentDesc"),
     },
     {
       to: Number(data?.totalSaved ?? 0),
       prefix: "$",
       suffix: "+",
-      label: "Saved by users",
-      description: "Through cancelling unused subs",
+      label: t("savedByUsers"),
+      description: t("savedByUsersDesc"),
     },
   ];
 

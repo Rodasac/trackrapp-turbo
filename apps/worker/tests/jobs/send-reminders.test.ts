@@ -56,6 +56,7 @@ vi.mock("@repo/database", () => {
         userId: "userId",
       },
       notificationPreferences: { userId: "userId" },
+      userPreferences: { userId: "userId" },
       pushSubscriptions: { userId: "userId" },
     },
   };
@@ -97,6 +98,7 @@ const TOMORROW = "2026-02-26";
 function setupDbMocks(options: {
   subscriptions?: unknown[];
   prefs?: unknown[];
+  userPrefs?: unknown[];
   pushSubs?: unknown[];
 }) {
   const subs = options.subscriptions ?? [
@@ -119,18 +121,22 @@ function setupDbMocks(options: {
       reminderDaysBefore: [7, 3, 1],
     },
   ];
+  const userPrefs = options.userPrefs ?? [
+    { userId: "user-1", locale: "en" },
+  ];
   const pushSubs = options.pushSubs ?? [];
 
   vi.mocked(db.query.trackedSubscriptions.findMany).mockResolvedValue(
     subs as never,
   );
 
-  // select().from().where() — the where() call itself is awaited in the impl,
-  // so it must return a Promise. Use mockResolvedValueOnce per DB query call.
+  // select().from().where() — the where() call itself is awaited in the impl.
+  // Order: 1) notificationPreferences, 2) userPreferences, 3) pushSubscriptions
   const mockWhere = vi
     .fn()
-    .mockResolvedValueOnce(prefs) // first select: notificationPreferences
-    .mockResolvedValueOnce(pushSubs); // second select: pushSubscriptions
+    .mockResolvedValueOnce(prefs)     // notificationPreferences
+    .mockResolvedValueOnce(userPrefs) // userPreferences
+    .mockResolvedValueOnce(pushSubs); // pushSubscriptions
   const mockFrom = vi.fn(() => ({ where: mockWhere }));
   vi.mocked(db.select).mockReturnValue({ from: mockFrom } as ReturnType<
     typeof db.select

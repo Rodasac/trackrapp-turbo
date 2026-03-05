@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import {
   LayoutDashboard,
   CreditCard,
@@ -11,24 +11,34 @@ import {
   Shield,
   Sparkles,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@repo/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { Separator } from "@repo/ui/separator";
 import { useSession, signOut } from "@/lib/auth-client";
 import { NotificationBell } from "@/components/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { useIsPro } from "@/hooks/use-subscription-plan";
 
+type NavKey =
+  | "dashboard"
+  | "subscriptions"
+  | "notifications"
+  | "tips"
+  | "settings"
+  | "admin";
+
 // Notifications uses a custom icon component; others use lucide icons directly.
-const BASE_NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/subscriptions", label: "Subscriptions", icon: CreditCard },
-  { href: "/notifications", label: "Notifications", icon: null },
-  { href: "/tips", label: "Tips", icon: Lightbulb },
-  { href: "/settings", label: "Settings", icon: Settings },
+const BASE_NAV_ITEMS: { href: string; key: NavKey; icon: React.ElementType | null }[] = [
+  { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
+  { href: "/subscriptions", key: "subscriptions", icon: CreditCard },
+  { href: "/notifications", key: "notifications", icon: null },
+  { href: "/tips", key: "tips", icon: Lightbulb },
+  { href: "/settings", key: "settings", icon: Settings },
 ];
 
-const ADMIN_NAV_ITEM = { href: "/admin", label: "Admin", icon: Shield };
+const ADMIN_NAV_ITEM = { href: "/admin", key: "admin" as NavKey, icon: Shield };
 
 function initials(name?: string | null) {
   if (!name) return "?";
@@ -45,6 +55,7 @@ export function SidebarNav() {
   const router = useRouter();
   const { data: session } = useSession();
   const isPro = useIsPro();
+  const t = useTranslations("nav");
   const isAdmin =
     (session?.user as { role?: string } | undefined)?.role === "admin";
   const navItems = isAdmin
@@ -67,7 +78,8 @@ export function SidebarNav() {
           </div>
           <span className="font-semibold">TrackrApp</span>
         </Link>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-1">
+          <LanguageSwitcher />
           <ThemeToggle />
         </div>
       </div>
@@ -76,7 +88,7 @@ export function SidebarNav() {
 
       {/* Navigation */}
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
-        {navItems.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, key, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + "/");
           return (
             <Link
@@ -94,7 +106,7 @@ export function SidebarNav() {
               ) : (
                 <NotificationBell />
               )}
-              {label}
+              {t(key)}
             </Link>
           );
         })}
@@ -107,7 +119,7 @@ export function SidebarNav() {
             className="bg-brand/10 text-brand hover:bg-brand/20 flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors"
           >
             <Sparkles className="size-4 shrink-0" />
-            Upgrade to Pro
+            {t("upgradeToPro")}
           </Link>
         </div>
       )}
@@ -134,7 +146,7 @@ export function SidebarNav() {
             size="icon"
             className="size-7 shrink-0"
             onClick={handleSignOut}
-            title="Sign out"
+            title={t("signOut")}
           >
             <LogOut className="size-4" />
           </Button>

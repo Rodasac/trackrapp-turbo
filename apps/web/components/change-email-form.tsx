@@ -14,6 +14,7 @@ import {
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
 import { Button } from "@repo/ui/button";
+import { useTranslations } from "next-intl";
 import { useChangeEmail } from "@/hooks/use-change-email";
 import {
   changeEmailSchema,
@@ -21,6 +22,7 @@ import {
 } from "@repo/shared/validations";
 
 export function ChangeEmailForm() {
+  const t = useTranslations("settings.profile");
   const { mutateAsync: changeEmail, isPending } = useChangeEmail();
   const [sentTo, setSentTo] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export function ChangeEmailForm() {
       toast.error(
         err instanceof Error
           ? err.message
-          : "Failed to send change email request",
+          : t("failedToChangeEmail"),
       );
     }
   }
@@ -46,8 +48,7 @@ export function ChangeEmailForm() {
   if (sentTo) {
     return (
       <p className="text-sm" role="status">
-        Verification email sent to <strong>{sentTo}</strong>. Click the link in
-        the email to confirm your new address.
+        {t("verificationSentTo", { email: sentTo })}
       </p>
     );
   }
@@ -64,11 +65,11 @@ export function ChangeEmailForm() {
           name="newEmail"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>New email address</FormLabel>
+              <FormLabel>{t("newEmailLabel")}</FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="new@example.com"
+                  placeholder={t("newEmailPlaceholder")}
                   autoComplete="email"
                   {...field}
                 />
@@ -78,7 +79,7 @@ export function ChangeEmailForm() {
           )}
         />
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Sending…" : "Send verification email"}
+          {isPending ? t("sendVerificationButtonLoading") : t("sendVerificationButton")}
         </Button>
       </form>
     </Form>

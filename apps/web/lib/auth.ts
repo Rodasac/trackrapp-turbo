@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { dash, sentinel } from "@better-auth/infra";
 import { admin } from "better-auth/plugins";
 import { stripe } from "@better-auth/stripe";
+import { i18n } from "@better-auth/i18n";
 import Stripe from "stripe";
 import { db } from "@repo/database";
 import { sendEmail } from "@/lib/email";
@@ -71,6 +72,26 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    i18n({
+      translations: {
+        es: {
+          INVALID_EMAIL_OR_PASSWORD: "Correo o contraseña incorrectos",
+          USER_ALREADY_EXISTS: "Ya existe una cuenta con este correo",
+          EMAIL_NOT_VERIFIED:
+            "Correo electrónico no verificado. Revisa tu bandeja de entrada.",
+          INVALID_TOKEN: "Token inválido o expirado",
+          TOKEN_EXPIRED: "El token ha expirado",
+          USER_NOT_FOUND: "Usuario no encontrado",
+          FAILED_TO_CREATE_USER: "Error al crear la cuenta",
+          FAILED_TO_SEND_EMAIL: "Error al enviar el correo",
+          PASSWORD_TOO_SHORT:
+            "La contraseña debe tener al menos 8 caracteres",
+          PASSWORD_TOO_LONG: "La contraseña es demasiado larga",
+        },
+      },
+      detection: ["cookie", "header"],
+      localeCookie: "NEXT_LOCALE",
+    }),
     admin(),
     dash(),
     sentinel({

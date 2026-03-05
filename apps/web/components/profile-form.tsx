@@ -16,6 +16,7 @@ import {
 import { Input } from "@repo/ui/input";
 import { Button } from "@repo/ui/button";
 import { Skeleton } from "@repo/ui/skeleton";
+import { useTranslations } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { useAccountProvider } from "@/hooks/use-account-provider";
 import { useUpdateProfile } from "@/hooks/use-profile-mutations";
@@ -28,6 +29,7 @@ import {
 } from "@repo/shared/validations";
 
 export function ProfileForm() {
+  const t = useTranslations("settings.profile");
   const { data: sessionData, isPending: sessionLoading } = useSession();
   const { data: providerData, isLoading: providerLoading } =
     useAccountProvider();
@@ -56,9 +58,9 @@ export function ProfileForm() {
         name: form.getValues("name") || user?.name || "",
         image: url,
       });
-      toast.success("Photo updated");
+      toast.success(t("photoUpdatedToast"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save photo");
+      toast.error(err instanceof Error ? err.message : t("failedToSavePhotoToast"));
     }
   }
 
@@ -68,10 +70,10 @@ export function ProfileForm() {
         name: values.name,
         image: user?.image ?? undefined,
       });
-      toast.success("Profile saved");
+      toast.success(t("profileSavedToast"));
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to save profile",
+        err instanceof Error ? err.message : t("failedToSaveProfileToast"),
       );
     }
   }
@@ -106,9 +108,9 @@ export function ProfileForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("nameLabel")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your name" {...field} />
+                  <Input placeholder={t("namePlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,7 +118,7 @@ export function ProfileForm() {
           />
 
           <Button type="submit" disabled={isPending}>
-            {isPending ? "Saving…" : "Save changes"}
+            {isPending ? t("saveButtonLoading") : t("saveButton")}
           </Button>
         </form>
       </Form>
@@ -126,7 +128,7 @@ export function ProfileForm() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-medium">Email</h3>
+            <h3 className="text-sm font-medium">{t("emailSectionTitle")}</h3>
             <p className="text-muted-foreground text-sm">{user?.email}</p>
           </div>
           {isCredentialUser && !showChangeEmail && (
@@ -136,7 +138,7 @@ export function ProfileForm() {
               size="sm"
               onClick={() => setShowChangeEmail(true)}
             >
-              Change email
+              {t("changeEmailButton")}
             </Button>
           )}
         </div>
@@ -148,7 +150,7 @@ export function ProfileForm() {
         <>
           <Separator />
           <div className="space-y-4">
-            <h3 className="text-sm font-medium">Change password</h3>
+            <h3 className="text-sm font-medium">{t("changePasswordTitle")}</h3>
             <ChangePasswordForm />
           </div>
         </>

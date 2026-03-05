@@ -1,42 +1,45 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Check, X } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { cn } from "@repo/ui/lib/utils";
 import { FadeIn } from "@/components/landing/motion/fade-in";
 import { COMPARISON_FEATURES } from "@/lib/comparison-data";
+import { useTranslations } from "next-intl";
 
-function CheckIcon() {
+function CheckIcon({ label }: { label: string }) {
   return (
     <Check
       data-testid="check-icon"
       className="mx-auto size-4 text-emerald-500"
-      aria-label="Included"
+      aria-label={label}
     />
   );
 }
 
-function CrossIcon() {
+function CrossIcon({ label }: { label: string }) {
   return (
     <X
       data-testid="cross-icon"
       className="mx-auto size-4 text-muted-foreground/40"
-      aria-label="Not included"
+      aria-label={label}
     />
   );
 }
 
 export function ComparisonTable() {
+  const t = useTranslations("landing.comparison");
+
   return (
     <section className="bg-muted/30 py-20 sm:py-28">
       <div className="mx-auto max-w-3xl px-6">
         <FadeIn className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Compare plans
+            {t("sectionTitle")}
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-lg">
-            Everything in Free, plus powerful Pro features.
+            {t("sectionDescription")}
           </p>
         </FadeIn>
 
@@ -45,11 +48,11 @@ export function ComparisonTable() {
             {/* Header */}
             <div className="grid grid-cols-3 border-b bg-muted/30 px-6 py-4">
               <div className="text-sm font-medium text-muted-foreground">
-                Feature
+                {t("featureHeader")}
               </div>
-              <div className="text-center text-sm font-semibold">Free</div>
+              <div className="text-center text-sm font-semibold">{t("freeHeader")}</div>
               <div className="text-center text-sm font-semibold text-brand">
-                Pro
+                {t("proHeader")}
               </div>
             </div>
 
@@ -65,10 +68,10 @@ export function ComparisonTable() {
               >
                 <span className="text-sm">{feature}</span>
                 <div className="text-center">
-                  {free ? <CheckIcon /> : <CrossIcon />}
+                  {free ? <CheckIcon label={t("included")} /> : <CrossIcon label={t("notIncluded")} />}
                 </div>
                 <div className="text-center">
-                  {pro ? <CheckIcon /> : <CrossIcon />}
+                  {pro ? <CheckIcon label={t("included")} /> : <CrossIcon label={t("notIncluded")} />}
                 </div>
               </div>
             ))}
@@ -77,10 +80,10 @@ export function ComparisonTable() {
             <div className="grid grid-cols-3 items-center gap-4 border-t bg-muted/30 px-6 py-4">
               <div />
               <Button variant="outline" size="sm" asChild>
-                <Link href="/signup">Get started free</Link>
+                <Link href="/signup">{t("getStartedFree")}</Link>
               </Button>
               <Button size="sm" className="bg-brand hover:bg-brand/90" asChild>
-                <Link href="/signup?plan=pro">Start free trial</Link>
+                <Link href="/signup?plan=pro">{t("startTrial")}</Link>
               </Button>
             </div>
           </div>

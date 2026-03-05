@@ -64,6 +64,16 @@ describe("emailLayout", () => {
     expect(html).toContain(EMAIL_BRAND.appUrl);
   });
 
+  it("defaults html lang to en", () => {
+    const html = emailLayout({ content: "" });
+    expect(html).toContain('lang="en"');
+  });
+
+  it("uses provided locale in html lang attribute", () => {
+    const html = emailLayout({ content: "", locale: "es" });
+    expect(html).toContain('lang="es"');
+  });
+
   it("includes copyright notice", () => {
     const html = emailLayout({ content: "" });
     expect(html).toContain("All rights reserved.");
