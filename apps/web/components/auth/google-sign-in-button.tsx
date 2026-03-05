@@ -3,14 +3,16 @@
 import { useState } from "react";
 import { Button } from "@repo/ui/button";
 import { signIn } from "@/lib/auth-client";
+import { useTranslations } from "next-intl";
 
 interface GoogleSignInButtonProps {
   label?: string;
 }
 
 export function GoogleSignInButton({
-  label = "Continue with Google",
+  label,
 }: GoogleSignInButtonProps) {
+  const t = useTranslations("auth.google");
   const [isPending, setIsPending] = useState(false);
 
   async function handleClick() {
@@ -52,7 +54,7 @@ export function GoogleSignInButton({
           />
         </svg>
       )}
-      {label}
+      {label ?? t("signInWithGoogle")}
     </Button>
   );
 }

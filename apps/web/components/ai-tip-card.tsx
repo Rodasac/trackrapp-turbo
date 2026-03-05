@@ -7,13 +7,13 @@ import {
   Scale,
   Sparkles,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@repo/ui/badge";
 import { cn } from "@repo/ui/lib/utils";
 import type { AiTipItem } from "@/lib/types/api";
 
 const categoryConfig = {
   savings: {
-    label: "Savings",
     icon: TrendingDown,
     borderColor: "border-l-emerald-500",
     iconColor: "text-emerald-500",
@@ -21,7 +21,6 @@ const categoryConfig = {
       "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
   },
   warning: {
-    label: "Warning",
     icon: AlertTriangle,
     borderColor: "border-l-amber-500",
     iconColor: "text-amber-500",
@@ -29,14 +28,12 @@ const categoryConfig = {
       "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
   },
   info: {
-    label: "Info",
     icon: Info,
     borderColor: "border-l-sky-500",
     iconColor: "text-sky-500",
     badgeClass: "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300",
   },
   comparison: {
-    label: "Comparison",
     icon: Scale,
     borderColor: "border-l-violet-500",
     iconColor: "text-violet-500",
@@ -51,6 +48,8 @@ interface AiTipCardProps {
 }
 
 export function AiTipCard({ tip, index = 0 }: AiTipCardProps) {
+  const t = useTranslations("tips");
+  const tCategories = useTranslations("tips.categories");
   const config = categoryConfig[tip.category];
   const Icon = config.icon;
 
@@ -86,7 +85,7 @@ export function AiTipCard({ tip, index = 0 }: AiTipCardProps) {
             config.badgeClass,
           )}
         >
-          {config.label}
+          {tCategories(tip.category)}
         </Badge>
       </div>
 
@@ -98,7 +97,7 @@ export function AiTipCard({ tip, index = 0 }: AiTipCardProps) {
       {/* Footer */}
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60 mt-auto pt-1 border-t border-white/10">
         <Sparkles className="size-3" />
-        <span>Generated {generatedDate}</span>
+        <span>{t("generatedOn", { date: generatedDate })}</span>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import React from "react";
 import { render, type RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NextIntlClientProvider } from "next-intl";
+import enMessages from "../messages/en.json";
 
 export function createTestQueryClient() {
   return new QueryClient({
@@ -19,7 +21,9 @@ export function createTestQueryClient() {
 function AllProviders({ children }: { children: React.ReactNode }) {
   const queryClient = createTestQueryClient();
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <NextIntlClientProvider locale="en" messages={enMessages}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </NextIntlClientProvider>
   );
 }
 
@@ -34,7 +38,11 @@ export function createWrapper() {
   const queryClient = createTestQueryClient();
   return function Wrapper({ children }: { children: React.ReactNode }) {
     return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </NextIntlClientProvider>
     );
   };
 }

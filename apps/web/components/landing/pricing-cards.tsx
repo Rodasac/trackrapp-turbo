@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Check } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/button";
@@ -25,6 +25,7 @@ import {
   PRO_EFFECTIVE_MONTHLY,
   PRO_ANNUAL_DISCOUNT_PCT,
 } from "@/lib/pricing-config";
+import { useTranslations } from "next-intl";
 
 /**
  * Shared pricing card grid + toggle — consumed by both PricingSection and PricingPage.
@@ -38,6 +39,9 @@ export function PricingCards() {
   const { data: plan } = useSubscriptionPlan({ enabled: isLoggedIn });
   const upgrade = useUpgradeToPro();
 
+  const t = useTranslations("pricing");
+  const tBilling = useTranslations("billing");
+
   const isPro =
     plan?.plan === "pro" &&
     (plan.status === "active" || plan.status === "trialing");
@@ -50,7 +54,7 @@ export function PricingCards() {
         cancelUrl: `${window.location.origin}/pricing`,
       });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upgrade failed");
+      toast.error(err instanceof Error ? err.message : tBilling("upgradeFailed"));
     }
   }
 
@@ -63,18 +67,18 @@ export function PricingCards() {
           size="sm"
           onClick={() => setAnnual(false)}
         >
-          Monthly
+          {t("monthly")}
         </Button>
         <Button
           variant={annual ? "secondary" : "ghost"}
           size="sm"
           onClick={() => setAnnual(true)}
         >
-          Annual
+          {t("annual")}
         </Button>
         {annual && (
           <Badge variant="outline" className="text-brand border-brand ml-1">
-            Save {PRO_ANNUAL_DISCOUNT_PCT}%
+            {t("savePercentage", { percentage: PRO_ANNUAL_DISCOUNT_PCT })}
           </Badge>
         )}
       </div>
@@ -84,15 +88,15 @@ export function PricingCards() {
         {/* Free */}
         <Card className="glass">
           <CardHeader>
-            <CardTitle>Free</CardTitle>
+            <CardTitle>{t("free.name")}</CardTitle>
             <CardDescription>
-              Everything you need to get started
+              {t("free.description")}
             </CardDescription>
             <div className="mt-2 flex items-baseline gap-1">
               <span className="text-3xl font-bold">
                 ${PRICING.free.monthly}
               </span>
-              <span className="text-muted-foreground text-sm">/ month</span>
+              <span className="text-muted-foreground text-sm">{t("free.perMonth")}</span>
             </div>
           </CardHeader>
           <Separator />
@@ -108,7 +112,7 @@ export function PricingCards() {
           </CardContent>
           <CardFooter>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/signup">Get started free</Link>
+              <Link href="/signup">{t("free.getStarted")}</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -117,37 +121,37 @@ export function PricingCards() {
         <Card className={cn("border-brand relative glow")}>
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Badge className="bg-brand text-brand-foreground">
-              Most popular
+              {t("pro.mostPopular")}
             </Badge>
           </div>
           <CardHeader>
-            <CardTitle>Pro</CardTitle>
-            <CardDescription>AI tips + advanced analytics</CardDescription>
+            <CardTitle>{t("pro.name")}</CardTitle>
+            <CardDescription>{t("pro.description")}</CardDescription>
             <div className="mt-2 flex items-baseline gap-1">
               {annual ? (
                 <>
                   <span className="text-3xl font-bold">
                     ${PRICING.pro.annual}
                   </span>
-                  <span className="text-muted-foreground text-sm">/ year</span>
+                  <span className="text-muted-foreground text-sm">{t("pro.perYear")}</span>
                 </>
               ) : (
                 <>
                   <span className="text-3xl font-bold">
                     ${PRICING.pro.monthly}
                   </span>
-                  <span className="text-muted-foreground text-sm">/ month</span>
+                  <span className="text-muted-foreground text-sm">{t("pro.perMonth")}</span>
                 </>
               )}
             </div>
             {annual && (
               <p className="text-muted-foreground text-xs">
-                ${PRO_EFFECTIVE_MONTHLY}/month effective — save{" "}
-                {PRO_ANNUAL_DISCOUNT_PCT}%
+                ${PRO_EFFECTIVE_MONTHLY}{t("pro.effectiveMonthly")}{" "}
+                {t("pro.savings", { percentage: PRO_ANNUAL_DISCOUNT_PCT })}
               </p>
             )}
             <p className="text-muted-foreground text-xs">
-              {PRICING.pro.trialDays}-day free trial
+              {t("pro.trialDays", { days: PRICING.pro.trialDays })}
             </p>
           </CardHeader>
           <Separator />
@@ -164,7 +168,7 @@ export function PricingCards() {
           <CardFooter>
             {isPro ? (
               <Button className="w-full" disabled>
-                Current plan
+                {t("pro.currentPlan")}
               </Button>
             ) : isLoggedIn ? (
               <Button
@@ -172,11 +176,11 @@ export function PricingCards() {
                 onClick={handleUpgrade}
                 disabled={upgrade.isPending}
               >
-                {upgrade.isPending ? "Redirecting…" : "Start free trial"}
+                {upgrade.isPending ? tBilling("upgradeButtonLoading") : t("pro.startTrial")}
               </Button>
             ) : (
               <Button className="bg-brand hover:bg-brand/90 w-full" asChild>
-                <Link href="/signup?plan=pro">Start free trial</Link>
+                <Link href="/signup?plan=pro">{t("pro.startTrial")}</Link>
               </Button>
             )}
           </CardFooter>

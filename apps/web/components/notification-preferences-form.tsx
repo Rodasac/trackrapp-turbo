@@ -20,20 +20,16 @@ import { PushNotificationManager } from "@/components/push-notification-manager"
 import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 import { useUpdateNotificationPreferences } from "@/hooks/use-notification-mutations";
 import { useIsPro } from "@/hooks/use-subscription-plan";
+import { useTranslations } from "next-intl";
 import {
   notificationPreferencesSchema,
   type NotificationPreferencesValues,
 } from "@repo/shared/validations";
 
-const REMINDER_DAY_OPTIONS = [
-  { value: 30, label: "30 days" },
-  { value: 14, label: "14 days" },
-  { value: 7, label: "7 days" },
-  { value: 3, label: "3 days" },
-  { value: 1, label: "1 day" },
-];
+const REMINDER_DAY_VALUES = [30, 14, 7, 3, 1];
 
 export function NotificationPreferencesForm() {
+  const t = useTranslations("settings.notifications");
   const { data: prefs, isLoading } = useNotificationPreferences();
   const { mutateAsync: updatePrefs } = useUpdateNotificationPreferences();
   const isPro = useIsPro();
@@ -61,9 +57,9 @@ export function NotificationPreferencesForm() {
   async function onSubmit(values: NotificationPreferencesValues) {
     try {
       await updatePrefs(values);
-      toast.success("Notification preferences saved");
+      toast.success(t("savedToast"));
     } catch {
-      toast.error("Failed to save preferences");
+      toast.error(t("failedToSaveToast"));
     }
   }
 
@@ -89,9 +85,9 @@ export function NotificationPreferencesForm() {
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Email reminders</FormLabel>
+                <FormLabel className="text-base">{t("emailRemindersLabel")}</FormLabel>
                 <FormDescription>
-                  Receive renewal reminders via email
+                  {t("emailRemindersDescription")}
                 </FormDescription>
               </div>
               <FormControl>
@@ -114,10 +110,10 @@ export function NotificationPreferencesForm() {
                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">
-                      Browser push notifications
+                      {t("pushNotificationsLabel")}
                     </FormLabel>
                     <FormDescription>
-                      Get notified directly in your browser
+                      {t("pushNotificationsDescription")}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -132,7 +128,7 @@ export function NotificationPreferencesForm() {
             {pushEnabled && (
               <div className="rounded-lg border p-4">
                 <p className="text-muted-foreground mb-3 text-sm">
-                  Allow browser notifications to receive push alerts
+                  {t("allowBrowserNotifications")}
                 </p>
                 <PushNotificationManager
                   vapidPublicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY}
@@ -144,16 +140,16 @@ export function NotificationPreferencesForm() {
           <div className="flex items-center justify-between rounded-lg border p-4 opacity-60">
             <div className="space-y-0.5">
               <p className="text-base font-medium leading-none">
-                Browser push notifications
+                {t("pushNotificationsLabel")}
               </p>
               <p className="text-muted-foreground text-sm">
-                Get notified directly in your browser
+                {t("pushNotificationsDescription")}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <Badge>Pro</Badge>
               <Button variant="outline" size="sm" asChild>
-                <Link href="/pricing">Upgrade</Link>
+                <Link href="/pricing">{t("upgradeLabel")}</Link>
               </Button>
             </div>
           </div>
@@ -165,13 +161,14 @@ export function NotificationPreferencesForm() {
           name="reminderDaysBefore"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Remind me before renewal</FormLabel>
+              <FormLabel>{t("remindMeLabel")}</FormLabel>
               <FormDescription>
-                Select when to receive renewal reminders
+                {t("remindMeDescription")}
               </FormDescription>
               <div className="mt-2 flex flex-wrap gap-2">
-                {REMINDER_DAY_OPTIONS.map(({ value, label }) => {
+                {REMINDER_DAY_VALUES.map((value) => {
                   const checked = field.value.includes(value);
+                  const label = t(value === 1 ? "1Day" : `${value}Days` as "30Days" | "14Days" | "7Days" | "3Days" | "1Day");
                   return (
                     <button
                       key={value}
@@ -207,7 +204,7 @@ export function NotificationPreferencesForm() {
         />
 
         <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Saving…" : "Save preferences"}
+          {form.formState.isSubmitting ? t("saveButtonLoading") : t("saveButton")}
         </Button>
       </form>
     </Form>

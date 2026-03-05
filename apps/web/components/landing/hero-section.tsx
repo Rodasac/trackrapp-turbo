@@ -1,11 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@repo/ui/button";
 import { FadeIn } from "@/components/landing/motion/fade-in";
 import { AppMockup } from "@/components/landing/app-mockup";
+import { useTranslations } from "next-intl";
 
 export function HeroSection() {
+  const t = useTranslations("landing.hero");
+
   return (
     <section className="relative overflow-hidden bg-slate-950 py-24 sm:py-32 lg:py-40">
       {/* Gradient orbs */}
@@ -32,14 +35,13 @@ export function HeroSection() {
           <FadeIn className="flex-1 text-center lg:text-left">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
               <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Subscription intelligence, simplified
+              {t("headline")}
             </div>
             <h1 className="font-display text-5xl font-normal leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Track Every <span className="text-emerald-400">Subscription</span>
+              {t("track")} <span className="text-emerald-400">{t("subscriptionHighlight")}</span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-lg text-white/60 lg:mx-0">
-              Never miss a renewal. Get insights on your spending, AI-powered
-              tips, and reminders before you&apos;re charged.
+              {t("description")}
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
               <Button
@@ -47,7 +49,7 @@ export function HeroSection() {
                 size="lg"
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold shadow-lg shadow-emerald-500/25 transition-all"
               >
-                <Link href="/signup">Start free</Link>
+                <Link href="/signup">{t("startFree")}</Link>
               </Button>
               <Button
                 asChild
@@ -55,11 +57,11 @@ export function HeroSection() {
                 variant="outline"
                 className="border-white/15 text-white/80 hover:bg-white/5 hover:text-white bg-transparent"
               >
-                <Link href="#pricing">See pricing</Link>
+                <Link href="#pricing">{t("seePricing")}</Link>
               </Button>
             </div>
             <p className="mt-4 text-xs text-white/30">
-              No credit card required · Free forever plan
+              {t("noCardRequired")}
             </p>
           </FadeIn>
 

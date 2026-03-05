@@ -7,41 +7,41 @@ import {
   StaggerChildren,
   itemVariants,
 } from "@/components/landing/motion/stagger-children";
-
-const STEPS = [
-  {
-    number: "1",
-    icon: Upload,
-    title: "Add your subscriptions",
-    description:
-      "Import from CSV or add manually. Our smart importer detects your columns automatically.",
-  },
-  {
-    number: "2",
-    icon: Bell,
-    title: "Get smart reminders",
-    description:
-      "Receive email and push notifications days before you're charged — so you're always in control.",
-  },
-  {
-    number: "3",
-    icon: TrendingDown,
-    title: "Save money",
-    description:
-      "AI-powered tips identify wasteful spend and suggest cheaper alternatives tailored to your stack.",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export function HowItWorks() {
+  const t = useTranslations("landing.howItWorks");
+
+  const STEPS = [
+    {
+      number: "1",
+      icon: Upload,
+      title: t("step1Title"),
+      description: t("step1Desc"),
+    },
+    {
+      number: "2",
+      icon: Bell,
+      title: t("step2Title"),
+      description: t("step2Desc"),
+    },
+    {
+      number: "3",
+      icon: TrendingDown,
+      title: t("step3Title"),
+      description: t("step3Desc"),
+    },
+  ];
+
   return (
     <section id="how-it-works" className="bg-muted/20 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-6">
         <FadeIn className="mb-16 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            How it works
+            {t("sectionTitle")}
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-lg">
-            From setup to savings in three simple steps.
+            {t("sectionDescription")}
           </p>
         </FadeIn>
 

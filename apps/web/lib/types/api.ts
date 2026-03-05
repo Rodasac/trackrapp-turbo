@@ -171,6 +171,7 @@ export interface AiTipItem {
 export interface UserPreferencesResponse {
   autoRenewDefault: boolean;
   defaultCurrency: string;
+  locale: string;
 }
 
 export interface PlatformStatsResponse {

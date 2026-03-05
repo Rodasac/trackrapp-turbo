@@ -11,6 +11,7 @@ import {
   XCircle,
   RotateCcw,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
@@ -57,6 +58,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
+  const t = useTranslations("subscriptions.detail");
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<"view" | "edit">(
     searchParams.get("edit") ? "edit" : "view",
@@ -82,7 +84,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
   if (isError || !sub) {
     return (
       <div className="text-muted-foreground rounded-lg border border-dashed py-12 text-center text-sm">
-        Subscription not found.
+        {t("notFound")}
       </div>
     );
   }
@@ -108,7 +110,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={() => setMode("view")}>
             <X className="mr-1 size-4" />
-            Cancel
+            {t("cancelButton")}
           </Button>
         </div>
         <SubscriptionForm
@@ -140,7 +142,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold">{sub.name}</h2>
-            {!sub.isActive && <Badge variant="secondary">Inactive</Badge>}
+            {!sub.isActive && <Badge variant="secondary">{t("inactiveBadge")}</Badge>}
           </div>
           {sub.category && (
             <Badge
@@ -175,7 +177,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                   onClick={() => renewMutation.mutate(id)}
                 >
                   <RefreshCw className="mr-1 size-4" />
-                  Renew
+                  {t("renewButton")}
                 </Button>
               )}
               {sub.previousRenewalDate && (
@@ -186,7 +188,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                   onClick={() => undoMutation.mutate(id)}
                 >
                   <Undo2 className="mr-1 size-4" />
-                  Undo Renewal
+                  {t("undoRenewalButton")}
                 </Button>
               )}
               <Button
@@ -195,7 +197,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                 onClick={() => setMode("edit")}
               >
                 <Pencil className="mr-1 size-4" />
-                Edit
+                {t("editButton")}
               </Button>
               <Button
                 variant="outline"
@@ -205,7 +207,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                 onClick={() => cancelMutation.mutate(id)}
               >
                 <XCircle className="mr-1 size-4" />
-                Cancel
+                {t("cancelButton")}
               </Button>
             </>
           ) : (
@@ -217,7 +219,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                 onClick={() => reactivateMutation.mutate(id)}
               >
                 <RotateCcw className="mr-1 size-4" />
-                Reactivate
+                {t("reactivateButton")}
               </Button>
               <Button
                 variant="outline"
@@ -225,7 +227,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                 onClick={() => setMode("edit")}
               >
                 <Pencil className="mr-1 size-4" />
-                Edit
+                {t("editButton")}
               </Button>
               <DeleteSubscriptionDialog
                 subscriptionId={id}
@@ -241,7 +243,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
         <CardContent className="pt-4">
           <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <InfoRow
-              label="Price"
+              label={t("priceLabel")}
               value={
                 <span className="font-mono font-medium">
                   {formatPrice(sub.price, sub.currency)}
@@ -252,34 +254,34 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
               }
             />
             <InfoRow
-              label="Billing cycle"
+              label={t("billingCycleLabel")}
               value={
                 sub.billingCycle.charAt(0).toUpperCase() +
                 sub.billingCycle.slice(1)
               }
             />
-            <InfoRow label="Currency" value={sub.currency} />
+            <InfoRow label={t("currencyLabel")} value={sub.currency} />
             <InfoRow
-              label="Next renewal"
+              label={t("nextRenewalLabel")}
               value={formatRenewalDate(sub.nextRenewalDate)}
             />
             <InfoRow
-              label="Start date"
+              label={t("startDateLabel")}
               value={sub.startDate ? formatShortDate(sub.startDate) : null}
             />
             <InfoRow
-              label="Status"
+              label={t("statusLabel")}
               value={
                 <div className="flex items-center gap-2">
                   <Badge variant={sub.isActive ? "default" : "secondary"}>
-                    {sub.isActive ? "Active" : "Inactive"}
+                    {sub.isActive ? t("activeBadge") : t("inactiveBadge")}
                   </Badge>
                   {sub.isActive && isDue(sub.nextRenewalDate) && (
                     <Badge
                       variant="outline"
                       className="border-amber-500 text-amber-600 dark:text-amber-400"
                     >
-                      Due
+                      {t("dueBadge")}
                     </Badge>
                   )}
                 </div>
@@ -287,7 +289,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
             />
             <div className="flex flex-col gap-1.5">
               <dt className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
-                Auto-renew
+                {t("autoRenewLabel")}
               </dt>
               <dd className="flex items-center gap-2">
                 <Switch
@@ -308,13 +310,13 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                   htmlFor={`auto-renew-${id}`}
                   className="text-sm font-normal"
                 >
-                  {sub.autoRenew === null ? "(using default)" : ""}
+                  {sub.autoRenew === null ? t("autoRenewDefault") : ""}
                 </Label>
               </dd>
             </div>
             {sub.websiteUrl && (
               <InfoRow
-                label="Website"
+                label={t("websiteLabel")}
                 value={
                   <a
                     href={sub.websiteUrl}
@@ -322,7 +324,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
                     rel="noopener noreferrer"
                     className="text-brand flex items-center gap-1 hover:underline"
                   >
-                    Visit
+                    {t("visitLink")}
                     <ExternalLink className="size-3" />
                   </a>
                 }
@@ -330,12 +332,12 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
             )}
             {sub.description && (
               <div className="col-span-2 sm:col-span-3">
-                <InfoRow label="Description" value={sub.description} />
+                <InfoRow label={t("descriptionLabel")} value={sub.description} />
               </div>
             )}
             {sub.notes && (
               <div className="col-span-2 sm:col-span-3">
-                <InfoRow label="Notes" value={sub.notes} />
+                <InfoRow label={t("notesLabel")} value={sub.notes} />
               </div>
             )}
           </dl>
@@ -346,7 +348,7 @@ export function SubscriptionDetail({ id }: SubscriptionDetailProps) {
       {sub.priceHistory.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Price history</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("priceHistoryTitle")}</CardTitle>
           </CardHeader>
           <CardContent>
             {sub.priceHistory.length >= 2 ? (

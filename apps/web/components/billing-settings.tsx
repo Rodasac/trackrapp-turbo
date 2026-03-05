@@ -3,6 +3,7 @@
 import { toast } from "sonner";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
+import { useTranslations } from "next-intl";
 import { useSubscriptionPlan } from "@/hooks/use-subscription-plan";
 import {
   useUpgradeToPro,
@@ -18,6 +19,7 @@ function formatDate(iso: string) {
 }
 
 export function BillingSettings() {
+  const t = useTranslations("billing");
   const { data: plan, isLoading } = useSubscriptionPlan();
   const upgrade = useUpgradeToPro();
   const billingPortal = useOpenBillingPortal();
@@ -44,7 +46,7 @@ export function BillingSettings() {
         cancelUrl: `${window.location.origin}/settings?tab=billing&upgraded=false`,
       });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upgrade failed");
+      toast.error(err instanceof Error ? err.message : t("upgradeFailed"));
     }
   }
 
@@ -55,7 +57,7 @@ export function BillingSettings() {
       });
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to open billing portal",
+        err instanceof Error ? err.message : t("billingPortalFailed"),
       );
     }
   }
@@ -64,19 +66,18 @@ export function BillingSettings() {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <span className="font-medium">Free plan</span>
-          <Badge variant="secondary">Free</Badge>
+          <span className="font-medium">{t("freePlanLabel")}</span>
+          <Badge variant="secondary">{t("freeBadge")}</Badge>
         </div>
         <p className="text-muted-foreground text-sm">
-          Upgrade to Pro to unlock AI-powered spending insights and push
-          notifications.
+          {t("upgradeDescription")}
         </p>
         <Button
           onClick={handleUpgrade}
           disabled={upgrade.isPending}
           className="bg-brand hover:bg-brand/90"
         >
-          {upgrade.isPending ? "Redirecting…" : "Upgrade to Pro"}
+          {upgrade.isPending ? t("upgradeButtonLoading") : t("upgradeButton")}
         </Button>
       </div>
     );
@@ -85,30 +86,29 @@ export function BillingSettings() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <span className="font-medium">Pro plan</span>
+        <span className="font-medium">{t("proPlanLabel")}</span>
         {plan.status === "trialing" ? (
-          <Badge variant="outline">Trial</Badge>
+          <Badge variant="outline">{t("trialBadge")}</Badge>
         ) : (
-          <Badge>Active</Badge>
+          <Badge>{t("activeBadge")}</Badge>
         )}
       </div>
 
       {plan.isTrialing && plan.trialEnd && (
         <p className="text-muted-foreground text-sm">
-          Trial ends on {formatDate(plan.trialEnd)}.
+          {t("trialEndsMessage", { date: formatDate(plan.trialEnd) })}
         </p>
       )}
 
       {plan.cancelAtPeriodEnd && plan.periodEnd && (
         <p className="text-sm text-amber-600 dark:text-amber-400">
-          Subscription cancels on {formatDate(plan.periodEnd)}. You will keep
-          access until then.
+          {t("subscriptionCancelsMessage", { date: formatDate(plan.periodEnd) })}
         </p>
       )}
 
       {!plan.isTrialing && !plan.cancelAtPeriodEnd && plan.periodEnd && (
         <p className="text-muted-foreground text-sm">
-          Next billing date: {formatDate(plan.periodEnd)}.
+          {t("nextBillingDateMessage", { date: formatDate(plan.periodEnd) })}
         </p>
       )}
 
@@ -117,7 +117,7 @@ export function BillingSettings() {
         onClick={handleBillingPortal}
         disabled={billingPortal.isPending}
       >
-        {billingPortal.isPending ? "Opening…" : "Manage billing"}
+        {billingPortal.isPending ? t("manageBillingButtonLoading") : t("manageBillingButton")}
       </Button>
     </div>
   );

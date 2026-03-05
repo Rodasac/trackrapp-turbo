@@ -13,7 +13,8 @@
     "./fuzzy-match": "./src/fuzzy-match.ts",
     "./column-detect": "./src/column-detect.ts",
     "./email-templates": "./src/email-templates.ts",
-    "./constants": "./src/constants.ts"
+    "./constants": "./src/constants.ts",
+    "./i18n": "./src/i18n.ts"
   },
   "scripts": {
     "test": "vitest run",

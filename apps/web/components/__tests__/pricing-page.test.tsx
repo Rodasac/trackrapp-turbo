@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import PricingPage from "@/app/pricing/page";
+import PricingPage from "@/app/[locale]/pricing/page";
 import { renderWithProviders } from "@/tests/test-utils";
 import { mockProPlan, mockSubscriptionPlan } from "@/tests/fixtures";
 

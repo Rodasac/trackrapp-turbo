@@ -1,11 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { FadeIn } from "@/components/landing/motion/fade-in";
+import { useTranslations } from "next-intl";
 
 export function CtaBanner() {
+  const t = useTranslations("landing.cta");
+
   return (
     <section className="relative overflow-hidden bg-slate-950 py-20 sm:py-28">
       {/* Gradient orb */}
@@ -25,12 +28,11 @@ export function CtaBanner() {
       <div className="relative mx-auto max-w-3xl px-6 text-center">
         <FadeIn>
           <h2 className="font-display text-4xl font-normal tracking-tight text-white sm:text-5xl">
-            Ready to take control of{" "}
-            <span className="text-emerald-400">your subscriptions?</span>
+            {t("headline")}{" "}
+            <span className="text-emerald-400">{t("highlight")}</span>
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-lg text-white/60">
-            Join thousands of users who&apos;ve stopped paying for services they
-            don&apos;t use. Start free, no credit card required.
+            {t("description")}
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Button
@@ -39,7 +41,7 @@ export function CtaBanner() {
               className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold shadow-lg shadow-emerald-500/25"
             >
               <Link href="/signup">
-                Start free
+                {t("startFree")}
                 <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
@@ -49,7 +51,7 @@ export function CtaBanner() {
               variant="outline"
               className="border-white/15 text-white/80 hover:bg-white/5 hover:text-white bg-transparent"
             >
-              <Link href="#pricing">View pricing</Link>
+              <Link href="#pricing">{t("viewPricing")}</Link>
             </Button>
           </div>
         </FadeIn>

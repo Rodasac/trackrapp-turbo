@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { CalendarIcon, CircleQuestionMarkIcon } from "lucide-react";
 import { Button } from "@repo/ui/button";
 import { Calendar } from "@repo/ui/calendar";
@@ -55,6 +56,7 @@ export function SubscriptionForm({
   subscriptionId,
   onSuccess,
 }: SubscriptionFormProps) {
+  const t = useTranslations("subscriptions.form");
   const router = useRouter();
   const { data: categories = [] } = useCategories();
   const { data: userPrefs } = useUserPreferences();
@@ -126,7 +128,7 @@ export function SubscriptionForm({
     try {
       await saveSubscription.mutateAsync(values);
       toast.success(
-        mode === "create" ? "Subscription added!" : "Subscription updated!",
+        mode === "create" ? t("addedToast") : t("updatedToast"),
       );
       if (onSuccess) {
         onSuccess();
@@ -134,7 +136,7 @@ export function SubscriptionForm({
         router.push("/subscriptions");
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(err instanceof Error ? err.message : t("saveFailed"));
     }
   }
 
@@ -148,7 +150,7 @@ export function SubscriptionForm({
         {mode === "create" && (
           <div>
             <p className="text-muted-foreground mb-1.5 text-sm font-medium">
-              Quick add from catalog
+              {t("quickAdd")}
             </p>
             <ServiceCatalogSearch onSelect={handleCatalogSelect} />
           </div>
@@ -160,9 +162,9 @@ export function SubscriptionForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name *</FormLabel>
+              <FormLabel>{t("nameLabel")}</FormLabel>
               <FormControl>
-                <Input placeholder="Netflix" {...field} />
+                <Input placeholder={t("namePlaceholder")} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -177,9 +179,9 @@ export function SubscriptionForm({
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price *</FormLabel>
+                  <FormLabel>{t("priceLabel")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="9.99" {...field} />
+                    <Input placeholder={t("pricePlaceholder")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -191,11 +193,11 @@ export function SubscriptionForm({
             name="currency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Currency</FormLabel>
+                <FormLabel>{t("currencyLabel")}</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="USD" />
+                      <SelectValue placeholder={t("currencyPlaceholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -218,18 +220,18 @@ export function SubscriptionForm({
           name="billingCycle"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Billing cycle *</FormLabel>
+              <FormLabel>{t("billingCycleLabel")}</FormLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select billing cycle" />
+                    <SelectValue placeholder={t("billingCyclePlaceholder")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">{t("cycleMonthly")}</SelectItem>
+                  <SelectItem value="yearly">{t("cycleYearly")}</SelectItem>
+                  <SelectItem value="quarterly">{t("cycleQuarterly")}</SelectItem>
+                  <SelectItem value="weekly">{t("cycleWeekly")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -244,7 +246,7 @@ export function SubscriptionForm({
             name="nextRenewalDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Next renewal *</FormLabel>
+                <FormLabel>{t("nextRenewalLabel")}</FormLabel>
                 <Popover
                   open={nextRenewalOpen}
                   onOpenChange={setNextRenewalOpen}
@@ -261,7 +263,7 @@ export function SubscriptionForm({
                         <CalendarIcon className="mr-2 size-4 shrink-0" />
                         {field.value
                           ? formatShortDate(field.value)
-                          : "Pick a date"}
+                          : t("nextRenewalPlaceholder")}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
@@ -288,7 +290,7 @@ export function SubscriptionForm({
             name="startDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Start date</FormLabel>
+                <FormLabel>{t("startDateLabel")}</FormLabel>
                 <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -302,7 +304,7 @@ export function SubscriptionForm({
                         <CalendarIcon className="mr-2 size-4 shrink-0" />
                         {field.value
                           ? formatShortDate(field.value)
-                          : "Optional"}
+                          : t("startDatePlaceholder")}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
@@ -331,7 +333,7 @@ export function SubscriptionForm({
           name="categoryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t("categoryLabel")}</FormLabel>
               <div className="flex items-center gap-2">
                 <Select
                   value={
@@ -347,7 +349,7 @@ export function SubscriptionForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="none">No category</SelectItem>
+                    <SelectItem value="none">{t("categoryNone")}</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={String(cat.id)}>
                         <DynamicIcon
@@ -376,9 +378,9 @@ export function SubscriptionForm({
             name="logoUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Logo URL</FormLabel>
+                <FormLabel>{t("logoUrlLabel")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://…" {...field} />
+                  <Input placeholder={t("logoUrlPlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -389,9 +391,9 @@ export function SubscriptionForm({
             name="websiteUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Website URL</FormLabel>
+                <FormLabel>{t("websiteUrlLabel")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://…" {...field} />
+                  <Input placeholder={t("websiteUrlPlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -405,10 +407,10 @@ export function SubscriptionForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t("descriptionLabel")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="What this subscription is for…"
+                  placeholder={t("descriptionPlaceholder")}
                   rows={2}
                   {...field}
                 />
@@ -424,10 +426,10 @@ export function SubscriptionForm({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>{t("notesLabel")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Account details, shared with…"
+                  placeholder={t("notesPlaceholder")}
                   rows={2}
                   {...field}
                 />
@@ -444,11 +446,11 @@ export function SubscriptionForm({
         >
           {form.formState.isSubmitting
             ? mode === "create"
-              ? "Adding…"
-              : "Saving…"
+              ? t("addButtonLoading")
+              : t("saveButtonLoading")
             : mode === "create"
-              ? "Add subscription"
-              : "Save changes"}
+              ? t("addButton")
+              : t("saveButton")}
         </Button>
       </form>
     </Form>

@@ -13,6 +13,7 @@ import {
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
 import { Button } from "@repo/ui/button";
+import { useTranslations } from "next-intl";
 import { useChangePassword } from "@/hooks/use-profile-mutations";
 import {
   changePasswordSchema,
@@ -20,6 +21,7 @@ import {
 } from "@repo/shared/validations";
 
 export function ChangePasswordForm() {
+  const t = useTranslations("settings.password");
   const { mutateAsync: changePassword, isPending } = useChangePassword();
 
   const form = useForm<ChangePasswordValues>({
@@ -37,11 +39,11 @@ export function ChangePasswordForm() {
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       });
-      toast.success("Password changed successfully");
+      toast.success(t("changedSuccessToast"));
       form.reset();
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to change password",
+        err instanceof Error ? err.message : t("failedToChangeToast"),
       );
     }
   }
@@ -54,7 +56,7 @@ export function ChangePasswordForm() {
           name="currentPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Current password</FormLabel>
+              <FormLabel>{t("currentPasswordLabel")}</FormLabel>
               <FormControl>
                 <Input
                   type="password"
@@ -72,7 +74,7 @@ export function ChangePasswordForm() {
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>New password</FormLabel>
+              <FormLabel>{t("newPasswordLabel")}</FormLabel>
               <FormControl>
                 <Input type="password" autoComplete="new-password" {...field} />
               </FormControl>
@@ -86,7 +88,7 @@ export function ChangePasswordForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm new password</FormLabel>
+              <FormLabel>{t("confirmNewPasswordLabel")}</FormLabel>
               <FormControl>
                 <Input type="password" autoComplete="new-password" {...field} />
               </FormControl>
@@ -96,7 +98,7 @@ export function ChangePasswordForm() {
         />
 
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving…" : "Change password"}
+          {isPending ? t("changeButtonLoading") : t("changeButton")}
         </Button>
       </form>
     </Form>

@@ -209,6 +209,7 @@ export const userPreferences = pgTable("user_preferences", {
     .references(() => users.id, { onDelete: "cascade" }),
   autoRenewDefault: boolean("auto_renew_default").notNull().default(true),
   defaultCurrency: text("default_currency").notNull().default("USD"),
+  locale: text("locale").notNull().default("en"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

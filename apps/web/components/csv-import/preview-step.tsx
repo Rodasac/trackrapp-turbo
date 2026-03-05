@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Skeleton } from "@repo/ui/skeleton";
@@ -24,22 +25,24 @@ function MatchBadge({
 }: {
   confidence: CsvImportPreviewRow["matchConfidence"];
 }) {
+  const t = useTranslations("csvImport.preview");
   if (confidence === "exact")
     return (
       <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-        Exact
+        {t("exact")}
       </Badge>
     );
   if (confidence === "fuzzy")
     return (
       <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">
-        Fuzzy
+        {t("fuzzy")}
       </Badge>
     );
   return <Badge variant="secondary">None</Badge>;
 }
 
 export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
+  const t = useTranslations("csvImport.preview");
   const router = useRouter();
   const preview = usePreviewCsvImport();
   const confirm = useConfirmCsvImport();
@@ -97,17 +100,21 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
     try {
       const result = await confirm.mutateAsync(toImport);
       toast.success(
-        `Imported ${result.imported} subscription${result.imported !== 1 ? "s" : ""}`,
+        result.imported === 1
+          ? t("importedSuccess", { count: result.imported })
+          : t("importedSuccessPlural", { count: result.imported }),
       );
       if (result.failed > 0) {
         toast.warning(
-          `${result.failed} row${result.failed !== 1 ? "s" : ""} failed to import`,
+          result.failed === 1
+            ? t("importedWarning", { count: result.failed })
+            : t("importedWarningPlural", { count: result.failed }),
         );
       }
       onSuccess();
       router.push("/subscriptions");
     } catch {
-      toast.error("Import failed. Please try again.");
+      toast.error(t("importFailed"));
     }
   }
 
@@ -124,7 +131,7 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
   if (preview.error) {
     return (
       <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-        Failed to preview rows. Please go back and check your CSV.
+        {t("failedToPreview")}
       </p>
     );
   }
@@ -133,16 +140,19 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
-          {validRows.length} valid · {rows.length - validRows.length} errors ·{" "}
-          {selected.size} selected
+          {t("summary", {
+            valid: validRows.length,
+            errors: rows.length - validRows.length,
+            selected: selected.size,
+          })}
         </span>
         <Button
           onClick={handleImport}
           disabled={selected.size === 0 || confirm.isPending}
         >
           {confirm.isPending
-            ? "Importing…"
-            : `Import ${selected.size} Selected`}
+            ? t("importingButton")
+            : t("importButton", { count: selected.size })}
         </Button>
       </div>
 
@@ -155,15 +165,15 @@ export function PreviewStep({ mappedRows, onSuccess }: PreviewStepProps) {
                   type="checkbox"
                   checked={allSelected}
                   onChange={toggleAll}
-                  aria-label="Select all valid rows"
+                  aria-label={t("selectAllValid")}
                 />
               </th>
               <th className="px-3 py-2 text-left font-medium">Name</th>
               <th className="px-3 py-2 text-left font-medium">Price</th>
-              <th className="px-3 py-2 text-left font-medium">Cycle</th>
-              <th className="px-3 py-2 text-left font-medium">Renewal</th>
+              <th className="px-3 py-2 text-left font-medium">{t("cycleColumn")}</th>
+              <th className="px-3 py-2 text-left font-medium">{t("renewalColumn")}</th>
               <th className="px-3 py-2 text-left font-medium">Category</th>
-              <th className="px-3 py-2 text-left font-medium">Match</th>
+              <th className="px-3 py-2 text-left font-medium">{t("matchColumn")}</th>
             </tr>
           </thead>
           <tbody>

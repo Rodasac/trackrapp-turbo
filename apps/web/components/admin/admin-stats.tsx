@@ -9,50 +9,52 @@ import {
   CalendarPlus,
   ShieldBan,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { KpiCard } from "@repo/ui/kpi-card";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 
 export function AdminStats() {
+  const t = useTranslations("admin.stats");
   const { data } = useAdminStats();
 
   const cards = [
     {
-      title: "Total Users",
+      title: t("totalUsers"),
       value: data?.totalUsers ?? "—",
       icon: Users,
     },
     {
-      title: "Active (30d)",
+      title: t("activeUsers30d"),
       value: data?.activeUsers30d ?? "—",
       icon: Activity,
     },
     {
-      title: "Pro Users",
+      title: t("proUsers"),
       value: data?.proUsers ?? "—",
       icon: Crown,
     },
     {
-      title: "Free Users",
+      title: t("freeUsers"),
       value: data?.freeUsers ?? "—",
       icon: Users,
     },
     {
-      title: "Tracked Subscriptions",
+      title: t("totalSubscriptions"),
       value: data?.totalSubscriptions ?? "—",
       icon: CreditCard,
     },
     {
-      title: "Signups (7d)",
+      title: t("signups7d"),
       value: data?.signups7d ?? "—",
       icon: UserPlus,
     },
     {
-      title: "Signups (30d)",
+      title: t("signups30d"),
       value: data?.signups30d ?? "—",
       icon: CalendarPlus,
     },
     {
-      title: "Banned Users",
+      title: t("bannedUsers"),
       value: data?.bannedUsers ?? "—",
       icon: ShieldBan,
     },

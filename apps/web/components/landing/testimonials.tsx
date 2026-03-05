@@ -9,6 +9,7 @@ import {
   itemVariants,
 } from "@/components/landing/motion/stagger-children";
 import { PRICING } from "@/lib/pricing-config";
+import { useTranslations } from "next-intl";
 
 const TESTIMONIALS = [
   {
@@ -36,16 +37,17 @@ const TESTIMONIALS = [
 ];
 
 export function Testimonials() {
+  const t = useTranslations("landing.testimonials");
+
   return (
     <section className="bg-background py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-6">
         <FadeIn className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            What our users say
+            {t("sectionTitle")}
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-lg">
-            Join thousands of people who&apos;ve taken control of their
-            subscriptions.
+            {t("sectionDescription")}
           </p>
         </FadeIn>
 

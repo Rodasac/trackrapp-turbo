@@ -13,19 +13,21 @@ export interface EmailLayoutOptions {
   content: string;
   previewText?: string;
   appUrl?: string;
+  locale?: string;
 }
 
 export function emailLayout({
   content,
   previewText,
   appUrl = EMAIL_BRAND.appUrl,
+  locale = "en",
 }: EmailLayoutOptions): string {
   const previewSpan = previewText
     ? `<span style="display:none;font-size:1px;color:#fff;max-height:0;overflow:hidden;opacity:0;">${previewText}</span>`
     : "";
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />

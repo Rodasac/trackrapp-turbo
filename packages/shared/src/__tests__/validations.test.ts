@@ -3,6 +3,8 @@ import {
   subscriptionFormSchema,
   categoryFormSchema,
   csvImportRowSchema,
+  createSubscriptionFormSchema,
+  createChangePasswordSchema,
 } from "../validations";
 
 const validSubscription = {
@@ -156,6 +158,30 @@ describe("csvImportRowSchema", () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.currency).toBe("USD");
+    }
+  });
+});
+
+describe("createSubscriptionFormSchema with custom messages", () => {
+  it("uses custom nameRequired message", () => {
+    const schema = createSubscriptionFormSchema({ nameRequired: "Nombre requerido" });
+    const result = schema.safeParse({ name: "", price: "9.99", currency: "USD", billingCycle: "monthly" as const, nextRenewalDate: "2026-03-15" });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const nameIssue = result.error.issues.find((i) => i.path.includes("name"));
+      expect(nameIssue?.message).toBe("Nombre requerido");
+    }
+  });
+});
+
+describe("createChangePasswordSchema with custom messages", () => {
+  it("uses custom passwordsMustMatch message", () => {
+    const schema = createChangePasswordSchema({ passwordsMustMatch: "Las contraseñas deben coincidir" });
+    const result = schema.safeParse({ currentPassword: "OldPass1!", newPassword: "NewPass1!", confirmPassword: "Different1!" });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const matchIssue = result.error.issues.find((i) => i.path.includes("confirmPassword"));
+      expect(matchIssue?.message).toBe("Las contraseñas deben coincidir");
     }
   });
 });

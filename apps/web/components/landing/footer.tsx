@@ -1,23 +1,7 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { CreditCard } from "lucide-react";
 import { Separator } from "@repo/ui/separator";
-
-const PRODUCT_LINKS = [
-  { href: "/#features", label: "Features" },
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#pricing", label: "Pricing" },
-];
-
-const COMPANY_LINKS = [
-  { href: "/login", label: "Sign in" },
-  { href: "/signup", label: "Get started" },
-];
-
-const LEGAL_LINKS = [
-  { href: "/terms", label: "Terms of Service" },
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/cookies", label: "Cookie Policy" },
-];
+import { getTranslations } from "next-intl/server";
 
 function FooterLinkGroup({
   title,
@@ -45,8 +29,28 @@ function FooterLinkGroup({
   );
 }
 
-export function Footer() {
+export async function Footer() {
+  const t = await getTranslations("landing.footer");
+  const tNav = await getTranslations("landing.nav");
+
   const year = new Date().getFullYear();
+
+  const PRODUCT_LINKS = [
+    { href: "/#features", label: tNav("features") },
+    { href: "/#how-it-works", label: tNav("howItWorks") },
+    { href: "/#pricing", label: tNav("pricing") },
+  ];
+
+  const COMPANY_LINKS = [
+    { href: "/login", label: tNav("signIn") },
+    { href: "/signup", label: tNav("getStarted") },
+  ];
+
+  const LEGAL_LINKS = [
+    { href: "/terms", label: t("terms") },
+    { href: "/privacy", label: t("privacy") },
+    { href: "/cookies", label: t("cookies") },
+  ];
 
   return (
     <footer className="bg-card border-t">
@@ -61,20 +65,19 @@ export function Footer() {
               <span className="font-semibold">TrackrApp</span>
             </Link>
             <p className="text-muted-foreground mt-3 text-sm">
-              Subscription tracking made simple. Know what you pay, cancel what
-              you don&apos;t need.
+              {t("tagline")}
             </p>
           </div>
 
-          <FooterLinkGroup title="Product" links={PRODUCT_LINKS} />
-          <FooterLinkGroup title="Company" links={COMPANY_LINKS} />
-          <FooterLinkGroup title="Legal" links={LEGAL_LINKS} />
+          <FooterLinkGroup title={t("product")} links={PRODUCT_LINKS} />
+          <FooterLinkGroup title={t("company")} links={COMPANY_LINKS} />
+          <FooterLinkGroup title={t("legal")} links={LEGAL_LINKS} />
         </div>
 
         <Separator className="my-8" />
 
         <p className="text-muted-foreground text-center text-sm">
-          &copy; {year} TrackrApp. All rights reserved.
+          &copy; {year} TrackrApp. {t("allRightsReserved")}
         </p>
       </div>
     </footer>
