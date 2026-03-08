@@ -112,7 +112,7 @@ test("tips page shows upgrade prompt for free user", async ({ page }) => {
     timeout: 10_000,
   });
   await expect(
-    page.getByRole("link", { name: /upgrade to pro/i }),
+    page.getByRole("main").getByRole("link", { name: /upgrade to pro/i }),
   ).toBeVisible();
 });
 
@@ -125,5 +125,7 @@ test("tips page shows Pro badge in the heading", async ({ page }) => {
     page.getByRole("heading", { name: "AI Insights" }),
   ).toBeVisible();
   // Pro badge is visible
-  await expect(page.getByText("Pro")).toBeVisible();
+  await expect(
+    page.getByRole("main").getByText("Pro", { exact: true }),
+  ).toBeVisible();
 });

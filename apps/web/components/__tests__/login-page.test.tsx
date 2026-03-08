@@ -124,7 +124,7 @@ describe("LoginPage", () => {
 
   it("shows unverified email banner on email-not-verified error", async () => {
     mockSignInEmail.mockResolvedValue({
-      error: { message: "Email not verified" },
+      error: { code: "EMAIL_NOT_VERIFIED" },
     });
     const user = userEvent.setup();
     renderWithProviders(<LoginPage />);
@@ -141,7 +141,7 @@ describe("LoginPage", () => {
 
   it("resend verification email button calls sendVerificationEmail", async () => {
     mockSignInEmail.mockResolvedValue({
-      error: { message: "Email not verified" },
+      error: { code: "EMAIL_NOT_VERIFIED" },
     });
     const user = userEvent.setup();
     renderWithProviders(<LoginPage />);

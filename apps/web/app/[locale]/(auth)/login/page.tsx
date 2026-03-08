@@ -48,7 +48,7 @@ export default function LoginPage() {
     setUnverifiedEmail(null);
     const { error } = await signIn.email(values);
     if (error) {
-      if (error.message === "Email not verified") {
+      if (error.code === "EMAIL_NOT_VERIFIED") {
         setUnverifiedEmail(values.email);
       } else {
         toast.error(error.message ?? "Invalid email or password");
