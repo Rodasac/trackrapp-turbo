@@ -48,10 +48,10 @@ export async function proxy(request: NextRequest) {
   // Disabled during Playwright E2E runs to avoid spurious 429s.
   // Better Auth handles /api/auth/* with its own rate limiter (Layer 1).
   // ---------------------------------------------------------------------------
-  if (pathname.startsWith("/api") && process.env.PLAYWRIGHT !== "true") {
+  if (pathname.startsWith("/api")) {
     const tierResult = resolveTier(pathname, request.method);
 
-    if (!tierResult.exempt) {
+    if (!tierResult.exempt && process.env.PLAYWRIGHT !== "true") {
       const key = getRateLimitKey(request.headers);
       const tierConfig =
         tierResult.tier === "MODERATE" ? TIERS.MODERATE : TIERS.RELAXED;

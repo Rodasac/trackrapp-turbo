@@ -93,49 +93,53 @@ export const auth = betterAuth({
     }),
     admin(),
     dash(),
-    sentinel({
-      apiKey: process.env.BETTER_AUTH_API_KEY ?? "",
-      security: {
-        emailValidation: {
-          enabled: process.env.NODE_ENV === "production",
-        },
-        compromisedPassword: {
-          enabled: process.env.NODE_ENV === "production",
-          action: "block",
-        },
+    ...(process.env.PLAYWRIGHT !== "true"
+      ? [
+          sentinel({
+            apiKey: process.env.BETTER_AUTH_API_KEY ?? "",
+            security: {
+              emailValidation: {
+                enabled: process.env.NODE_ENV === "production",
+              },
+              compromisedPassword: {
+                enabled: process.env.NODE_ENV === "production",
+                action: "block",
+              },
 
-        // Location-based
-        impossibleTravel: {
-          enabled: process.env.NODE_ENV === "production",
-          action: "challenge",
-        },
+              // Location-based
+              impossibleTravel: {
+                enabled: process.env.NODE_ENV === "production",
+                action: "challenge",
+              },
 
-        // Abuse prevention
-        freeTrialAbuse: {
-          enabled: process.env.NODE_ENV === "production",
-          maxAccountsPerVisitor: 3,
-          action: "block",
-        },
-        velocity: {
-          enabled: process.env.NODE_ENV === "production",
-          maxSignupsPerVisitor: 5,
-          action: "challenge",
-        },
+              // Abuse prevention
+              freeTrialAbuse: {
+                enabled: process.env.NODE_ENV === "production",
+                maxAccountsPerVisitor: 3,
+                action: "block",
+              },
+              velocity: {
+                enabled: process.env.NODE_ENV === "production",
+                maxSignupsPerVisitor: 5,
+                action: "challenge",
+              },
 
-        // Bot protection
-        botBlocking: { action: "challenge" },
-        suspiciousIpBlocking: { action: "block" },
+              // Bot protection
+              botBlocking: { action: "challenge" },
+              suspiciousIpBlocking: { action: "block" },
 
-        // Account monitoring
-        staleUsers: {
-          enabled: process.env.NODE_ENV === "production",
-          staleDays: 90,
-          notifyUser: true,
-          notifyAdmin: true,
-          adminEmail: "security@trackrapp.xyz",
-        },
-      },
-    }),
+              // Account monitoring
+              staleUsers: {
+                enabled: process.env.NODE_ENV === "production",
+                staleDays: 90,
+                notifyUser: true,
+                notifyAdmin: true,
+                adminEmail: "security@trackrapp.xyz",
+              },
+            },
+          }),
+        ]
+      : []),
     ...(process.env.STRIPE_SECRET_KEY
       ? [
           stripe({
