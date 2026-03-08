@@ -7,6 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   ACME_EMAIL: ${{ secrets.ACME_EMAIL_STAGING }}
+  BETTER_AUTH_API_KEY: ${{ secrets.BETTER_AUTH_API_KEY }}
 
 jobs:
   # ─── Build staging images ──────────────────────────────────────────────────
@@ -73,6 +74,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
           build-args: |
             NEXT_PUBLIC_APP_ENV=development
+            BETTER_AUTH_API_KEY=${{ env.BETTER_AUTH_API_KEY }}
           secret-files: |
             ENV_FILE=/tmp/staging.env
 
