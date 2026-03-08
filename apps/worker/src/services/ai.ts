@@ -30,9 +30,15 @@ export function getAiModel(
   return anthropic("claude-sonnet-4-6");
 }
 
+const LOCALE_NAMES: Record<string, string> = {
+  en: "English",
+  es: "Spanish",
+};
+
 export function buildPrompt(
   subs: SubscriptionForPrompt[],
   totalMonthlySpend: number,
+  locale: string = "en",
 ): { system: string; user: string } {
   const subList = subs
     .map(
@@ -41,7 +47,13 @@ export function buildPrompt(
     )
     .join("\n");
 
-  const system = `You are a helpful financial advisor specializing in subscription management. Analyze the user's subscriptions and provide 3-5 actionable tips. Each tip must have a title (short headline), message (detailed advice, 1-2 sentences), and category (one of: savings, warning, info, comparison). Respond with a JSON array only, no markdown wrapping.`;
+  const languageName = LOCALE_NAMES[locale];
+  const languageInstruction =
+    languageName && locale !== "en"
+      ? ` IMPORTANT: All tip titles and messages must be written in ${languageName}.`
+      : "";
+
+  const system = `You are a helpful financial advisor specializing in subscription management. Analyze the user's subscriptions and provide 3-5 actionable tips. Each tip must have a title (short headline), message (detailed advice, 1-2 sentences), and category (one of: savings, warning, info, comparison). Respond with a JSON array only, no markdown wrapping.${languageInstruction}`;
 
   const user = `Here are my current subscriptions (total monthly spend: $${totalMonthlySpend.toFixed(2)}):
 
@@ -90,6 +102,7 @@ export async function generateTipsForUser(
   model: LanguageModel,
   subs: SubscriptionForPrompt[],
   totalMonthlySpend: number,
+  locale: string = "en",
 ): Promise<
   {
     title: string;
@@ -98,7 +111,7 @@ export async function generateTipsForUser(
   }[]
 > {
   try {
-    const { system, user } = buildPrompt(subs, totalMonthlySpend);
+    const { system, user } = buildPrompt(subs, totalMonthlySpend, locale);
     const result = await generateText({
       model,
       system,

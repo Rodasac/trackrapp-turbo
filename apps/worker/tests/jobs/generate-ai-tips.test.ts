@@ -74,6 +74,7 @@ vi.mock("@repo/database", () => ({
     categories: {},
     aiTips: { userId: "userId" },
     users: { id: "id", role: "role" },
+    userPreferences: { userId: "userId" },
   },
 }));
 
@@ -81,6 +82,10 @@ vi.mock("drizzle-orm", () => ({
   eq: vi.fn((a: unknown, b: unknown) => ({ eq: [a, b] })),
   and: vi.fn((...a: unknown[]) => ({ and: a })),
   inArray: vi.fn((a: unknown, b: unknown) => ({ inArray: [a, b] })),
+}));
+
+vi.mock("@repo/shared/i18n", () => ({
+  getTranslator: vi.fn(() => (key: string) => key),
 }));
 
 import { generateAiTips } from "../../src/jobs/generate-ai-tips.js";
@@ -120,6 +125,7 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER]) // Pro users
       .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([]) // user preferences (none)
       .mockResolvedValueOnce(SUB_DATA); // user's subscriptions
 
     await generateAiTips();
@@ -131,6 +137,7 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER]) // Pro users
       .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([]) // user preferences (none)
       .mockResolvedValueOnce([]); // no subscriptions
 
     await generateAiTips();
@@ -142,6 +149,7 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER])
       .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([]) // user preferences (none)
       .mockResolvedValueOnce(SUB_DATA);
 
     await generateAiTips();
@@ -153,6 +161,7 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER])
       .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([]) // user preferences (none)
       .mockResolvedValueOnce(SUB_DATA);
 
     await generateAiTips();
@@ -169,6 +178,7 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce(users)
       .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([]) // user preferences (none, batch)
       // user-1 subs → error during generation
       .mockResolvedValueOnce(SUB_DATA)
       // user-2 subs
@@ -198,6 +208,7 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce([PRO_USER])
       .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([]) // user preferences (none)
       .mockResolvedValueOnce(SUB_DATA);
     mockGenerateTipsForUser.mockResolvedValue([]);
 
@@ -210,6 +221,7 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce([]) // no Pro users
       .mockResolvedValueOnce([ADMIN_USER]) // admin users
+      .mockResolvedValueOnce([]) // user preferences (none)
       .mockResolvedValueOnce(SUB_DATA); // admin user's subscriptions
 
     await generateAiTips();
@@ -223,10 +235,65 @@ describe("generate-ai-tips job", () => {
     mockSelectResult
       .mockResolvedValueOnce([SHARED_USER_PRO]) // Pro users
       .mockResolvedValueOnce([SHARED_USER_ADMIN]) // admin users (same person)
+      .mockResolvedValueOnce([]) // user preferences (none)
       .mockResolvedValueOnce(SUB_DATA); // subscriptions (called only once)
 
     await generateAiTips();
     // Should only process user-1 once despite appearing in both lists
     expect(mockGenerateTipsForUser).toHaveBeenCalledOnce();
+  });
+
+  it("passes es locale to generateTipsForUser when user has Spanish preference", async () => {
+    const USER_PREF_ES = { userId: "user-1", locale: "es" };
+    mockSelectResult
+      .mockResolvedValueOnce([PRO_USER])
+      .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([USER_PREF_ES]) // user preferences
+      .mockResolvedValueOnce(SUB_DATA);
+
+    await generateAiTips();
+    expect(mockGenerateTipsForUser).toHaveBeenCalledWith(
+      "mock-model",
+      expect.any(Array),
+      expect.any(Number),
+      "es",
+    );
+  });
+
+  it("defaults to en locale when no preferences exist for user", async () => {
+    mockSelectResult
+      .mockResolvedValueOnce([PRO_USER])
+      .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([]) // no user preferences
+      .mockResolvedValueOnce(SUB_DATA);
+
+    await generateAiTips();
+    expect(mockGenerateTipsForUser).toHaveBeenCalledWith(
+      "mock-model",
+      expect.any(Array),
+      expect.any(Number),
+      "en",
+    );
+  });
+
+  it("uses translated notification strings for es locale", async () => {
+    const { getTranslator } = await import("@repo/shared/i18n");
+    const mockT = vi.fn((key: string) => `translated:${key}`);
+    vi.mocked(getTranslator).mockReturnValue(mockT);
+
+    const USER_PREF_ES = { userId: "user-1", locale: "es" };
+    mockSelectResult
+      .mockResolvedValueOnce([PRO_USER])
+      .mockResolvedValueOnce([]) // admin users (none)
+      .mockResolvedValueOnce([USER_PREF_ES]) // user preferences
+      .mockResolvedValueOnce(SUB_DATA);
+
+    await generateAiTips();
+    expect(getTranslator).toHaveBeenCalledWith("es", "notification");
+    expect(mockCreateNotification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "translated:aiTips.title",
+      }),
+    );
   });
 });

@@ -23,14 +23,14 @@ export const auth = betterAuth({
   rateLimit: {
     enabled: process.env.PLAYWRIGHT !== "true",
     window: 60,
-    max: 5,
+    max: 10,
     storage: "memory",
     customRules: {
-      "/sign-in/email": { window: 60, max: 5 },
-      "/sign-up/email": { window: 60, max: 3 },
-      "/forgot-password": { window: 60, max: 3 },
-      "/reset-password": { window: 60, max: 3 },
-      "/send-verification-email": { window: 60, max: 3 },
+      "/sign-in/email": { window: 60, max: 20 },
+      "/sign-up/email": { window: 60, max: 20 },
+      "/forgot-password": { window: 60, max: 10 },
+      "/reset-password": { window: 60, max: 10 },
+      "/send-verification-email": { window: 60, max: 10 },
     },
   },
   emailAndPassword: {
@@ -96,25 +96,28 @@ export const auth = betterAuth({
     sentinel({
       apiKey: process.env.BETTER_AUTH_API_KEY ?? "",
       security: {
+        emailValidation: {
+          enabled: process.env.NODE_ENV === "production",
+        },
         compromisedPassword: {
-          enabled: true,
+          enabled: process.env.NODE_ENV === "production",
           action: "block",
         },
 
         // Location-based
         impossibleTravel: {
-          enabled: true,
+          enabled: process.env.NODE_ENV === "production",
           action: "challenge",
         },
 
         // Abuse prevention
         freeTrialAbuse: {
-          enabled: true,
+          enabled: process.env.NODE_ENV === "production",
           maxAccountsPerVisitor: 3,
           action: "block",
         },
         velocity: {
-          enabled: true,
+          enabled: process.env.NODE_ENV === "production",
           maxSignupsPerVisitor: 5,
           action: "challenge",
         },
@@ -125,7 +128,7 @@ export const auth = betterAuth({
 
         // Account monitoring
         staleUsers: {
-          enabled: true,
+          enabled: process.env.NODE_ENV === "production",
           staleDays: 90,
           notifyUser: true,
           notifyAdmin: true,

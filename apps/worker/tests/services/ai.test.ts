@@ -102,6 +102,51 @@ describe("AI service", () => {
       expect(user).toContain("monthly");
       expect(user).toContain("Software");
     });
+
+    it("does NOT include language instruction for en locale", () => {
+      const subs = [
+        {
+          name: "Netflix",
+          price: "15.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: null,
+        },
+      ];
+      const { system } = buildPrompt(subs, 15.99, "en");
+      expect(system).not.toContain("IMPORTANT: All tip titles");
+    });
+
+    it("includes Spanish language instruction for es locale", () => {
+      const subs = [
+        {
+          name: "Netflix",
+          price: "15.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: null,
+        },
+      ];
+      const { system } = buildPrompt(subs, 15.99, "es");
+      expect(system).toContain("Spanish");
+      expect(system).toContain(
+        "IMPORTANT: All tip titles and messages must be written in Spanish",
+      );
+    });
+
+    it("does NOT include language instruction when locale defaults to en", () => {
+      const subs = [
+        {
+          name: "Netflix",
+          price: "15.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: null,
+        },
+      ];
+      const { system } = buildPrompt(subs, 15.99);
+      expect(system).not.toContain("IMPORTANT: All tip titles");
+    });
   });
 
   describe("parseTipsResponse", () => {
@@ -189,6 +234,35 @@ describe("AI service", () => {
       const model = getAiModel("anthropic");
       const tips = await generateTipsForUser(model, [], 0);
       expect(tips).toEqual([]);
+    });
+
+    it("passes locale to buildPrompt (es locale includes Spanish in system prompt)", async () => {
+      vi.mocked(generateText).mockResolvedValue({
+        text: JSON.stringify([
+          {
+            title: "Ahorra",
+            message: "Cambia al plan anual",
+            category: "savings",
+          },
+        ]),
+      } as never);
+
+      const subs = [
+        {
+          name: "Netflix",
+          price: "15.99",
+          currency: "USD",
+          billingCycle: "monthly",
+          categoryName: null,
+        },
+      ];
+      const model = getAiModel("anthropic");
+      await generateTipsForUser(model, subs, 15.99, "es");
+
+      const callArgs = vi.mocked(generateText).mock.calls[0][0] as {
+        system: string;
+      };
+      expect(callArgs.system).toContain("Spanish");
     });
   });
 });

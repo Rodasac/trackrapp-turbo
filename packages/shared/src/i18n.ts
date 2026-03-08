@@ -72,6 +72,12 @@ const NOTIFICATION_TRANSLATIONS = {
       messageDays:
         "Your {name} subscription ({currency} {price}) renews in {days} days.",
     },
+    aiTips: {
+      title: "New AI Tips Available",
+      messageSingular: "1 new personalized spending tip generated for you.",
+      messagePlural:
+        "{count} new personalized spending tips generated for you.",
+    },
   },
   es: {
     renewal: {
@@ -81,6 +87,13 @@ const NOTIFICATION_TRANSLATIONS = {
         "Tu suscripción a {name} ({currency} {price}) se renueva mañana.",
       messageDays:
         "Tu suscripción a {name} ({currency} {price}) se renueva en {days} días.",
+    },
+    aiTips: {
+      title: "Nuevos consejos de IA disponibles",
+      messageSingular:
+        "1 nuevo consejo de gasto personalizado generado para ti.",
+      messagePlural:
+        "{count} nuevos consejos de gasto personalizados generados para ti.",
     },
   },
 } as const;

@@ -4,6 +4,7 @@ import { validateAiEnv } from "../env.js";
 import { getAiModel, generateTipsForUser } from "../services/ai.js";
 import { createNotification } from "../services/notification.js";
 import type { SubscriptionForPrompt } from "../services/ai.js";
+import { getTranslator } from "@repo/shared/i18n";
 import { aiTipsLog } from "../logger.js";
 
 export async function generateAiTips(): Promise<void> {
@@ -37,6 +38,13 @@ export async function generateAiTips(): Promise<void> {
     aiTipsLog.info("No eligible users found — skipping");
     return;
   }
+
+  // Batch-fetch user preferences to get locale settings
+  const userPrefsRows = await db
+    .select()
+    .from(schema.userPreferences)
+    .where(inArray(schema.userPreferences.userId, [...eligibleUserIds]));
+  const userPrefsMap = new Map(userPrefsRows.map((p) => [p.userId, p]));
 
   aiTipsLog.info({ count: eligibleUserIds.size }, "Processing eligible users");
   let generated = 0;
@@ -75,11 +83,13 @@ export async function generateAiTips(): Promise<void> {
       // Delete old tips before generating new ones
       await db.delete(schema.aiTips).where(eq(schema.aiTips.userId, userId));
 
-      // Generate new tips
+      // Generate new tips in the user's preferred language
+      const userLocale = userPrefsMap.get(userId)?.locale ?? "en";
       const tips = await generateTipsForUser(
         model,
         subsForPrompt,
         totalMonthly,
+        userLocale,
       );
 
       if (tips.length === 0) {
@@ -101,12 +111,18 @@ export async function generateAiTips(): Promise<void> {
         })),
       );
 
-      // Notify user
+      // Notify user with localized strings
+      const tn = getTranslator(userLocale, "notification");
+      const notifTitle = tn("aiTips.title");
+      const notifMessage =
+        tips.length === 1
+          ? tn("aiTips.messageSingular")
+          : tn("aiTips.messagePlural", { count: tips.length });
       await createNotification({
         userId,
         type: "tip",
-        title: "New AI Tips Available",
-        message: `${tips.length} new personalized spending tip${tips.length > 1 ? "s" : ""} generated for you.`,
+        title: notifTitle,
+        message: notifMessage,
       });
 
       generated++;

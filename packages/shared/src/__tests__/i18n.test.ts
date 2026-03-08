@@ -84,4 +84,42 @@ describe("getTranslator — notification domain", () => {
       }),
     ).toBe("Tu suscripción a Netflix (USD 15.99) se renueva en 7 días.");
   });
+
+  it("returns English aiTips title", () => {
+    const t = getTranslator("en", "notification");
+    expect(t("aiTips.title")).toBe("New AI Tips Available");
+  });
+
+  it("returns Spanish aiTips title", () => {
+    const t = getTranslator("es", "notification");
+    expect(t("aiTips.title")).toBe("Nuevos consejos de IA disponibles");
+  });
+
+  it("returns English aiTips singular message", () => {
+    const t = getTranslator("en", "notification");
+    expect(t("aiTips.messageSingular")).toBe(
+      "1 new personalized spending tip generated for you.",
+    );
+  });
+
+  it("returns English aiTips plural message with count interpolation", () => {
+    const t = getTranslator("en", "notification");
+    expect(t("aiTips.messagePlural", { count: 3 })).toBe(
+      "3 new personalized spending tips generated for you.",
+    );
+  });
+
+  it("returns Spanish aiTips singular message", () => {
+    const t = getTranslator("es", "notification");
+    expect(t("aiTips.messageSingular")).toBe(
+      "1 nuevo consejo de gasto personalizado generado para ti.",
+    );
+  });
+
+  it("returns Spanish aiTips plural message with count interpolation", () => {
+    const t = getTranslator("es", "notification");
+    expect(t("aiTips.messagePlural", { count: 4 })).toBe(
+      "4 nuevos consejos de gasto personalizados generados para ti.",
+    );
+  });
 });

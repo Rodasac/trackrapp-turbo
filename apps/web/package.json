@@ -11,9 +11,9 @@
     "lint:fix": "eslint . --fix",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
-    "e2e": "playwright test",
-    "e2e:headed": "playwright test --headed",
-    "e2e:ui": "playwright test --ui",
+    "e2e": "PLAYWRIGHT=true playwright test",
+    "e2e:headed": "PLAYWRIGHT=true playwright test --headed",
+    "e2e:ui": "PLAYWRIGHT=true playwright test --ui",
     "clean": "pnpm dlx rimraf .next/cache node_modules/"
   },
   "dependencies": {
