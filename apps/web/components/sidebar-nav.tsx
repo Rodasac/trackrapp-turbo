@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import {
@@ -10,11 +11,13 @@ import {
   LogOut,
   Shield,
   Sparkles,
+  Menu,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@repo/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { Separator } from "@repo/ui/separator";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@repo/ui/sheet";
 import { useSession, signOut } from "@/lib/auth-client";
 import { NotificationBell } from "@/components/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -54,7 +57,7 @@ function initials(name?: string | null) {
     .toUpperCase();
 }
 
-export function SidebarNav() {
+function SidebarNavContent() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
@@ -73,7 +76,7 @@ export function SidebarNav() {
   }
 
   return (
-    <aside className="bg-card flex h-full w-64 flex-col border-r">
+    <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex h-14 items-center px-5">
         <Link href="/dashboard" className="flex items-center gap-2">
@@ -156,6 +159,49 @@ export function SidebarNav() {
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+export function SidebarNav() {
+  return (
+    <aside className="bg-card hidden h-full w-64 flex-col border-r md:flex">
+      <SidebarNavContent />
     </aside>
+  );
+}
+
+export function MobileSidebar() {
+  const [open, setOpen] = useState(false);
+  const t = useTranslations("nav");
+
+  // Close the sheet when the user clicks any link inside it (route change).
+  function handleContentClick(event: React.MouseEvent<HTMLDivElement>) {
+    if ((event.target as HTMLElement).closest("a")) {
+      setOpen(false);
+    }
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          aria-label={t("openMenu")}
+        >
+          <Menu className="size-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent
+        side="left"
+        className="w-64 p-0"
+        onClick={handleContentClick}
+      >
+        <SheetTitle className="sr-only">{t("menu")}</SheetTitle>
+        <SidebarNavContent />
+      </SheetContent>
+    </Sheet>
   );
 }

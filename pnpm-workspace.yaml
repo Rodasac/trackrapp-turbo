@@ -6,3 +6,7 @@ onlyBuiltDependencies:
   - "@parcel/watcher"
   - "@swc/core"
   - argon2
+  - core-js-pure
+  - esbuild
+  - msgpackr-extract
+  - sharp

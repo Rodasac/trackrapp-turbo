@@ -1,70 +1,89 @@
-# Turborepo starter
+# TrackrApp
 
-This Turborepo starter is maintained by the Turborepo core team.
+A multi-user subscription tracker with automatic renewal reminders, expense analytics, and AI-powered spending insights. TrackrApp helps you see every recurring expense in one place, visualize where your money goes, and get personalized tips for cutting waste. Freemium model — AI insights are a Pro (paid) feature.
 
-## Using this example
+## Features
 
-This example is based on the `basic` example (`npx create-turbo@latest`) to demonstrate how to use Vitest and get the most out of Turborepo's caching.
+- Subscription CRUD with categories, currencies, billing cycles, and renewal dates
+- Renewal reminders via email and web push (VAPID)
+- Dashboard with KPI cards and spend-over-time charts (Recharts)
+- AI-generated monthly spending tips (Pro)
+- Stripe billing with customer portal, freemium gating, and trial activation
+- CSV import with column mapping and configurable defaults
+- Multi-currency and multi-language UI (`next-intl`, English + Spanish today)
+- Light / dark theme
 
-This example demonstrates two approaches to Vitest configuration:
+## Tech stack
 
-1. **Package-level caching (Recommended)**: Each package has its own Vitest configuration that imports shared settings from `@repo/vitest-config`. This approach leverages Turborepo's caching effectively.
+- **Web:** Next.js 16 (App Router) + React 19
+- **Database:** Drizzle ORM + PostgreSQL
+- **Auth:** Better Auth (email + Google OAuth) with the Stripe plugin
+- **Payments:** Stripe (subscriptions + customer portal)
+- **UI:** shadcn/ui (new-york style) + Tailwind CSS v4
+- **Worker:** Node.js + node-cron (reminders, AI tips, cleanup) — planned
+- **Email:** Resend
+- **Push:** Web Push with VAPID
+- **Tooling:** Turborepo, pnpm, Vitest, Playwright
 
-2. **Vitest Projects**: A root `vitest.config.ts` uses Vitest's projects feature for unified test running during development.
+## Monorepo layout
 
-## Getting Started
+| Path                         | Purpose                                               |
+| ---------------------------- | ----------------------------------------------------- |
+| `apps/web`                   | Next.js App Router — frontend + API routes            |
+| `apps/worker`                | Node.js cron worker (reminders, AI tips, cleanup)     |
+| `packages/database`          | Drizzle ORM schema + client, shared by web and worker |
+| `packages/ui`                | shadcn/ui components and shared primitives            |
+| `packages/tailwind-config`   | Single source of Tailwind v4 CSS tokens               |
+| `packages/vitest-config`     | Shared Vitest base / UI config                        |
+| `packages/eslint-config`     | Shared ESLint config                                  |
+| `packages/typescript-config` | Shared `tsconfig` bases                               |
 
-First, install dependencies and build the shared configuration package:
+## Getting started
+
+Requires Node.js 20+, pnpm 9+, and a running PostgreSQL instance.
 
 ```bash
+# 1. Install dependencies
 pnpm install
+
+# 2. Build the shared Vitest config (one-time, required before first `pnpm test`)
 pnpm build --filter=@repo/vitest-config
+
+# 3. Configure environment variables
+cp packages/database/.env.example packages/database/.env   # set DATABASE_URL
+cp apps/web/.env.example apps/web/.env                     # set BETTER_AUTH_*, STRIPE_*, etc.
+
+# 4. Push the schema and seed initial data
+pnpm db:push
+pnpm db:seed
+
+# 5. Run the web app
+pnpm dev --filter=web
 ```
 
-## Available Commands
+Open [http://localhost:3000](http://localhost:3000).
 
-- `pnpm test`: Runs tests in each package using Turborepo (leverages caching)
-- `pnpm test:projects`: Runs tests using Vitest's projects feature
-- `pnpm test:projects:watch`: Runs tests using Vitest's projects feature in watch mode
-- `pnpm view-report`: Collects coverage from each package and shows it in a merged report
+See the **Environment Variables** table in [`CLAUDE.md`](./CLAUDE.md) for the full list of required keys per package.
 
-## Configuration Structure
+## Common scripts
 
-The example uses a shared `@repo/vitest-config` package that exports:
+| Command                 | What it does                                 |
+| ----------------------- | -------------------------------------------- |
+| `pnpm dev`              | Run every app in dev mode                    |
+| `pnpm dev --filter=web` | Run only the web app (port 3000)             |
+| `pnpm build`            | Build all packages and apps                  |
+| `pnpm lint`             | Lint every workspace                         |
+| `pnpm check-types`      | Type-check every workspace                   |
+| `pnpm test`             | Run all tests via Turborepo (cached)         |
+| `pnpm test:projects`    | Run all tests via Vitest projects (no cache) |
+| `pnpm db:generate`      | Generate a new Drizzle migration from schema |
+| `pnpm db:migrate`       | Apply pending migrations                     |
+| `pnpm db:push`          | Push the schema directly (dev shortcut)      |
+| `pnpm db:seed`          | Seed development data                        |
+| `pnpm db:studio`        | Open Drizzle Studio                          |
 
-- `sharedConfig`: Base configuration with coverage settings
-- `baseConfig`: For Node.js packages (like `math`)
-- `uiConfig`: For packages requiring jsdom environment (like `web`, `docs`)
+## Project status
 
-### Remote Caching
+Phases 1–4 are complete (auth, CRUD, Stripe billing, reminders, dashboard, AI tips, polish). Current focus: shared/family subscription splitting. Bank / Open Banking integration is on the roadmap.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+For the full plan, milestones, and progress, see [`docs/implementation-plan.md`](./docs/implementation-plan.md) and [`docs/progress.md`](./docs/progress.md).

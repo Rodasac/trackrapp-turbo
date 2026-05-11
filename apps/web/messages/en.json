@@ -23,7 +23,9 @@
     "settings": "Settings",
     "admin": "Admin",
     "upgradeToPro": "Upgrade to Pro",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "openMenu": "Open menu",
+    "menu": "Menu"
   },
   "auth": {
     "login": {

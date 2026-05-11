@@ -23,7 +23,9 @@
     "settings": "Ajustes",
     "admin": "Admin",
     "upgradeToPro": "Actualizar a Pro",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "openMenu": "Abrir menú",
+    "menu": "Menú"
   },
   "auth": {
     "login": {
