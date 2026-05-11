@@ -15,18 +15,18 @@
     "clean": "pnpm dlx rimraf node_modules/"
   },
   "dependencies": {
-    "pino": "^9.7.0",
+    "pino": "^10.3.1",
     "pino-pretty": "^13.0.0",
-    "pino-roll": "^1.0.0"
+    "pino-roll": "^4.0.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/vitest-config": "workspace:*",
-    "@types/node": "^24.10.13",
-    "@vitest/coverage-istanbul": "^4.0.18",
-    "eslint": "^10.0.2",
-    "typescript": "5.9.3",
-    "vitest": "^4.0.18"
+    "@types/node": "^25.6.2",
+    "@vitest/coverage-istanbul": "^4.1.6",
+    "eslint": "^10.3.0",
+    "typescript": "6.0.3",
+    "vitest": "^4.1.6"
   }
 }
