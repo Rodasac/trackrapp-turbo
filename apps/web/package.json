@@ -31,7 +31,7 @@
     "@uploadthing/shared": "^7.1.10",
     "argon2": "^0.44.0",
     "better-auth": "^1.5.3",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "lucide-react": "^0.575.0",
     "motion": "^12.34.4",
     "next": "16.1.6",
