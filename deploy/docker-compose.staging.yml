@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-trackrapp}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - postgres-staging-data:/var/lib/postgresql/data
+      - postgres-staging-data:/var/lib/postgresql
     healthcheck:
       test:
         [
