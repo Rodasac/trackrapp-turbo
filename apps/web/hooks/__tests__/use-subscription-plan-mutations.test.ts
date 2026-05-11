@@ -142,7 +142,7 @@ describe("useUpgradeToPro", () => {
           cancelUrl: "http://localhost:3000/pricing",
         }),
       ),
-    ).rejects.toThrow("Payment required");
+    ).rejects.toMatchObject({ message: "Payment required" });
   });
 });
 
@@ -218,6 +218,6 @@ describe("useOpenBillingPortal", () => {
           returnUrl: "http://localhost:3000/settings?tab=billing",
         }),
       ),
-    ).rejects.toThrow("Not found");
+    ).rejects.toMatchObject({ message: "Not found" });
   });
 });

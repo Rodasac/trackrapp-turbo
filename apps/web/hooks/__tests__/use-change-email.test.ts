@@ -114,6 +114,6 @@ describe("useChangeEmail", () => {
 
     await expect(
       act(() => result.current.mutateAsync({ newEmail: "taken@example.com" })),
-    ).rejects.toThrow("Email already in use");
+    ).rejects.toMatchObject({ message: "Email already in use" });
   });
 });

@@ -118,7 +118,7 @@ describe("useBanUser", () => {
 
     await expect(
       act(() => result.current.mutateAsync({ userId: "user-123" })),
-    ).rejects.toThrow("Forbidden");
+    ).rejects.toMatchObject({ message: "Forbidden" });
   });
 });
 

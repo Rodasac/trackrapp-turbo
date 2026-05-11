@@ -87,7 +87,7 @@ describe("useUpdateProfile", () => {
 
     await expect(
       act(() => result.current.mutateAsync({ name: "Jane" })),
-    ).rejects.toThrow("Failed to update");
+    ).rejects.toMatchObject({ message: "Failed to update" });
   });
 });
 
@@ -163,6 +163,6 @@ describe("useChangePassword", () => {
           newPassword: "NewPass456",
         }),
       ),
-    ).rejects.toThrow("Incorrect password");
+    ).rejects.toMatchObject({ message: "Incorrect password" });
   });
 });
